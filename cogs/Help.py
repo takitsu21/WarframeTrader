@@ -4,7 +4,8 @@
 import discord
 from discord.ext import commands
 
-help_commands = """`*help` - returns help commands""" 
+help_commands = """`*help` - returns help commands
+`*wtb <item_name>` - returns items on sale""" 
 
 class Help(commands.Cog):
     """Help commands"""
@@ -20,8 +21,8 @@ class Help(commands.Cog):
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made by Taki#0853 (WIP)",
                         icon_url=ctx.guild.me.avatar_url)
-
         await ctx.author.send(embed=embed)
+        await ctx.message.delete()
 
 def setup(bot):
     bot.add_cog(Help(bot))

@@ -1,14 +1,19 @@
 #!/usr/bin/python
 #coding:utf-8
-import json, os, asyncio
+import json, os, asyncio, nest_asyncio
 from aiohttp import ClientSession
+
+
+nest_asyncio.apply()#fix asyncio error
+
 
 class StatusError(Exception):
     def __init__(self,*args,**kwargs):
         Exception.__init__(self,*args,**kwargs)
 
+
 def set_headers():
-    with open("../config.json", "r") as f:
+    with open("config.json", "r") as f:
         config = json.load(f)["headers"]
     headers = {
         "Authorization":config["token"],
@@ -26,18 +31,18 @@ class WfmApi:
         self.endpoints = '/'.join(endpoints)
         self.URL = f"{self.root}{self.endpoints}"
 
-    async def fetch(self, session) -> str:
+    async def fetch(self, session):
         """make requests"""
         async with session.get(self.URL, headers=self.headers) as r:
             try:
                 assert r.status == 200
                 return await r.json()
             except:
-                raise StatusError(await r.json(), r.status)
+                raise StatusError(r.status)
     
 
-    async def data(self) -> str:
-        """returns api.warframe.market responses"""
+    async def data(self) -> dict:
+        """returns api.warframe.market responses -> dict"""
         async with ClientSession() as session:
             responses = await self.fetch(session)
         return responses
@@ -45,54 +50,49 @@ class WfmApi:
     async def icon_endpoint(self, icon: bool=True) -> str:
         async with ClientSession() as session:
             responses = await self.fetch(session)
-        return [x["icon"] for x in responses["payload"]["item"]["items_in_set"]][0] if icon else \
-            [x["thumb"] for x in responses["payload"]["item"]["items_in_set"]][0]
+        return self.icon_root + [x["icon"] for x in responses["payload"]["item"]["items_in_set"]][0] if icon else \
+            self.icon_root + [x["thumb"] for x in responses["payload"]["item"]["items_in_set"]][0]
  
 
 def run(func = lambda x: x):
-    """asyncio runner function"""
-    loop = asyncio.get_event_loop()
-    return loop.run_until_complete(func)
+    """asyncio runner function using python 3.7"""
+    return asyncio.run(func)
  
 
-def check_status(status) -> int:
-    if status == "ingame": return 3
-    return 2 if status == "online" else 1
- 
-def sort_orders(data) -> dict:
+def check_status(status: str) -> int:
+    return {"ingame":3, "online":2,"offline":1}[status]
+
+def order_type_convert(order_type :str) -> str:
+    if order_type == "wts":
+        return "buy"
+    elif order_type == "wtb":
+        return "sell"
+
+def sort_orders(data: dict, order_type: str) -> dict:
     _sorted, prices = {}, {}
     list_to_sort = []
     parser = []
+    i = 0
     for order in data["payload"]["orders"]:
-        # if order["user"]["status"] == "ingame":
-        if order["user"]["status"] == "ingame":
+        if order["user"]["status"] == "ingame" and order["order_type"] == order_type_convert(order_type):
             prices[order["user"]["ingame_name"]] = {"status":order["user"]["status"],
                                                     "rep":order["user"]["reputation"],
                                                     "platinum":order["platinum"],
                                                     "quantity":order["quantity"],
-                                                    "icon":order["icon"]}
+                                                    "order_type":order["order_type"]}
             list_to_sort.append((order["user"]["ingame_name"],
-                                order["platinum"],
-                                order["user"]["status"]))
+                                order["platinum"]))
     list_to_sort = sorted(list_to_sort, key=lambda v : v[1])
-    list_to_sort = sorted(list_to_sort, key=lambda v : v[2], reverse=True)
-    for igname, p, st in list_to_sort:
+    for igname, p in list_to_sort:
         parser.append({"status":prices[igname]["status"],
                                 "name":igname,
                                 "rep":prices[igname]["rep"],
-                                "platinum":prices[igname]["platinum"],
-                                "quantity":prices[igname]["quantity"]})
+                                "platinum":p,
+                                "quantity":prices[igname]["quantity"],
+                                "order_type":prices[igname]["order_type"],
+                                "number":i})
+        if i == 10:
+            break
+        i+=1
     _sorted["data"] = parser
     return _sorted
-
-def show_listed_orders(orders : dict):
-    for _data in orders["data"]:
-        print("{} | {} +{}rep -> {}pl --- {} qt".format(_data["name"],
-                        _data["status"],
-                        _data["rep"],
-                        _data["platinum"],
-                        _data["quantity"]))
-
-if __name__ == "__main__":
-    api = WfmApi("items", "condition_overload")
-    print(json.dumps(run(api.icon_endpoint(icon=False)), indent=4))

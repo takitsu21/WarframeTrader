@@ -18,10 +18,10 @@ async def on_guild_join(ctx):
     embed = discord.Embed(title='**Nice to meet you!**',
                         colour=0x87DABC,
                         description= "Thanks for inviting me!")
-    embed.add_field(name="**Prefix**", value="`a!`")
-    embed.add_field(name="**About Apex Stats**",
-                    value="Type `a!help` to get all the commands!")
-    embed.set_footer(text="Made by Taki#0853 (WIP)")
+    embed.add_field(name="**Prefix**", value="`*`")
+    embed.add_field(name="**About Warframe Trader**",
+                    value="Type `*help` to get all the commands!")
+    embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)")
     await ctx.owner.send(embed = embed)
 
 # @client.event
@@ -61,4 +61,5 @@ async def on_ready():
                 await asyncio.sleep(10)
         nb_users = 0
 
-client.run("NTkzMzY0MjgxNTcyMTk2MzUz.XRMzmQ.gtsbwX0ikw-4j1VJU8sRakCIG84")
+
+client.run("")

@@ -13,7 +13,7 @@ class StatusError(Exception):
 
 
 def set_headers():
-    with open("config.json", "r") as f:
+    with open("../config.json", "r") as f:
         config = json.load(f)["headers"]
     headers = {
         "Authorization":config["token"],
@@ -96,3 +96,7 @@ def sort_orders(data: dict, order_type: str) -> dict:
         i+=1
     _sorted["data"] = parser
     return _sorted
+
+# if __name__ == "__main__":
+#     api = WfmApi("items", "ash_prime_blueprint", "statistics")
+#     print(json.dumps(run(api.data()), indent=4))

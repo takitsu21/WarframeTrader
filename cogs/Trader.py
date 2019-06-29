@@ -28,7 +28,7 @@ class Trader(commands.Cog):
     @commands.command(pass_context=True)
     async def wtb(self, ctx, *args):
         try:
-            embed = discord.Embed(title='`💰`Items on sale`💰` (Online in game)',
+            embed = discord.Embed(title='`💰`Items on sale`💰` (Online in game - Sort by prices)',
                         colour=self.colour,
                         timestamp=datetime.datetime.utcfromtimestamp(time.time()))
             args_endpoint = '_'.join(args).lower()
@@ -41,10 +41,10 @@ class Trader(commands.Cog):
             for i, d in enumerate(item_data["data"], start = 1):
                 pl = int(d["platinum"])
                 embed.add_field(name="`{0}.` **{1}** *Online in game* "\
-                "+{2}`🙂` {3} platinum "\
+                "+**{2}**`🙂` **{3}** platinum "\
                 "{4} pieces".format(i,d["name"],d["rep"], pl, d["quantity"]),
                 value="||`/w {0} Hi! I want to buy: {1} "\
-                "for {2} platinum. (warframe.market)`||"\
+                "for {2} platinum. (warframe.market - Warframe Trader bot)`||"\
                 .format(d["name"],formatted_args, pl))
             embed.set_thumbnail(url=item_thumb)
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
@@ -53,10 +53,11 @@ class Trader(commands.Cog):
             embed = discord.Embed(title='`❌`Error`❌`',
                                     colour=self.colour,
                                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-                                    description=f"{type(e).__name__} : ERROR {e} (you might spelled the item wrong or the API is down)`🤔`")
+                                    description=f"{type(e).__name__} : ERROR {e} (You might have spelled a wrong item name or the API is down)`🤔`")
             embed.set_thumbnail(url=ctx.guild.me.avatar_url)
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                                 icon_url=ctx.guild.me.avatar_url)
+        except  
         finally:
             await ctx.send(embed=embed)
 

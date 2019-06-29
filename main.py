@@ -62,4 +62,4 @@ async def on_ready():
         nb_users = 0
 
 
-client.run("")
+client.run("NTkzMzY0MjgxNTcyMTk2MzUz.XRS2xQ.SaGJZ8uFUcuJdnQZvWiaPvVBQkE")

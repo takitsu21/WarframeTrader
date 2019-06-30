@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from api_response import *
+# from api_response import *
 
 class GraphProcess:
     """render statistics as graph"""
@@ -48,8 +48,8 @@ class GraphProcess:
         plt.xlabel("Time(last 90 days)")
         plt.ylabel("Volume")
 
-        # plt.savefig("graphs/"+self.url_name+".png")
-        plt.show()
+        plt.savefig("graphs/"+self.url_name+".png")
+        # plt.show()
 
 # if __name__ == "__main__":
 #     api = WfmApi("items", "ash_prime_blueprint", "statistics")

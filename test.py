@@ -1,18 +1,13 @@
 import requests, os
+import datetime
 
 def get_JWT():
     session = requests.Session()
     response = session.get('https://warframe.market/')
     return session.cookies.get_dict()
 
-# %matplotlib inline
-import matplotlib.pyplot as plt
-plt.style.use('seaborn-whitegrid')
-import numpy as np
-fig = plt.figure()
-ax = plt.axes()
+def get_timestamp(file):
+    return datetime.datetime.fromtimestamp(os.path.getmtime(file))
 
-x = np.linspace(0, 1000, 100)
-ax.plot(x, np.sin(x))
-plt.show()
 
+print(get_timestamp("graphs/ash_prime_blueprint.png"))

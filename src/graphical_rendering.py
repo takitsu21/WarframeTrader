@@ -1,6 +1,5 @@
 import numpy as np
 from matplotlib import pyplot as plt
-# from api_response import *
 
 class GraphProcess:
     """render statistics as graph"""
@@ -44,7 +43,7 @@ class GraphProcess:
 
         plt.subplot(2, 1, 2)
         plt.bar(x, d, label="Bars")
-        plt.legend(["Volume"])
+        plt.legend(["Volume sold"])
         plt.xlabel("Time(last 90 days)")
         plt.ylabel("Volume")
 

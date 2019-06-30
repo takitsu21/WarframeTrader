@@ -4,7 +4,7 @@
 import discord, datetime, time, os 
 from discord.ext import commands
 from src.graphical_rendering import *
-from src.api_response import * 
+from src.wf_market_responses import * 
 
 
 class Statistics(commands.Cog):
@@ -14,7 +14,7 @@ class Statistics(commands.Cog):
         self.colour = 0x87DABC
 
     def make_graph(self, args: str, args_endpoint: str) -> bytes:
-        api = WfmApi("items", args_endpoint, "statistics")
+        api = WfmApi("pc","items", args_endpoint, "statistics")
         capitalize_args = [x.capitalize() for x in args]
         formatted_args = ' '.join(capitalize_args)
         graph = GraphProcess(formatted_args, args_endpoint)

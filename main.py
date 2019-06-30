@@ -1,14 +1,17 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 #coding:utf-8
 import discord, time, datetime, os, asyncio, logging
 from discord.ext import commands
 from cogs import *
+
+__version__ = 0
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
+
 
 client = commands.Bot(command_prefix='*', activity=discord.Game(name='Updating...'),
                       status=discord.Status('idle'), afk=True)
@@ -62,4 +65,4 @@ async def on_ready():
         nb_users = 0
 
 
-client.run("")
+client.run("NTkzMzY0MjgxNTcyMTk2MzUz.XRf1DQ.U-yTOTjmRwfMli11LBxV9YiXfEg")

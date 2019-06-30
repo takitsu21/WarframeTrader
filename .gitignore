@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.png
+*test.py
+*discord.log
 
 # C extensions
 *.so

@@ -42,7 +42,7 @@ class Trader(commands.Cog):
                 pl = int(d["platinum"])
                 embed.add_field(name="`{0}.` **{1}** *Online in game* "\
                 "+**{2}**`🙂` **{3}** platinum "\
-                "{4} pieces".format(i,d["name"],d["rep"], pl, d["quantity"]),
+                "**{4}** pieces".format(i,d["name"],d["rep"], pl, d["quantity"]),
                 value="||`/w {0} Hi! I want to buy: {1} "\
                 "for {2} platinum. (warframe.market - Warframe Trader bot)`||"\
                 .format(d["name"],formatted_args, pl))
@@ -57,7 +57,6 @@ class Trader(commands.Cog):
             embed.set_thumbnail(url=ctx.guild.me.avatar_url)
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                                 icon_url=ctx.guild.me.avatar_url)
-        except  
         finally:
             await ctx.send(embed=embed)
 

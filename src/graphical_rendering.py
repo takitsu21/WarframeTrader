@@ -1,30 +1,57 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from api_response import *
-import time, datetime
 
-# d2 = datetime.datetime.strptime(ts[:len(ts)-19],"%Y-%m-%d")
+class GraphProcess:
+    """render statistics as graph"""
+    def __init__(self, title: str, url_name: str):
+        self.title = title
+        self.url_name = url_name
 
-api = WfmApi("items", "ash_prime_blueprint", "statistics")
-data = run(api.data())
-x, y, z = [], [], []
-acc = 0
-for stats in data["payload"]["statistics_live"]["90days"]:
-    if stats["order_type"] == "sell":
-        ddate_f = stats["datetime"][:len(stats["datetime"])-19]
-        ddate_plan = datetime.datetime.strptime(ddate_f,"%Y-%m-%d")
-        x.append(str(ddate_plan.day) +"/"+ str(ddate_plan.month))#
-        y.append(stats["avg_price"])
-    else: #make buyer avg price
-        z.append(stats["avg_price"])
 
-plt.plot(x, y)
-plt.plot(x, z)
-plt.legend(["Seller", "Buyer"])
-plt.xlabel("Time")
-plt.ylabel("Platinum")
+    
+    def save_graph(self, data: dict) -> bytes:
+        try:
+            zz = data["payload"]["statistics_closed"]["90days"][0]["mod_rank"]
+            is_mod = True
+        except:
+            is_mod = False
+        x, y, z, d = [], [], [], []
+            #     # ddate_f = stats["datetime"][:len(stats["datetime"])-19]
+            #     # ddate_plan = datetime.datetime.strptime(ddate_f,"%Y-%m-%d")
 
-plt.show()
+        for i, stats in enumerate(data["payload"]["statistics_closed"]["90days"]):
+            if is_mod:
+                if i % 2 != 0:
+                    y.append(stats["wa_price"])
+                    z.append(stats["moving_avg"])
+                    d.append(stats["volume"])
+            else:
+                y.append(stats["wa_price"])
+                z.append(stats["moving_avg"])
+                d.append(stats["volume"])
 
+        x = np.arange(len(y))
+        plt.figure(figsize=(8, 7))
+        plt.subplot(2, 1, 1)
+        plt.plot(x, y, "-")
+        plt.plot(x, z, ":")
+
+        plt.title(self.title)
+        plt.legend(["Average selling price", "Moving average selling price"])
+        plt.xlabel("Time(last 90 days)")
+        plt.ylabel("Prices(platinum)")
+
+        plt.subplot(2, 1, 2)
+        plt.bar(x, d, label="Bars")
+        plt.legend(["Volume"])
+        plt.xlabel("Time(last 90 days)")
+        plt.ylabel("Volume")
+
+        # plt.savefig("graphs/"+self.url_name+".png")
+        plt.show()
+
+# if __name__ == "__main__":
 #     api = WfmApi("items", "ash_prime_blueprint", "statistics")
-#     print(json.dumps(run(api.data()), indent=4))
+#     graph = GraphProcess("ash", "ash_prime_blueprint")
+#     graph.save_graph(run(api.data()))

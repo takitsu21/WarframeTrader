@@ -7,18 +7,14 @@ class GraphProcess:
         self.title = title
         self.url_name = url_name
 
-
-    
     def save_graph(self, data: dict) -> bytes:
         try:
-            zz = data["payload"]["statistics_closed"]["90days"][0]["mod_rank"]
-            is_mod = True
-        except:
+            if isinstance(data["payload"]["statistics_closed"]["90days"][0]["mod_rank"], int):
+                is_mod = True
+        except Exception as e:
+            print(f"{type(e).__name__} : {e}") 
             is_mod = False
         x, y, z, d = [], [], [], []
-            #     # ddate_f = stats["datetime"][:len(stats["datetime"])-19]
-            #     # ddate_plan = datetime.datetime.strptime(ddate_f,"%Y-%m-%d")
-
         for i, stats in enumerate(data["payload"]["statistics_closed"]["90days"]):
             if is_mod:
                 if i % 2 != 0:

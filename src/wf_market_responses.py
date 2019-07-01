@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #coding:utf-8
-import json, os, asyncio, nest_asyncio
+import json, asyncio, nest_asyncio
 from aiohttp import ClientSession
 
 
@@ -33,12 +33,10 @@ class WfmApi:
         }
         async with session.get(self.URL, headers=HEADERS) as r:
             try:
-                assert r.status == 200
                 return await r.json()
-            except:
+            except Exception:
                 raise StatusError(await r.json(), r.status)
     
-
     async def data(self) -> dict:
         """returns api.warframe.market responses -> dict"""
         async with ClientSession() as session:
@@ -51,12 +49,10 @@ class WfmApi:
         return self.icon_root + [x["icon"] for x in responses["payload"]["item"]["items_in_set"]][0] if icon else \
             self.icon_root + [x["thumb"] for x in responses["payload"]["item"]["items_in_set"]][0]
  
-
 def run(func = lambda x: x):
     """asyncio runner function using python 3.7"""
     return asyncio.run(func)
  
-
 def check_status(status: str) -> int:
     return {"ingame":3, "online":2,"offline":1}[status]
 

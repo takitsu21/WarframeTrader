@@ -4,8 +4,8 @@
 import discord
 from discord.ext import commands
 
-help_commands = """`*help` - returns help commands
-`*wtb <item_name>` - returns items on sale""" 
+help_commands = "`*help` - returns help commands" + \
+"`*wtb <item_name>` - returns items on sale"
 
 class Help(commands.Cog):
     """Help commands"""

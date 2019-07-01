@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #coding:utf-8
-import discord, time, datetime, os, asyncio, logging
+import discord, datetime, os, asyncio, logging
 from discord.ext import commands
 from cogs import *
 

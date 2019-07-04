@@ -11,12 +11,13 @@ class Trader(commands.Cog):
         self.bot = bot
         self.colour = 0x87DABC
 
-    @commands.command(pass_context=True)
+    @commands.command(aliases=["buy", "b"])
     async def wtb(self, ctx, platform, *args):
         try:
             embed = discord.Embed(title='`💰`Items on sale`💰` (Online in game - Sort by prices)',
                         colour=self.colour,
-                        timestamp=datetime.datetime.utcfromtimestamp(time.time()))
+                        timestamp=datetime.datetime.utcfromtimestamp(time.time()),
+                        description="Will be deleted in 5 minutes!")
             args_endpoint = '_'.join(args).lower()
             api_orders = WfmApi(platform, "items", args_endpoint, "orders")
             api_icons = WfmApi(platform, "items", args_endpoint)
@@ -34,10 +35,15 @@ class Trader(commands.Cog):
                     "for {2} platinum. (warframe.market - Warframe Trader bot)`||"\
                     .format(d["name"],formatted_args, pl))
             else:
-                embed.add_field(name="0 offer for {}".format(formatted_args), value="No one is actually online in game sorry!\nComeback later tenno!")
+                embed.add_field(
+                        name="0 offer for {}".format(formatted_args),
+                        value="No one is actually online in game sorry!\nComeback later tenno!"
+                    )
             embed.set_thumbnail(url=item_thumb)
-            embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
-                            icon_url=ctx.guild.me.avatar_url)
+            embed.set_footer(
+                            text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
+                            icon_url=ctx.guild.me.avatar_url
+                        )
         except StatusError as e:
             embed = discord.Embed(title='❌Error❌',
                                     colour=0xFF0026,
@@ -47,9 +53,11 @@ class Trader(commands.Cog):
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                                 icon_url=ctx.guild.me.avatar_url)
         finally:
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, delete_after = 300)
+            # await asyncio.sleep(300)
+            await ctx.message.delete(delay=300)
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, aliases=["sell","s"])
     async def wts(self, ctx, *args):
         embed = discord.Embed(title='**Supported Commands**',
                             colour=self.colour)

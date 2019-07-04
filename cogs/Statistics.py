@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #coding:utf-8
-import discord, datetime, os
+import discord, datetime, time, os
 from discord.ext import commands
 from src.graphical_rendering import *
 from src.wf_market_responses import *
@@ -12,21 +12,37 @@ class Statistics(commands.Cog):
         self.colour = 0x87DABC
 
     @classmethod
-    def make_graph(cls, args: str, args_endpoint: str) -> bytes:
+    def make_graph(cls, args_endpoint: str, fargs: str):
         api = WfmApi("pc","items", args_endpoint, "statistics")
-        capitalize_args = [x.capitalize() for x in args]
-        formatted_args = ' '.join(capitalize_args)
-        graph = GraphProcess(formatted_args, args_endpoint)
+        graph = GraphProcess(fargs, args_endpoint)
         graph.save_graph(run(api.data()))
 
     @classmethod
-    def get_file_time(cls, file_path):
+    def get_file_time(cls, file_path: str):
         return datetime.datetime.fromtimestamp(\
             os.path.getmtime(file_path))
 
-    @commands.command(pass_context=True)
+    @classmethod
+    def embed_graph(cls, ctx, item_name, icon):
+        embed = discord.Embed(
+            title=f"{item_name} Graphic",
+            timestamp=datetime.datetime.utcfromtimestamp(time.time()),
+            description="Will be deleted in 5 mins!",
+            colour=self.colour
+        )
+        # embed.add_field()
+        embed.set_thumbnail(url=icon)
+        embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
+                        icon_url=ctx.guild.me.avatar_url)
+        return embed
+
+
+    @commands.command(aliases=["st"])
     async def stats(self, ctx, *args):
         args_endpoint = '_'.join(args).lower()
+        thumb = WfmApi("pc", "items", args_endpoint)
+        capitalize_args = [x.capitalize() for x in args]
+        fargs = ' '.join(capitalize_args)
         graphs_path = "graphs/"+args_endpoint+".png"
         try:
             if os.path.exists(graphs_path):
@@ -35,16 +51,20 @@ class Statistics(commands.Cog):
                 if file_date.day == today.day:
                     pass
                 else:
-                    self.make_graph(args, args_endpoint)
+                    self.make_graph(args_endpoint, fargs)
             else:
-                self.make_graph(args, args_endpoint)
+                self.make_graph(args_endpoint, fargs)
         except Exception as e:
             print(f"{type(e).__name__} : {e}")
             return
         finally:
+            embed = self.embed_graph(ctx, fargs, run(thumb.icon_endpoint()))
             with open(graphs_path, 'rb') as p:
-                await ctx.send(file=discord.File(p,
-                    graphs_path))
+                await ctx.send(embed=embed,
+                                file=discord.File(p,
+                    graphs_path), delete_after = 300)
+            # await asyncio.sleep(300)
+            await ctx.message.delete(delay=300)
 
 def setup(bot):
     bot.add_cog(Statistics(bot))

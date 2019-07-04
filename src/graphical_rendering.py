@@ -12,7 +12,6 @@ class GraphProcess:
             if isinstance(data["payload"]["statistics_closed"]["90days"][0]["mod_rank"], int):
                 is_mod = True
         except Exception as e:
-            print(f"{type(e).__name__} : {e}") 
             is_mod = False
         x, y, z, d = [], [], [], []
         for i, stats in enumerate(data["payload"]["statistics_closed"]["90days"]):

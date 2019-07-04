@@ -1,14 +1,10 @@
 #!/usr/bin/python3
 #coding:utf-8
-import json, asyncio, nest_asyncio
+import asyncio, nest_asyncio
 from aiohttp import ClientSession
-
+from src.exceptions import *
 
 nest_asyncio.apply()#fix asyncio error
-
-class StatusError(Exception):
-    def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)
 
 # def get_JWT():
 #     session = requests.Session()
@@ -48,11 +44,11 @@ class WfmApi:
             responses = await self.fetch(session)
         return self.icon_root + [x["icon"] for x in responses["payload"]["item"]["items_in_set"]][0] if icon else \
             self.icon_root + [x["thumb"] for x in responses["payload"]["item"]["items_in_set"]][0]
- 
+
 def run(func = lambda x: x):
     """asyncio runner function using python 3.7"""
     return asyncio.run(func)
- 
+
 def check_status(status: str) -> int:
     return {"ingame":3, "online":2,"offline":1}[status]
 

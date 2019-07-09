@@ -6,7 +6,7 @@ def run(func = lambda x: x):
     """asyncio runner function using python 3.7"""
     return asyncio.run(func)
 
-class WorldState:
+class WorldStateData:
     """Warframe worldstate data (alerts, cetusCycle, etc...)"""
     def __init__(self):
         self.root = "https://api.warframestat.us/"
@@ -18,8 +18,8 @@ class WorldState:
                 return await r.json()
             except Exception:
                 raise StatusError(await r.json(), r.status)
-
-    async def data(self, platform: str, *endpoints: list) -> dict:
+    
+    async def data(self, platform: str="pc", *endpoints: list) -> dict:
         endpoint = platform + "/" + '/'.join(endpoints)
         async with ClientSession(json_serialize=json.dumps) as session:
             responses = await self.fetch(session, endpoint)

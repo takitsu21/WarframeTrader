@@ -11,13 +11,21 @@ class Trader(commands.Cog):
         self.bot = bot
         self.colour = 0x87DABC
 
+    @classmethod
+    async def e_send(cls, ctx, embed=None, delay=None):
+        """Clean messages with a delay"""
+        await ctx.send(embed=embed, delete_after=delay)
+        await ctx.message.delete(delay=delay)
+
+
     @commands.command(aliases=["buy", "b"])
     async def wtb(self, ctx, platform, *args):
         try:
             embed = discord.Embed(title='`💰`Items on sale`💰` (Online in game - Sort by prices)',
                         colour=self.colour,
                         timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-                        description="Will be deleted in 5 minutes!")
+                        description="Will be deleted in 5 minutes!\nYou can get stats with the following command\n"+\
+                        f"**`*stats {' '.join(args)}`**")
             args_endpoint = '_'.join(args).lower()
             api_orders = WfmApi(platform, "items", args_endpoint, "orders")
             api_icons = WfmApi(platform, "items", args_endpoint)
@@ -52,10 +60,8 @@ class Trader(commands.Cog):
             embed.set_thumbnail(url=ctx.guild.me.avatar_url)
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                                 icon_url=ctx.guild.me.avatar_url)
-        finally:
-            await ctx.send(embed=embed, delete_after = 300)
-            # await asyncio.sleep(300)
-            await ctx.message.delete(delay=300)
+        await self.e_send(ctx, embed=embed, delay=10)
+
 
     @commands.command(pass_context=True, aliases=["sell","s"])
     async def wts(self, ctx, *args):

@@ -22,8 +22,19 @@ class Statistics(commands.Cog):
         return datetime.datetime.fromtimestamp(\
             os.path.getmtime(file_path))
 
-    @classmethod
-    def embed_graph(cls, ctx, item_name, icon):
+    def clean_dir(self, path, today):
+        if os.path.exists(path+"flag"):
+            if self.get_file_time(path+"flag").day == today.day:
+                return True
+            else:
+                for file in os.listdir(path):
+                    os.remove(file)
+                open("flag", "a").close()
+                return False
+        open(path+"flag", "a").close()
+        return False
+
+    def embed_graph(self, ctx, item_name, icon):
         embed = discord.Embed(
             title=f"{item_name} Graphic",
             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
@@ -47,8 +58,7 @@ class Statistics(commands.Cog):
         try:
             if os.path.exists(graphs_path):
                 today = datetime.datetime.now()
-                file_date = self.get_file_time(graphs_path)
-                if file_date.day == today.day:
+                if self.clean_dir("graphs/", today):
                     pass
                 else:
                     self.make_graph(args_endpoint, fargs)

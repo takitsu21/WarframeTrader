@@ -26,12 +26,12 @@ def get_cetusCycle(data: dict) -> str:
     if data["isDay"]:
         string = timeLeft + " to ☀️"
     else:
-        string = timeLeft + " to 🌙"
+        string = timeLeft + " to 🌑"
     return string
 
 @client.event
-async def on_disconnect():
-    print(f"{client.user.name} succesfully disconnected")
+async def on_disconnect(ctx):
+    print(f"{ctx.guild.me.name} succesfully disconnected")
 
 @client.event
 async def on_guild_join(ctx):
@@ -75,15 +75,15 @@ async def on_ready():
     if loaded is None:
         print('All cogs loaded!')
     else: print(f"Cogs missing -> {fail}")
-    # nb_users, t, acc = 0,0,0
-    ws = WorldState()
+    ws = WorldStateData()
     while True:
         cetus_string = get_cetusCycle(run(ws.data("pc", "cetusCycle")))
         await client.change_presence(
-            activity=discord.Activity(name="[*help] {0}".format(cetus_string),
-            type=3)
+            activity=discord.Activity(
+                name="[*help] {0}".format(cetus_string),
+                type=3)
             )
         await asyncio.sleep(60)
 
-client.run()
+client.run("NTkzMzY0MjgxNTcyMTk2MzUz.XRf1DQ.U-yTOTjmRwfMli11LBxV9YiXfEg")
 

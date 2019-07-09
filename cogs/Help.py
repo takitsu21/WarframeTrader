@@ -22,7 +22,7 @@ class Help(commands.Cog):
             version = "Shorter version commands"
             with open("commands_s.txt", "r",encoding="utf8") as f:
                 lines = f.readlines()
-        return ''.join(lines), version 
+        return ''.join(lines), version
 
 
     @commands.command(aliases=["h"])

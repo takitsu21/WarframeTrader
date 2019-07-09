@@ -38,7 +38,7 @@ class WfmApi:
         async with ClientSession() as session:
             responses = await self.fetch(session)
         return responses
-    
+
     async def icon_endpoint(self, icon: bool=True) -> str:
         async with ClientSession() as session:
             responses = await self.fetch(session)

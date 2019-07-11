@@ -1,3 +1,4 @@
-`*h [--s]` - returns help commands
-`*<b | buy> <pc | xbox | ps4> <item_name>` - returns items on sale
-`*st <item_name>` - returns graph about item
+`*h [--s]` - returns help shorter version commands
+`*b <pc | xbox | ps4> <item_name>` - returns items on sale
+`*st <item_name>` - returns graph stats for the item
+`*f <pc | ps4 | xb1 | swi>` - returns all fissures for the current plaftorm

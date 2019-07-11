@@ -72,7 +72,9 @@ def sort_orders(data: dict, order_type: str) -> dict:
                                                     "order_type":order["order_type"]}
             list_to_sort.append((order["user"]["ingame_name"],
                                 order["platinum"]))
+
     list_to_sort = sorted(list_to_sort, key=lambda v : v[1])
+
     for igname, p in list_to_sort:
         parser.append({"status":prices[igname]["status"],
                                 "name":igname,

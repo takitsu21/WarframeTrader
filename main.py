@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 #coding:utf-8
-import discord, os, asyncio, logging
+import discord, os, asyncio, logging, nest_asyncio
 from discord.ext import commands
 from cogs import *
 from src.worldstate import *
+
+nest_asyncio.apply()
 
 __version__ = "0.0.1"
 logger = logging.getLogger('discord')
@@ -16,18 +18,40 @@ cyan = 0x87DAB
 client = commands.Bot(command_prefix='*', activity=discord.Game(name='Updating...'),
                       status=discord.Status('idle'), afk=True)
 
-with open("commands.txt", "r") as f:
-    help_commands = ''.join(f.readlines())
+def ttc_c(time, icon_type):
+    if time is None:
+        return None
+    new_t = time.split(" ")
+    new_t_lenght = len(new_t)
+    if new_t_lenght == 1:
+        return time + icon_type
+    minute_time = 60 if new_t_lenght - 2 == 1 or "h" in new_t[0] else 0
+    min_sum = str()
+    for x in new_t[new_t_lenght - 2]:
+        try: min_sum += x if isinstance(int(x), int) else ""
+        except: pass
+    minute_time += int(min_sum)
+    return str(minute_time) + "m" + icon_type
 
 def get_cetusCycle(data: dict) -> str:
-    if "-" in data["timeLeft"]:
+    timeLeft = data["timeLeft"]
+    if "-" in timeLeft:
         return None
-    timeLeft = data["timeLeft"].split(" ")[0]
     if data["isDay"]:
-        string = timeLeft + " to ☀️"
+        icon = " to 🌙"
     else:
-        string = timeLeft + " to 🌑"
-    return string
+        icon = " to ☀️"
+    return timeLeft, icon
+
+def get_orbisCycle(data: dict) -> str:
+    timeLeft = data["timeLeft"]
+    if "-" in timeLeft:
+        return None
+    if data["isWarm"]:
+        icon = " to ❄️"
+    else:
+        icon = " to 🔥"
+    return timeLeft, icon
 
 @client.event
 async def on_disconnect(ctx):
@@ -60,7 +84,6 @@ async def on_ready():
     #waiting internal cache to be ready
     await client.wait_until_ready()
     client.remove_command("help")
-
     loaded = None
     fail = str()
     # Adding Cogs
@@ -77,10 +100,17 @@ async def on_ready():
     else: print(f"Cogs missing -> {fail}")
     ws = WorldStateData()
     while True:
-        cetus_string = get_cetusCycle(run(ws.data("pc", "cetusCycle")))
+        try:
+            vallis_time = get_orbisCycle(run(ws.data("pc", "vallisCycle")))
+            cetus_time = get_cetusCycle(run(ws.data("pc", "cetusCycle")))
+            cetus_string = ttc_c(cetus_time[0], cetus_time[1])
+            vallis_string = ttc_c(vallis_time[0], vallis_time[1])
+        except:
+            cetus_string = ""
+            vallis_string = ""
         await client.change_presence(
             activity=discord.Activity(
-                name="[*help] {0}".format(cetus_string),
+                name="{0} | {1} [*help]".format(cetus_string, vallis_string),
                 type=3)
             )
         await asyncio.sleep(60)

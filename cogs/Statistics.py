@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 #coding:utf-8
-import discord, datetime, time, os
+import discord, datetime, time, os, nest_asyncio
 from discord.ext import commands
 from src.graphical_rendering import *
 from src.wf_market_responses import *
+
+nest_asyncio.apply()
 
 class Statistics(commands.Cog):
     """Trader commands"""

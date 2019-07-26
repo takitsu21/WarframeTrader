@@ -13,7 +13,7 @@ class Trader(commands.Cog):
         self.bot = bot
         self.colour = 0x87DABC
 
-    @commands.command(aliases=["buy", "b"])
+    @commands.command(aliases=["b"])
     async def wtb(self, ctx, platform: str = None, *args):
         if platform is None:
             return await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | xbox | ps4>`")
@@ -61,7 +61,7 @@ class Trader(commands.Cog):
             embed.set_thumbnail(url=ctx.guild.me.avatar_url)
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                                 icon_url=ctx.guild.me.avatar_url)
-        await e_send(ctx, embed=embed, delay=10)
+        await e_send(ctx, embed=embed, delay=300)
 
 
     @commands.command(pass_context=True, aliases=["sell","s"])
@@ -76,4 +76,3 @@ class Trader(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Trader(bot))
-    print("Added Trader")

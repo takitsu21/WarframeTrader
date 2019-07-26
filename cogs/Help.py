@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #coding:utf-8
 
-import discord
+import discord, time
 from discord.ext import commands
 
 class Help(commands.Cog):
@@ -22,6 +22,14 @@ class Help(commands.Cog):
                 lines = f.readlines()
         return ''.join(lines), version
 
+    @commands.command(pass_context=True)
+    async def ping(self, ctx):
+        """ Pong! """
+        await ctx.message.delete()
+        before = time.monotonic()
+        message = await ctx.send("Pong!", delete_after=20)
+        ping = (time.monotonic() - before) * 1000
+        await message.edit(content=f"Pong!  `{int(ping)}ms`")
 
     @commands.command(aliases=["h"])
     async def help(self, ctx, settings = None):
@@ -39,4 +47,3 @@ class Help(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Help(bot))
-    print("Added Help")

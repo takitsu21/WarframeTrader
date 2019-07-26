@@ -43,7 +43,6 @@ class Statistics(commands.Cog):
             description="Will be deleted in 5 mins!",
             colour=self.colour
         )
-        # embed.add_field()
         embed.set_thumbnail(url=icon)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                         icon_url=ctx.guild.me.avatar_url)
@@ -75,9 +74,7 @@ class Statistics(commands.Cog):
                 await ctx.send(embed=embed,
                                 file=discord.File(p,
                     graphs_path), delete_after = 300)
-            # await asyncio.sleep(300)
             await ctx.message.delete(delay=300)
 
 def setup(bot):
     bot.add_cog(Statistics(bot))
-    print("Added Statistics")

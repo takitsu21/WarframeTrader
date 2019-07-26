@@ -9,11 +9,11 @@ class GraphProcess:
 
     def save_graph(self, data: dict) -> bytes:
         try:
-            if isinstance(data["payload"]["statistics_closed"]["90days"][0]["mod_rank"], int):
+            if isinstance(data["payload"]["statistics_closed"]["90days"][0]["mod_rank"],int):
                 is_mod = True
         except Exception:
             is_mod = False
-        x, y, z, d = [], [], [], []
+        y, z, d = [], [], [], []
         for i, stats in enumerate(data["payload"]["statistics_closed"]["90days"]):
             if is_mod:
                 if i % 2 != 0:
@@ -44,8 +44,3 @@ class GraphProcess:
 
         plt.savefig("graphs/"+self.url_name+".png")
         # plt.show()
-
-# if __name__ == "__main__":
-#     api = WfmApi("items", "ash_prime_blueprint", "statistics")
-#     graph = GraphProcess("ash", "ash_prime_blueprint")
-#     graph.save_graph(run(api.data()))

@@ -18,6 +18,10 @@ cyan = 0x87DAB
 client = commands.Bot(command_prefix='*', activity=discord.Game(name='Updating...'),
                       status=discord.Status('idle'), afk=True)
 
+with open("commands.txt", "r",encoding="utf8") as f:
+    lines = f.readlines()
+    help_commands = ''.join(lines)
+
 def ttc_c(time, icon_type):
     if time is None:
         return None
@@ -29,11 +33,11 @@ def ttc_c(time, icon_type):
     min_sum = str()
     for x in new_t[new_t_lenght - 2]:
         try: min_sum += x if isinstance(int(x), int) else ""
-        except: pass
+        except Exception: pass
     minute_time += int(min_sum)
     return str(minute_time) + "m" + icon_type
 
-def get_cetusCycle(data: dict) -> str:
+def get_cetusCycle(data: dict) -> list:
     timeLeft = data["timeLeft"]
     if "-" in timeLeft:
         return None
@@ -43,7 +47,7 @@ def get_cetusCycle(data: dict) -> str:
         icon = " to ☀️"
     return timeLeft, icon
 
-def get_orbisCycle(data: dict) -> str:
+def get_orbisCycle(data: dict) -> list:
     timeLeft = data["timeLeft"]
     if "-" in timeLeft:
         return None
@@ -53,9 +57,9 @@ def get_orbisCycle(data: dict) -> str:
         icon = " to 🔥"
     return timeLeft, icon
 
-@client.event
-async def on_disconnect(ctx):
-    print(f"{ctx.guild.me.name} succesfully disconnected")
+# @client.event
+# async def on_disconnect(ctx):
+#     print(f"{ctx.guild.me.name} succesfully disconnected")
 
 @client.event
 async def on_guild_join(ctx):
@@ -91,6 +95,7 @@ async def on_ready():
         try:
             if file.endswith(".py"):
                 client.load_extension(f'cogs.{file.split(".")[0]}')
+                print(f"{file} loaded")
         except Exception as e:
             print(f"{file} can't be loaded :\n {type(e).__name__} : {e}")
             fail += file + " "
@@ -105,15 +110,17 @@ async def on_ready():
             cetus_time = get_cetusCycle(run(ws.data("pc", "cetusCycle")))
             cetus_string = ttc_c(cetus_time[0], cetus_time[1])
             vallis_string = ttc_c(vallis_time[0], vallis_time[1])
-        except:
+        except Exception as e:
+            logger.error(e)
             cetus_string = ""
             vallis_string = ""
         await client.change_presence(
             activity=discord.Activity(
                 name="{0} | {1} [*help]".format(cetus_string, vallis_string),
-                type=3)
+                type=3
+                )
             )
         await asyncio.sleep(60)
 
-client.run("NTkzMzY0MjgxNTcyMTk2MzUz.XRf1DQ.U-yTOTjmRwfMli11LBxV9YiXfEg")
+client.run("")
 

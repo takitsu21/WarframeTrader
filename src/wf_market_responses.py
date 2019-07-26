@@ -32,7 +32,7 @@ class WfmApi:
                 return await r.json()
             except Exception:
                 raise StatusError(await r.json(), r.status)
-    
+
     async def data(self) -> dict:
         """returns api.warframe.market responses -> dict"""
         async with ClientSession() as session:

@@ -1,8 +1,6 @@
-import asyncio, nest_asyncio, json
+import asyncio, json
 from aiohttp import ClientSession
 from src.exceptions import *
-
-nest_asyncio.apply()
 
 def run(func = lambda x: x):
     """asyncio runner function using python 3.7"""

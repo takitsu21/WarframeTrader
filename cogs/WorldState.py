@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
-#coding:utf-8
-
-import discord, time, datetime
+# coding:utf-8
+import discord
+import time
+import datetime
 from discord.ext import commands
 from src.worldstate import *
 from src._discord import *
 
+
 class WorldState(commands.Cog):
     """Warframe worldstate data"""
-    def __init__(self,bot):
+    def __init__(self, bot):
         self.bot = bot
         self.colour = 0x87DABC
         self.footer_ws = "Made with ❤️ by Taki#0853 (WIP) | using api.warframestat.us"
 
     @commands.command(aliases=["f"])
-    async def fissures(self, ctx, platform: str = None):
+    async def fissures(self, ctx, platform: str=None):
         if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:
             platform = platform.lower()
             ws = WorldStateData()
@@ -47,7 +49,7 @@ class WorldState(commands.Cog):
             await ctx.send(f"{ctx.author.mention}Platform invalid!\nRetry with `*fissures <pc | ps4 | xb1 | swi>`")
 
     @commands.command(aliases=["a"])
-    async def alerts(self, ctx, platform: str = None):
+    async def alerts(self, ctx, platform: str=None):
         if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:
             platform = platform.lower()
             ws = WorldStateData()

@@ -1,10 +1,13 @@
-import asyncio, json
+import asyncio
+import json
 from aiohttp import ClientSession
 from src.exceptions import *
 
-def run(func = lambda x: x):
+
+def run(func=lambda x: x):
     """asyncio runner function using python 3.7"""
     return asyncio.run(func)
+
 
 class WorldStateData:
     """Warframe worldstate data (alerts, cetusCycle, etc...)"""

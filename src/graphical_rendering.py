@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
+
 class GraphProcess:
     """render statistics as graph"""
     def __init__(self, title: str, url_name: str):
@@ -9,11 +10,14 @@ class GraphProcess:
 
     def save_graph(self, data: dict) -> bytes:
         try:
-            if isinstance(data["payload"]["statistics_closed"]["90days"][0]["mod_rank"],int):
+            if isinstance(
+                    data["payload"]["statistics_closed"]["90days"][0]["mod_rank"],
+                    int
+                    ):
                 is_mod = True
         except Exception:
             is_mod = False
-        y, z, d = [], [], [], []
+        y, z, d = [], [], []
         for i, stats in enumerate(data["payload"]["statistics_closed"]["90days"]):
             if is_mod:
                 if i % 2 != 0:

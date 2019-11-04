@@ -31,20 +31,20 @@ class Trader(commands.Cog):
                 args_endpoint = '_'.join(args).lower()
                 api_orders = WfmApi(platform, "items", args_endpoint, "orders")
                 api_icons = WfmApi(platform, "items", args_endpoint)
-                item_data = sort_orders(run(api_orders.data()), "wtb")
-                item_thumb = run(api_icons.icon_endpoint())
+                item_data = sort_orders(api_orders.data(), "wtb")
+                item_thumb = api_icons.icon_endpoint()
                 capitalize_args = [x.capitalize() for x in args]
                 formatted_args = ' '.join(capitalize_args)
                 if len(item_data["data"]):
                     for i, d in enumerate(item_data["data"], start=1):
                         pl = int(d["platinum"])
                         embed.add_field(
-                            name="`{0}.` **{1}** *Online in game* "\
-                                "+**{2}**`🙂` **{3}** platinum "\
-                                "**{4}** pieces".format(i, d["name"], d["rep"], pl, d["quantity"]),
-                            value="||`/w {0} Hi! I want to buy: {1} "\
-                                "for {2} platinum. (warframe.market - Warframe Trader bot)`||"\
-                                .format(d["name"], formatted_args, pl)
+                            name="{0}. **{1}** | "
+                                 "+**{2}**`🙂`, **{3}** platinum "
+                                 "**{4}** pieces".format(i, d["name"], d["rep"], pl, d["quantity"]),
+                            value="||`/w {0} Hi! I want to buy: {1} "
+                                  "for {2} platinum. (warframe.market - Warframe Trader bot)`||"
+                                  .format(d["name"], formatted_args, pl)
                         )
                 else:
                     embed.add_field(

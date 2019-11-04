@@ -4,13 +4,9 @@ import discord
 import datetime
 import time
 import os
-import nest_asyncio
 from discord.ext import commands
 from src.graphical_rendering import *
 from src.wf_market_responses import *
-
-
-nest_asyncio.apply()
 
 
 class Statistics(commands.Cog):
@@ -19,16 +15,17 @@ class Statistics(commands.Cog):
         self.bot = bot
         self.colour = 0x87DABC
 
-    @classmethod
-    def make_graph(cls, args_endpoint: str, fargs: str):
+    @staticmethod
+    def make_graph(args_endpoint: str, fargs: str):
         api = WfmApi("pc", "items", args_endpoint, "statistics")
         graph = GraphProcess(fargs, args_endpoint)
-        graph.save_graph(run(api.data()))
+        graph.save_graph(api.data())
 
-    @classmethod
-    def get_file_time(cls, file_path: str):
-        return datetime.datetime.fromtimestamp(\
-            os.path.getmtime(file_path))
+    @staticmethod
+    def get_file_time(file_path: str):
+        return datetime.datetime.fromtimestamp(
+                    os.path.getmtime(file_path)
+               )
 
     def clean_dir(self, path, today):
         if os.path.exists(path+"flag"):
@@ -76,13 +73,13 @@ class Statistics(commands.Cog):
             print(f"{type(e).__name__} : {e}")
             return
         finally:
-            embed = self.embed_graph(ctx, fargs, run(thumb.icon_endpoint()))
+            embed = self.embed_graph(ctx, fargs, thumb.icon_endpoint())
             with open(graphs_path, 'rb') as p:
                 await ctx.send(
                     embed=embed,
                     file=discord.File(p, graphs_path),
                     delete_after=300
-                )
+                    )
             await ctx.message.delete(delay=300)
 
 

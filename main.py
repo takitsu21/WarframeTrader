@@ -7,13 +7,16 @@ import logging
 from discord.ext import commands
 from cogs import *
 from src.worldstate import *
-
+import decouple
+from discord.ext.commands import when_mentioned_or
+import datetime
+import time
 
 __version__ = "0.0.1"
-logger = logging.getLogger('discord')
+logger = logging.getLogger('warframe')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(
-        filename='discord.log',
+        filename='warframe.log',
         encoding='utf-8',
         mode='w'
     )
@@ -23,18 +26,9 @@ handler.setFormatter(logging.Formatter(
     )
 logger.addHandler(handler)
 
-cyan = 0x87DAB
-client = commands.Bot(
-            command_prefix='*',
-            activity=discord.Game(name='Updating...'),
-            status=discord.Status('idle'),
-            afk=True
-        )
-
 with open("commands.txt", "r", encoding="utf8") as f:
     lines = f.readlines()
     help_commands = ''.join(lines)
-
 
 def ttc_c(time, icon_type):
     if time is None:
@@ -49,98 +43,126 @@ def ttc_c(time, icon_type):
         try: min_sum += x if isinstance(int(x), int) else ""
         except Exception as e: logger.error(e)
     minute_time += int(min_sum)
-    return str(minute_time) + "m" + icon_type
-
+    return str(minute_time) + "m:" + icon_type
 
 def get_cetusCycle(data: dict) -> list:
     timeLeft = data["timeLeft"]
     if "-" in timeLeft:
         return None
     if data["isDay"]:
-        icon = " to 🌙"
+        icon = "🌙"
     else:
-        icon = " to ☀️"
+        icon = "☀️"
     return timeLeft, icon
-
 
 def get_orbisCycle(data: dict) -> list:
     timeLeft = data["timeLeft"]
     if "-" in timeLeft:
         return None
     if data["isWarm"]:
-        icon = " to ❄️"
+        icon = "❄️"
     else:
-        icon = " to 🔥"
+        icon = "🔥"
     return timeLeft, icon
 
+class WarframeTrader(commands.Bot):
+    def __init__(self):
+        super().__init__(
+            command_prefix=when_mentioned_or('*'),
+            activity=discord.Game(name='Updating...'),
+            status=discord.Status('dnd')
+        )
+        self.remove_command("help")
+        self._load_extensions()
+        self.colour = 0x87DAB
 
-@client.event
-async def on_guild_join(ctx):
-    embed = discord.Embed(
-                    title='**Nice to meet you!**',
-                    colour=cyan,
-                    description="Thanks for inviting me!"
+    def _load_extensions(self):
+        for file in os.listdir("cogs/"):
+            try:
+                if file.endswith(".py"):
+                    self.load_extension(f'cogs.{file[:-3]}')
+                    logger.info(f"{file} loaded")
+            except Exception:
+                logger.exception(f"Fail to load {file}")
+
+    async def on_guild_join(self, guild: discord.Guild):
+        general = find(lambda x: x.name == "general", guild.text_channels)
+        embed = discord.Embed(
+                        title='**Nice to meet you!**',
+                        colour=self.colour,
+                        description="Thanks for inviting me!"
+                    )
+        embed.add_field(name="Prefix", value="`*`")
+        embed.add_field(name="About Warframe Trader",
+                        value="Type `*help` to get all the commands!")
+        embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)")
+        await guild.owner.send(embed=embed)
+        if general and general.permissions_for(guild.me).send_messages:
+            embed = discord.Embed(
+                    title="Nice to meet you!",
+                    description="Below are the infos about Apex Stats",
+                    timestamp=datetime.datetime.utcfromtimestamp(time.time()),
+                    color=self.colour
                 )
-    embed.add_field(name="**Prefix**", value="`*`")
-    embed.add_field(name="**About Warframe Trader**",
-                    value="Type `*help` to get all the commands!")
-    embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)")
-    await ctx.owner.send(embed=embed)
+            embed.set_thumbnail(url=guild.me.avatar_url)
+            embed.add_field(name="Vote",
+                            value="[Click here](https://discordbots.org/bot/551446491886125059/vote)")
+            embed.add_field(name="Invite Apex Stats",
+                            value="[Click here](https://discordapp.com/oauth2/authorize?client_id=551446491886125059&scope=bot&permissions=1543825472)")
+            embed.add_field(name="Discord Support",
+                            value="[Click here](https://discordapp.com/invite/wTxbQYb)")
+            embed.add_field(name="Donate",value="[Click here](https://www.patreon.com/takitsu)")
+            embed.add_field(name = "Source code and commands", value="[Click here](https://takitsu21.github.io/ApexStats/)")
+            embed.add_field(name="Help command",value="a!help")
+            nb_users = 0
+            for s in self.guilds:
+                nb_users += len(s.members)
 
+            embed.add_field(name="Servers", value=len(self.guilds))
+            embed.add_field(name="Members", value=nb_users)
+            embed.add_field(name="**Creator**", value="Taki#0853")
+            embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                            icon_url=guild.me.avatar_url)
+            await general.send(embed=embed)
 
-@client.event
-async def on_member_join(ctx):
-    embed = discord.Embed(
-            title='**Welcome to the server!**',
-            colour=cyan,
-            description="Hey tenno 👋 try to trade with me on Warframe!"
-            )
-    embed.add_field(name="Commands", value=help_commands)
-    embed.set_thumbnail(url=ctx.guild.me.avatar_url)
-    embed.set_footer(
-                text="Made with ❤️ by Taki#0853 (WIP)",
-                icon_url=ctx.guild.me.avatar_url
+    async def on_ready(self):
+        # waiting internal cache to be ready
+        await self.wait_until_ready()
+        while True:
+            try:
+                cetus_time = get_cetusCycle(ws_data("pc", "cetusCycle"))
+                cetus_string = ttc_c(cetus_time[0], cetus_time[1])
+            except Exception:
+                cetus_string = ""
+            try:
+                vallis_time = get_orbisCycle(ws_data("pc", "vallisCycle"))
+                vallis_string = ttc_c(vallis_time[0], vallis_time[1])
+            except Exception:
+                vallis_string = ""
+            await self.change_presence(
+                activity=discord.Activity(
+                    name="{0} | {1} | [*help]".format(cetus_string, vallis_string),
+                    type=3
+                    )
                 )
-    await ctx.send(embed=embed)
+            await asyncio.sleep(60)
 
-
-@client.event
-async def on_ready():
-    # waiting internal cache to be ready
-    await client.wait_until_ready()
-    client.remove_command("help")
-    loaded = None
-    fail = str()
-    # Adding Cogs
-    for file in os.listdir("cogs/"):
+    def run(self, *args, **kwargs):
         try:
-            if file.endswith(".py"):
-                client.load_extension(f'cogs.{file.split(".")[0]}')
-                print(f"{file} loaded")
-        except Exception as e:
-            print(f"{file} can't be loaded :\n {type(e).__name__} : {e}")
-            fail += file + " "
-            loaded = False
-    if loaded is None:
-        print('All cogs loaded!')
-    else: print(f"Cogs missing -> {fail}")
-    ws = WorldStateData()
-    while True:
-        try:
-            vallis_time = get_orbisCycle(run(ws.data("pc", "vallisCycle")))
-            cetus_time = get_cetusCycle(run(ws.data("pc", "cetusCycle")))
-            cetus_string = ttc_c(cetus_time[0], cetus_time[1])
-            vallis_string = ttc_c(vallis_time[0], vallis_time[1])
-        except Exception as e:
-            logger.error(e)
-            cetus_string = ""
-            vallis_string = ""
-        await client.change_presence(
-            activity=discord.Activity(
-                name="{0} | {1} [*help]".format(cetus_string, vallis_string),
-                type=3
+            self.loop.run_until_complete(self.start(decouple.config("token")))
+        except KeyboardInterrupt:
+            self.loop.run_until_complete(self.logout())
+            for task in asyncio.all_tasks(self.loop):
+                task.cancel()
+            try:
+                self.loop.run_until_complete(
+                    asyncio.gather(*asyncio.all_tasks(self.loop))
                 )
-            )
-        await asyncio.sleep(60)
+            except asyncio.CancelledError:
+                logger.debug("Pending tasks has been cancelled.")
+            finally:
+                logger.error("Shutting down")
 
-client.run("")
+if __name__ == "__main__":
+    bot = WarframeTrader()
+    bot.run()

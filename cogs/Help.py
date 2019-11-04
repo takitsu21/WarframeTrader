@@ -12,8 +12,8 @@ class Help(commands.Cog):
         self.bot = bot
         self.colour = 0x87DABC
 
-    @classmethod
-    def commands_verison(cls, settings):
+    @staticmethod
+    def commands_verison(settings):
         if settings is None:
             version = "Commands"
             with open("commands.txt", "r", encoding="utf8") as f:

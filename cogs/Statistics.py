@@ -21,24 +21,6 @@ class Statistics(commands.Cog):
         graph = GraphProcess(fargs, args_endpoint)
         graph.save_graph(api.data())
 
-    @staticmethod
-    def get_file_time(file_path: str):
-        return datetime.datetime.fromtimestamp(
-                    os.path.getmtime(file_path)
-               )
-
-    def clean_dir(self, path, today):
-        if os.path.exists(path+"flag"):
-            if self.get_file_time(path+"flag").day == today.day:
-                return True
-            else:
-                for file in os.listdir(path):
-                    os.remove(file)
-                open("flag", "a").close()
-                return False
-        open(path+"flag", "a").close()
-        return False
-
     def embed_graph(self, ctx, item_name, icon):
         embed = discord.Embed(
             title=f"{item_name} Graphic",
@@ -70,7 +52,6 @@ class Statistics(commands.Cog):
                 delete_after=300
                 )
         os.remove(graphs_path)
-
 
 def setup(bot):
     bot.add_cog(Statistics(bot))

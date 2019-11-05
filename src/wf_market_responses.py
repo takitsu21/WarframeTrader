@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # coding:utf-8
 import requests
-# from src.exceptions import *
+from src.exceptions import *
 
 class WfmApi:
     """
@@ -71,24 +71,8 @@ def sort_orders(data: dict, order_type: str) -> dict:
             "order_type": prices[igname]["order_type"],
             "number": i
             })
-        if i == 9:
+        if i == 6:
             break
         i += 1
     _sorted["data"] = parser
     return _sorted
-
-if __name__ == "__main__":
-    ducats = WfmApi('pc', 'tools', 'ducats')
-    items = WfmApi('pc', 'items')
-    ducats_data = ducats.data()
-    items_data = items.data()
-    for i, du in enumerate(ducats_data['payload']['previous_day'], start=1):
-        for x in items_data['payload']['items']:
-            if x['id'] == du['item']:
-                embed.add_field(
-                    name=f"{i}. {x['item_name']}",
-                    value=f'**{du["ducats_per_platinum_wa"]}** <:du:641336909989281842>/<:pl:632332600538824724>\n**{du["wa_price"]}** WA Price\n**{du["ducats"]}** <:du:641336909989281842>'
-                )
-                continue
-        if i == 12:
-            break

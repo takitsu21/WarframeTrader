@@ -130,12 +130,14 @@ class WarframeTrader(commands.Bot):
             try:
                 cetus_time = get_cetusCycle(ws_data("pc", "cetusCycle"))
                 cetus_string = ttc_c(cetus_time[0], cetus_time[1])
-            except Exception:
+            except Exception as e:
+                logger.exception(e, exc_info=True)
                 cetus_string = ""
             try:
                 vallis_time = get_orbisCycle(ws_data("pc", "vallisCycle"))
                 vallis_string = ttc_c(vallis_time[0], vallis_time[1])
             except Exception:
+                logger.exception(e, exc_info=True)
                 vallis_string = ""
             await self.change_presence(
                 activity=discord.Activity(

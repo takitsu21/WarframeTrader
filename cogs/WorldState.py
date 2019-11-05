@@ -13,7 +13,7 @@ class WorldState(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.colour = 0x87DABC
-        self.footer_ws = "Made with ❤️ by Taki#0853 (WIP) | using api.warframestat.us | will be deleted in "
+        self.footer_ws = "Made with ❤️ by Taki#0853 (WIP) | using api.warframestat.us"
 
     @commands.command(aliases=["f"])
     async def fissures(self, ctx, platform: str=None):
@@ -39,7 +39,7 @@ class WorldState(commands.Cog):
                         )
             embed.set_thumbnail(url=ctx.guild.me.avatar_url)
             embed.set_footer(
-                        text=self.footer_ws + str(delay) + "s",
+                        text=self.footer_ws,
                         icon_url=ctx.guild.me.avatar_url
                     )
             await e_send(ctx, embed=embed, delay=delay)
@@ -70,7 +70,7 @@ class WorldState(commands.Cog):
                       f'\n**{c["modifierDescription"]}**'
                 )
         embed.set_footer(
-                text=self.footer_ws + str(delay) + "s",
+                text=self.footer_ws,
                 icon_url=ctx.guild.me.avatar_url
                 )
         await e_send(ctx, embed=embed, delay=delay)

@@ -102,7 +102,7 @@ class Trader(commands.Cog):
                             name="{0}. **{1}** | "
                                  "+**{2}**`🙂` for **{3}** <:pl:632332600538824724> x "
                                  "**{4}** pieces".format(i, d["name"], d["rep"], pl, d["quantity"]),
-                            value="||`/w {0} Hi! I want to buy: {1} "
+                            value="||`/w {0} Hi! I want to sell: {1} "
                                   "for {2} platinum. (warframe.market - https://discordapp.com/invite/wTxbQYb)`||"
                                   .format(d["name"], formatted_args, pl)
                         )

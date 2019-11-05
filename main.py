@@ -28,10 +28,6 @@ handler.setFormatter(logging.Formatter(
     )
 logger.addHandler(handler)
 
-with open("commands.txt", "r", encoding="utf8") as f:
-    lines = f.readlines()
-    help_commands = ''.join(lines)
-
 def ttc_c(time, icon_type):
     if time is None:
         return None
@@ -107,15 +103,15 @@ class WarframeTrader(commands.Bot):
                     color=self.colour
                 )
             embed.set_thumbnail(url=guild.me.avatar_url)
-            embed.add_field(name="Vote",
-                            value="[Click here](https://discordbots.org/bot/551446491886125059/vote)")
-            embed.add_field(name="Invite Apex Stats",
+            # embed.add_field(name="Vote",
+            #                 value="[Click here](https://discordbots.org/bot/551446491886125059/vote)")
+            embed.add_field(name="Invite Warframe Trader",
                             value="[Click here](https://discordapp.com/oauth2/authorize?client_id=551446491886125059&scope=bot&permissions=1543825472)")
             embed.add_field(name="Discord Support",
                             value="[Click here](https://discordapp.com/invite/wTxbQYb)")
-            embed.add_field(name="Donate",value="[Click here](https://www.patreon.com/takitsu)")
-            embed.add_field(name = "Source code and commands", value="[Click here](https://takitsu21.github.io/ApexStats/)")
-            embed.add_field(name="Help command",value="a!help")
+            embed.add_field(name="Donate",value="[Patreon](https://www.patreon.com/takitsu)\n[Kofi](https://ko-fi.com/takitsu)")
+            # embed.add_field(name = "Source code and commands", value="[Click here](https://takitsu21.github.io/ApexStats/)")
+            embed.add_field(name="Help command",value="*help")
             nb_users = 0
             for s in self.guilds:
                 nb_users += len(s.members)

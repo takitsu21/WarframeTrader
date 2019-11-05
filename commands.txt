@@ -1,4 +1,0 @@
-`*help [--s]` - returns help commands
-`*wtb <pc | xbox | ps4> <item_name>` - returns items on sale
-`*stats <item_name>` - returns graph stats about item
-`*fissures <pc | ps4 | xb1 | swi>` - returns all fissures for the current plaftorm

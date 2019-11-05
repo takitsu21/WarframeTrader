@@ -49,33 +49,31 @@ class WorldState(commands.Cog):
             await ctx.send(f"{ctx.author.mention}Platform invalid!\nRetry with `*fissures <pc | ps4 | xb1 | swi>`")
 
     @commands.command()
-    async def sortie(self, ctx, platform : str = None):
-        platform = platform.lower()
-        if platform is not None and platform in ["pc", "xb1", "ps4", "swi"]:
-            delay = 300
-            data = ws_data(platform, 'sortie')
-            d = datetime.datetime.now()
-            embed = discord.Embed(
-                title=f'Sortie {d.day}/{d.month}/{d.year} - [{platform.upper()}]',
-                colour = self.colour,
-                timestamp = datetime.datetime.utcfromtimestamp(time.time()),
-                description=f'Faction : **{data["faction"]}**\nTime left **{data["eta"]}**'
+    async def sortie(self, ctx):
+        delay = 300
+        data = ws_data('pc', 'sortie')
+        embed = discord.Embed(
+            title='Sortie',
+            colour = self.colour,
+            timestamp = datetime.datetime.utcfromtimestamp(time.time()),
+            description=f'Faction : **{data["faction"]}**\nTime left **{data["eta"]}**'
+        )
+        embed.set_author(
+            name='Sortie',
+            icon_url='https://vignette.wikia.nocookie.net/warframe/images/1/15/Sortie_b.png/revision/latest?cb=20151217134250'
             )
-            for i, c in enumerate(data["variants"], start=1):
-                embed.add_field(
-                    name=f'• __Part {i}__',
-                    value=f'**{c["missionType"]}** mission on **{c["node"]}**'
-                          f'\n**{c["modifierDescription"]}**'
-                    )
-            embed.set_footer(
-                    text=self.footer_ws + str(delay) + "s",
-                    icon_url=ctx.guild.me.avatar_url
-                    )
-            await e_send(ctx, embed=embed, delay=delay)
-        elif platform is None:
-            await e_send(ctx, message=f"{ctx.author.mention}Please provide a platform `<pc | ps4 | xb1 | swi>`", delay=60)
-        else:
-            await e_send(ctx, message=f"{ctx.author.mention}Invalid platform\nRetry with `*sortie <pc | ps4 | xb1 | swi>`", delay=60)
+        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+        for i, c in enumerate(data["variants"], start=1):
+            embed.add_field(
+                name=f'• __Part {i}__',
+                value=f'**{c["missionType"]}** mission on **{c["node"]}**'
+                      f'\n**{c["modifierDescription"]}**'
+                )
+        embed.set_footer(
+                text=self.footer_ws + str(delay) + "s",
+                icon_url=ctx.guild.me.avatar_url
+                )
+        await e_send(ctx, embed=embed, delay=delay)
 
     # @commands.command(aliases=["a"])
     # async def alerts(self, ctx, platform: str=None):

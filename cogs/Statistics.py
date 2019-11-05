@@ -60,27 +60,16 @@ class Statistics(commands.Cog):
         capitalize_args = [x.capitalize() for x in args]
         fargs = ' '.join(capitalize_args)
         graphs_path = "graphs/"+args_endpoint+".png"
-        try:
-            if os.path.exists(graphs_path):
-                today = datetime.datetime.now()
-                if self.clean_dir("graphs/", today):
-                    pass
-                else:
-                    self.make_graph(args_endpoint, fargs)
-            else:
-                self.make_graph(args_endpoint, fargs)
-        except Exception as e:
-            print(f"{type(e).__name__} : {e}")
-            return
-        finally:
-            embed = self.embed_graph(ctx, fargs, thumb.icon_endpoint())
-            with open(graphs_path, 'rb') as p:
-                await ctx.send(
-                    embed=embed,
-                    file=discord.File(p, graphs_path),
-                    delete_after=300
-                    )
-            await ctx.message.delete(delay=300)
+        self.make_graph(args_endpoint, fargs)
+        embed = self.embed_graph(ctx, fargs, thumb.icon_endpoint())
+        with open(graphs_path, 'rb') as p:
+            await ctx.message.delete()
+            await ctx.send(
+                embed=embed,
+                file=discord.File(p, graphs_path),
+                delete_after=300
+                )
+        os.remove(graphs_path)
 
 
 def setup(bot):

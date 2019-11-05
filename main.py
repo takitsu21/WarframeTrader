@@ -11,6 +11,8 @@ import decouple
 from discord.ext.commands import when_mentioned_or
 import datetime
 import time
+from discord.utils import find
+
 
 __version__ = "0.0.1"
 logger = logging.getLogger('warframe')
@@ -41,7 +43,7 @@ def ttc_c(time, icon_type):
     min_sum = str()
     for x in new_t[new_t_lenght - 2]:
         try: min_sum += x if isinstance(int(x), int) else ""
-        except Exception as e: logger.error(e)
+        except Exception as e: pass
     minute_time += int(min_sum)
     return str(minute_time) + "m:" + icon_type
 

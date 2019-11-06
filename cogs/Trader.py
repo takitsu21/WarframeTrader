@@ -7,6 +7,7 @@ from discord.ext import commands
 from src.wf_market_responses import *
 from src._discord import *
 from src.exceptions import *
+from src.decorators import trigger_typing
 
 
 class Trader(commands.Cog):
@@ -16,6 +17,7 @@ class Trader(commands.Cog):
         self.colour = 0x87DABC
 
     @commands.command(aliases=["b"])
+    @trigger_typing
     async def wtb(self, ctx, platform: str=None, *args):
         if platform is None:
             return await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | xbox | ps4 | swi>`")
@@ -75,6 +77,7 @@ class Trader(commands.Cog):
 
 
     @commands.command(aliases=["s"])
+    @trigger_typing
     async def wts(self, ctx, platform: str=None, *args):
         if platform is None:
             return await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | xbox | ps4 | swi>`")
@@ -133,6 +136,7 @@ class Trader(commands.Cog):
         await e_send(ctx, embed=embed, delay=300)
 
     @commands.command()
+    @trigger_typing
     async def ducats(self, ctx):
         ducats = WfmApi('pc', 'tools', 'ducats')
         items = WfmApi('pc', 'items')

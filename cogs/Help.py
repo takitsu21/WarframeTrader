@@ -4,6 +4,7 @@
 import discord
 import time
 from discord.ext import commands
+from src.decorators import trigger_typing
 
 
 class Help(commands.Cog):
@@ -13,6 +14,7 @@ class Help(commands.Cog):
         self.colour = 0x87DABC
 
     @commands.command()
+    @trigger_typing
     async def ping(self,ctx):
         """Ping's Bot"""
         before = time.monotonic()
@@ -24,6 +26,7 @@ class Help(commands.Cog):
         await message.edit(content="", embed=embed)
 
     @commands.command(aliases=["h"])
+    @trigger_typing
     async def help(self, ctx, settings=None):
         await ctx.message.delete()
 

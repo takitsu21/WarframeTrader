@@ -7,6 +7,7 @@ import os
 from discord.ext import commands
 from src.graphical_rendering import *
 from src.wf_market_responses import *
+from src.decorators import trigger_typing
 
 
 class Statistics(commands.Cog):
@@ -36,6 +37,7 @@ class Statistics(commands.Cog):
         return embed
 
     @commands.command(aliases=["st"])
+    @trigger_typing
     async def stats(self, ctx, *args):
         args_endpoint = '_'.join(args).lower()
         thumb = WfmApi("pc", "items", args_endpoint)

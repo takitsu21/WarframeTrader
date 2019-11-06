@@ -2,7 +2,7 @@ version: '2.1'
 
 services:
   warframetrader:
-    image: warframetrader
+    image: wfbot
     build:
       context: .
       dockerfile: Dockerfile

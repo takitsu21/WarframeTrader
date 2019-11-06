@@ -90,9 +90,9 @@ class WorldState(commands.Cog):
             description=arbitration_eta(data["expiry"])
             # description=f'Mission type : **{data["type"]}**\nFaction : **{data["enemy"]}**\n{arbitration_eta(data["expiry"])}\n{data["node"]}'
         )
-        embed.add_field(name="Mission Type", value=f"**{data['type']}**")
-        embed.add_field(name='Node', value=f"**{data['node']}**")
-        embed.add_field(name='Faction', value=f'**{data["enemy"]}**')
+        embed.add_field(name="Mission Type", value=f"{data['type']}")
+        embed.add_field(name='Node', value=f"{data['node']}")
+        embed.add_field(name='Faction', value=f'{data["enemy"]}')
         embed.set_footer(
             text=self.footer_ws,
             icon_url=ctx.guild.me.avatar_url

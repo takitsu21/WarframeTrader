@@ -37,7 +37,7 @@ class Help(commands.Cog):
                             "`[RequiredArgument] <ParameterToChoose>`",
                             color=self.colour)
         embed.add_field(name='<:wf_market:641718306260385792> Warframe Market', value="View commands about warframe.market(WTS, WTB, stats).")
-        embed.add_field(name='<:ws:641721981292773376> Worldstate', value="View commands about arbitration, sortie, baro etc...")
+        embed.add_field(name='<:ws:641721981292773376> Worldstat', value="View commands about arbitration, sortie, baro etc...")
         embed.add_field(name=u"\u2699 About Warframe Trader", value="View commands about the bot")
         embed.add_field(
             name="If you want to support me",
@@ -59,19 +59,14 @@ class Help(commands.Cog):
     @trigger_typing
     async def help(self, ctx):
         await ctx.message.delete()
-        trade_command = """**`<a!stats | a!s>`** - Explanation about stats\n
-        **`<a!stats | a!s> [USERNAME] <pc | xbox | psn>`** - View Apex Legends statistics -> Example `a!s nicehat_taki pc`\n
-        **`<a!stats | a!s> [USERNAME]`** - View Apex Legends statistics for PC only (shortcut) -> Example `a!s nicehat_taki\n
-        **`<a!profile | a!p>`** - View your Apex Legends profile if registered before\n
-        **`<a!profile | a!p> save [USERNAME] <pc | xbox | psn>`** - Link your Discord account to your Apex Legends stats -> Example `a!p save nicehat_taki pc`\n
-        **`<a!profile | a!p> display`** - View the current saved profile\n
-        **`<a!profile | a!p> unlink`** - Unlink your profile\n
-        **`a!history [USERNAME] <pc | xbox | psn>`** - View player's recent matches"""
+        trade_command = """**`<*wtb | *b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
+        **`<*wts | *s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)\n
+        **`<*wtb | *b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)        **`<a!profile | a!p>`** - View your Apex Legends profile if registered before\n
+        **`*ducats`** - View 12 worth it items to sell in ducats\n"""
         ws_command = """**`<*fissures | *f> <pc | ps4 | xb1 | swi>`** - View current fissures available\n
         **`*sortie`** - View current sortie\n
-        **`a!legend`** - Random legend to pick for the next game\n
-        **`a!team`** - Entire random team for the next game\n
-        **`a!weapons`** - List all weapon commands to get their informations"""
+        **`*baro`** - View baro ki'teer inventory and dates\n
+        **`*news`** - View news about Warframe\n"""
         other_commands = """**`*bug [MESSAGE]`** - Send me a bug report, this will helps to improve the bot\n
         **`*suggestion [MESSAGE]`** - Suggestion to add for the bot, all suggestions are good don't hesitate\n
         **`*ping`** - View bot latency\n
@@ -102,7 +97,7 @@ class Help(commands.Cog):
                                     description=trade_command,
                                     color=self.colour)
             elif '<:ws:641721981292773376>' in str(reaction.emoji):
-                embed = discord.Embed(title="<:ws:641721981292773376> Worldstate",
+                embed = discord.Embed(title="<:ws:641721981292773376> Worldstat",
                                     description=ws_command,
                                     color=self.colour)
             elif '<:ws:641721981292773376>' in str(reaction.emoji):

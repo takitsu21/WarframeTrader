@@ -18,6 +18,7 @@ class WorldState(commands.Cog):
 
     @commands.command(aliases=["f"])
     @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
     async def fissures(self, ctx, platform: str=None):
         if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:
             delay = 300
@@ -35,8 +36,8 @@ class WorldState(commands.Cog):
             for f in data:
                 if f["active"]:
                     embed.add_field(
-                            name=f"• **{f['missionType']}** - **{f['tier']}** *{f['eta']}* remaining",
-                            value=f" **{f['node']}** - *{f['enemy']}*",
+                            name=f"• **{f['missionType']}** - **{f['tier']}** {f['eta']} remaining",
+                            value=f" **{f['node']}** - {f['enemy']}",
                             inline=False
                         )
             embed.set_thumbnail(url=ctx.guild.me.avatar_url)
@@ -52,6 +53,7 @@ class WorldState(commands.Cog):
 
     @commands.command()
     @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
     async def sortie(self, ctx):
         delay = 300
         data = ws_data('pc', 'sortie')
@@ -80,6 +82,7 @@ class WorldState(commands.Cog):
 
     @commands.command()
     @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
     async def arbitration(self, ctx):
         delay = 300
         data = ws_data('pc', 'arbitration')
@@ -102,6 +105,7 @@ class WorldState(commands.Cog):
     
     @commands.command()
     @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
     async def baro(self, ctx):
         delay = 600
         data = ws_data('pc', 'voidTrader')

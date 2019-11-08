@@ -18,6 +18,7 @@ class Trader(commands.Cog):
 
     @commands.command(aliases=["b"])
     @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
     async def wtb(self, ctx, platform: str=None, *args):
         if platform is None:
             return await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | xbox | ps4 | swi>`")
@@ -78,6 +79,7 @@ class Trader(commands.Cog):
 
     @commands.command(aliases=["s"])
     @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
     async def wts(self, ctx, platform: str=None, *args):
         if platform is None:
             return await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | xbox | ps4 | swi>`")
@@ -137,6 +139,7 @@ class Trader(commands.Cog):
 
     @commands.command()
     @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
     async def ducats(self, ctx):
         ducats = WfmApi('pc', 'tools', 'ducats')
         items = WfmApi('pc', 'items')

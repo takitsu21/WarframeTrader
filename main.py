@@ -45,7 +45,7 @@ def ttc_c(time, icon_type):
 
 def get_cetusCycle(data: dict) -> list:
     timeLeft = data["timeLeft"]
-    if "-" in timeLeft:
+    if timeLeft.startswith('-'):
         timeLeft = "0"
     if data["isDay"]:
         icon = "🌙"
@@ -55,7 +55,7 @@ def get_cetusCycle(data: dict) -> list:
 
 def get_orbisCycle(data: dict) -> list:
     timeLeft = data["timeLeft"]
-    if "-" in timeLeft:
+    if timeLeft.startswith('-'):
         timeLeft = '0'
     if data["isWarm"]:
         icon = "❄️"
@@ -137,12 +137,20 @@ class WarframeTrader(commands.Bot):
                 vallis_string = ttc_c(vallis_time[0], vallis_time[1])
             except Exception as e:
                 logger.exception(e, exc_info=True)
-            await self.change_presence(
-                activity=discord.Activity(
-                    name="{0} | {1} | [*help]".format(cetus_string, vallis_string),
-                    type=3
+            try:
+                await self.change_presence(
+                    activity=discord.Activity(
+                        name="{0} | {1} | [*help]".format(cetus_string, vallis_string),
+                        type=3
+                        )
                     )
-                )
+            except:
+                await self.change_presence(
+                    activity=discord.Activity(
+                        name="syncing... | [*help]",
+                        type=3
+                        )
+                    )
             await asyncio.sleep(60)
 
     def run(self, *args, **kwargs):

@@ -61,7 +61,7 @@ class Help(commands.Cog):
         await ctx.message.delete()
         trade_command = """**`<*wtb | *b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
         **`<*wts | *s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)\n
-        **`<*wtb | *b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)        **`<a!profile | a!p>`** - View your Apex Legends profile if registered before\n
+        **`<*wtb | *b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
         **`*ducats`** - View 12 worth it items to sell in ducats\n"""
         ws_command = """**`<*fissures | *f> <pc | ps4 | xb1 | swi>`** - View current fissures available\n
         **`*sortie`** - View current sortie\n

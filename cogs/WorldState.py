@@ -103,7 +103,7 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def baro(self, ctx):
-        delay = 300
+        delay = 600
         data = ws_data('pc', 'voidTrader')
         if not len(data['inventory']):
             embed = discord.Embed(
@@ -128,7 +128,7 @@ class WorldState(commands.Cog):
                 )
             embed.add_field(name='Location', value=data['location'])
             for c in data['inventory']:
-                embed.add_field(name=c['item'], value=c['ducats'] + '<:du:641336909989281842>\n' + c['credits'] + 'credits')
+                embed.add_field(name=c['item'], value=str(c['ducats']) + '<:du:641336909989281842> + ' + str(c['credits']) + ' credits')
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(
             text=self.footer_ws,

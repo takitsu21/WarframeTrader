@@ -26,7 +26,7 @@ class WfmApi:
         r = requests.get(self.URL, headers=HEADERS)
         if r.status_code == 200:
             return r.json()
-        raise StatusError(r)
+        raise StatusError(r.status_code)
 
     def icon_endpoint(self, icon: bool = True) -> str:
         responses = self.data()
@@ -58,9 +58,7 @@ def sort_orders(data: dict, order_type: str) -> dict:
                 }
             list_to_sort.append((order["user"]["ingame_name"],
                                 order["platinum"]))
-
     list_to_sort = sorted(list_to_sort, key=lambda v: v[1])
-
     for igname, p in list_to_sort:
         parser.append({
             "status": prices[igname]["status"],

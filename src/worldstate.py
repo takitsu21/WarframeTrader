@@ -10,7 +10,7 @@ def ws_data(platform: str="pc", *endpoints: list) -> dict:
     r = requests.get(root + endpoint)
     if r.status_code == 200:
         return r.json()
-    raise StatusError(r)
+    raise StatusError(r.status_code)
 
 def arbitration_eta(expiry):
     d = datetime.datetime.now()

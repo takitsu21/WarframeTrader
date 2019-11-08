@@ -143,7 +143,7 @@ class Trader(commands.Cog):
         ducats_data = ducats.data()
         items_data = items.data()
         embed = discord.Embed(
-            description="This is the top 15 worth it items to sell in ducats",
+            description="This is the top 12 worth it items to sell in ducats",
             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
             colour=self.colour
         )
@@ -166,7 +166,7 @@ class Trader(commands.Cog):
             text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
             icon_url=ctx.guild.me.avatar_url
         )         
-        await e_send(ctx, embed=embed, delay=300)
+        await e_send(ctx, embed=embed, delay=600)
 
 def setup(bot):
     bot.add_cog(Trader(bot))

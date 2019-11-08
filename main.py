@@ -39,7 +39,7 @@ def ttc_c(time, icon_type):
     min_sum = str()
     for x in new_t[new_t_lenght - 2]:
         try: min_sum += x if isinstance(int(x), int) else ""
-        except Exception as e: pass
+        except Exception: pass
     minute_time += int(min_sum)
     return str(minute_time) + "m:" + icon_type
 

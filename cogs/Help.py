@@ -201,6 +201,13 @@ class Help(commands.Cog):
         await e_send(ctx, settings[0], embed=embed, delay=settings[1])
 
     @commands.command()
+    async def table(self, ctx, *, table):
+        print(read_table((table, )))
+        delete, delay = read_settings((ctx.guild.id,))
+        print(delete, delay)
+
+
+    @commands.command()
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(administrator=True)
@@ -208,11 +215,11 @@ class Help(commands.Cog):
         
         settings = read_settings((ctx.guild.id,))[0]
         if not len(settings):
-            i_guild_settings((ctx.guild.id, 0, None))
+            i_guild_settings((ctx.guild.id, False, None))
         if len(args) == 2 and args[0] == '--delay':
             try:
                 delay = abs(int(args[1]))
-                u_guild_settings(( 1, delay, ctx.guild.id,))
+                u_guild_settings((True, delay, ctx.guild.id,))
                 embed = discord.Embed(
                     title="Settings Updated",
                     description=f"Your guild settings ({ctx.guild.id}) has been updated",
@@ -256,11 +263,14 @@ class Help(commands.Cog):
 
     @commands.command()
     async def getprefix(self, ctx):
-        settings = read_settings((ctx.guild.id,))[0]
+        settings = read_settings((ctx.guild.id,))
+        if not len(settings):
+            i_guild_settings((ctx.guild.id, False, 0,))
+        settings = read_settings((ctx.guild.id,))
         prefix = read_prefix((ctx.guild.id,))
         embed = discord.Embed(
             title="Prefix",
-            description=prefix,
+            description=prefix[0][0],
             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
             color=self.colour
         )

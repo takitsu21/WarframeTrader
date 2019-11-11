@@ -15,7 +15,7 @@ async def e_send(ctx, delete, embed=None, delay=None, message=None):
             await ctx.send(message)
 
 def convert_bool(arg):
-    return 1 if arg.lower() in ('y', 'yes') else 0
+    return True if arg.lower() in ('y', 'yes') else False
 
 def convert_str(arg):
-    return 'Yes' if arg == 1 else 'No'
+    return 'Yes' if arg else 'No'

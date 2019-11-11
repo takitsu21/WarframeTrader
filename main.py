@@ -103,6 +103,7 @@ class WarframeTrader(commands.Bot):
 
     async def on_guild_remove(self, guild: discord.Guild):
         d_guild((guild.id,))
+        d_prefix((guild.id,))
 
     @commands.is_owner()
     async def reload(self, ctx):
@@ -110,7 +111,14 @@ class WarframeTrader(commands.Bot):
         self._load_extensions()           
 
     async def on_guild_join(self, guild: discord.Guild):
-        i_guild_settings((guild.id, 0, 300))
+        try:
+            i_prefix((guild.id, '*', ))
+        except: 
+            pass
+        try:
+            i_guild_settings((guild.id, False, None,))
+        except:
+            pass
         general = find(lambda x: x.name == "general", guild.text_channels)
         embed = discord.Embed(
                         title='**Nice to meet you!**',

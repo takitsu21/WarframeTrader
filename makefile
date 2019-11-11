@@ -6,7 +6,7 @@ else
 endif
 
 clean:
-	rm -rf find __pycache__
+	rm -rf ./src/__pycache__ ./cogs/__pycache__
 install:
 	$(python) -m pip install -r requirements.txt
 lint:

@@ -104,10 +104,7 @@ class Help(commands.Cog):
                 embed = discord.Embed(title="<:ws:641721981292773376> Worldstat",
                                     description=ws_command,
                                     color=self.colour)
-            elif '<:ws:641721981292773376>' in str(reaction.emoji):
-                embed = discord.Embed(title="📃 News",
-                                    description=news_command,
-                                    color=self.colour)
+
                 
                 await pagination.edit(embed=embed)
             elif u"\u2699" in str(reaction.emoji):
@@ -158,9 +155,9 @@ class Help(commands.Cog):
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def donate(self, ctx):
-        embed = discord.Embed(title='**Donate** :',
+        embed = discord.Embed(title='Donate',
                               colour=self.colour)
-        embed.add_field(name="Patreon", value='[Patreon](https://www.patreon.com/takitsu)', inline=False)
+        embed.add_field(name="Patreon", value='[Click here](https://www.patreon.com/takitsu)')
         embed.add_field(name="Buy me a Kofi", value="[Click here](https://ko-fi.com/takitsu)")
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)", icon_url=ctx.guild.me.avatar_url)
@@ -193,6 +190,8 @@ class Help(commands.Cog):
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                         icon_url=ctx.guild.me.avatar_url)
         await e_send(ctx, embed=embed, delay=300)
+
+
 
 def setup(bot):
     bot.add_cog(Help(bot))

@@ -12,6 +12,7 @@ from discord.ext.commands import when_mentioned_or
 import datetime
 import time
 from discord.utils import find
+from src.sql import *
 
 
 __version__ = "0.0.1"
@@ -63,17 +64,25 @@ def get_orbisCycle(data: dict) -> list:
         icon = "🔥"
     return timeLeft, icon
 
+def _get_prefix(bot, message):
+    if not message.guild:
+        return when_mentioned_or('*')(bot, message)
+    prefix = read_prefix((message.guild.id, ))
+    if not len(prefix):
+        return when_mentioned_or('*')(bot, message)
+    return when_mentioned_or(prefix[0][0])(bot, message)
+
 class WarframeTrader(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix=when_mentioned_or('*'),
+            command_prefix=_get_prefix,
             activity=discord.Game(name='Updating...'),
             status=discord.Status('dnd')
         )
         self.remove_command("help")
         self._load_extensions()
         self.colour = 0x87DAB
-
+        
     def _load_extensions(self):
         for file in os.listdir("cogs/"):
             try:
@@ -82,8 +91,26 @@ class WarframeTrader(commands.Bot):
                     logger.info(f"{file} loaded")
             except Exception:
                 logger.exception(f"Fail to load {file}")
+            
+    def _unload_extensions(self):
+        for file in os.listdir("cogs/"):
+            try:
+                if file.endswith(".py"):
+                    self.load_extension(f'cogs.{file[:-3]}')
+                    logger.info(f"{file} loaded")
+            except Exception:
+                logger.exception(f"Fail to load {file}")
+
+    async def on_guild_remove(self, guild: discord.Guild):
+        d_guild((guild.id,))
+
+    @commands.is_owner()
+    async def reload(self, ctx):
+        self._unload_extensions()
+        self._load_extensions()           
 
     async def on_guild_join(self, guild: discord.Guild):
+        i_guild_settings((guild.id, 0, 300))
         general = find(lambda x: x.name == "general", guild.text_channels)
         embed = discord.Embed(
                         title='**Nice to meet you!**',

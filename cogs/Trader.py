@@ -8,6 +8,7 @@ from src.wf_market_responses import *
 from src._discord import *
 from src.exceptions import *
 from src.decorators import trigger_typing
+from src.sql import *
 
 
 class Trader(commands.Cog):
@@ -20,6 +21,7 @@ class Trader(commands.Cog):
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def wtb(self, ctx, platform: str=None, *args):
+        settings = read_settings((ctx.guild.id,))[0]
         if platform is None:
             return await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | xbox | ps4 | swi>`")
         try:
@@ -61,7 +63,8 @@ class Trader(commands.Cog):
                     icon_url=ctx.guild.me.avatar_url
                 )
             else:
-                return await ctx.send(f"{ctx.author.mention}Wrong platform try with `<pc | xbox | ps4 | swi>`")
+                msg = f"{ctx.author.mention}Wrong platform try with `<pc | xbox | ps4 | swi>`"
+                return await e_send(ctx, settings[0], message=msg, delay=settings[1])
         except StatusError as e:
             embed = discord.Embed(
                     title='❌Error❌',
@@ -74,7 +77,7 @@ class Trader(commands.Cog):
                 text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                 icon_url=ctx.guild.me.avatar_url
             )
-        await e_send(ctx, embed=embed, delay=300)
+        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
 
 
     @commands.command(aliases=["s"])
@@ -93,13 +96,13 @@ class Trader(commands.Cog):
                 item_thumb = api_icons.icon_endpoint()
                 capitalize_args = [x.capitalize() for x in args]
                 formatted_args = ' '.join(capitalize_args)
+                settings = read_settings((ctx.guild.id,))[0]
                 embed = discord.Embed(
                     title=f'`💰`WTS {formatted_args}`💰` (Online in game - Sort by prices)',
                     colour=self.colour,
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                     description=f"Will be deleted in 5 minutes!\nYou can get stats with the following command\n**`*stats {' '.join(args)}`**"
                 )
-
                 if len(item_data["data"]):
                     for i, d in enumerate(item_data["data"], start=1):
                         pl = int(d["platinum"])
@@ -122,7 +125,8 @@ class Trader(commands.Cog):
                     icon_url=ctx.guild.me.avatar_url
                 )
             else:
-                return await ctx.send(f"{ctx.author.mention}Wrong platform try with `<pc | xbox | ps4 | swi>`")
+                msg = f"{ctx.author.mention}Wrong platform try with `<pc | xbox | ps4 | swi>`"
+                return await e_send(ctx, settings[0], message=msg, delay=settings[1])
         except StatusError as e:
             embed = discord.Embed(
                     title='❌Error❌',
@@ -135,12 +139,13 @@ class Trader(commands.Cog):
                 text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                 icon_url=ctx.guild.me.avatar_url
             )
-        await e_send(ctx, embed=embed, delay=300)
+        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
 
     @commands.command()
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def ducats(self, ctx):
+        settings = read_settings((ctx.guild.id,))[0]
         ducats = WfmApi('pc', 'tools', 'ducats')
         items = WfmApi('pc', 'items')
         ducats_data = ducats.data()
@@ -169,7 +174,7 @@ class Trader(commands.Cog):
             text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
             icon_url=ctx.guild.me.avatar_url
         )         
-        await e_send(ctx, embed=embed, delay=600)
+        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
 
 def setup(bot):
     bot.add_cog(Trader(bot))

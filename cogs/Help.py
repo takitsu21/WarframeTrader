@@ -22,10 +22,9 @@ class Help(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     async def ping(self, ctx):
         """Ping's Bot"""
-        settings = read_settings((ctx.guild.id,))[0]
+        to_delete, delay = read_settings(ctx.guild.id)
         before = time.monotonic()
-        print(settings)
-        message = await e_send(ctx, settings[0], delay=settings[1], message="🏓Pong!")
+        message = await e_send(ctx, to_delete, delay=delay, message="🏓Pong!")
         ping = (time.monotonic() - before) * 1000
         embed = discord.Embed(colour=0xff00,
                             title="Warframe Trader ping",
@@ -37,7 +36,7 @@ class Help(commands.Cog):
         )
         await message.edit(content="", embed=embed)
 
-    def embed_pagination(self, ctx):
+    def embed_pagination(self, ctx, prefix):
         embed = discord.Embed(title="Help hub",
                             description="[Vote here](https://top.gg/bot/551446491886125059) to support me if you ❤️ the bot\n"
                             "`[RequiredArgument] <ParameterToChoose>`",
@@ -45,6 +44,7 @@ class Help(commands.Cog):
         embed.add_field(name='<:wf_market:641718306260385792> Warframe Market', value="View commands about warframe.market(WTS, WTB, stats).")
         embed.add_field(name='<:ws:641721981292773376> Worldstat', value="View commands about arbitration, sortie, baro etc...")
         embed.add_field(name=u"\u2699 About Warframe Trader", value="View commands about the bot")
+        embed.add_field(name="Prefix", value=f"`{prefix}`")
         embed.add_field(
             name="If you want to support me",
             value="[Kofi](https://ko-fi.com/takitsu)"
@@ -65,27 +65,27 @@ class Help(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True, add_reactions=True)
     @trigger_typing
     async def help(self, ctx):
-        trade_command = """**`<*wtb | *b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
-        **`<*wts | *s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)\n
-        **`<*wtb | *b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
-        **`*ducats`** - View 12 worth it items to sell in ducats\n"""
-        ws_command = """**`<*fissures | *f> <pc | ps4 | xb1 | swi>`** - View current fissures available\n
-        **`*sortie`** - View current sortie\n
-        **`*baro`** - View baro ki'teer inventory and dates\n
-        **`*news`** - View news about Warframe\n"""
-        other_commands = """**`*bug [MESSAGE]`** - Send me a bug report, this will helps to improve the bot\n
-        **`*suggestion [MESSAGE]`** - Suggestion to add for the bot, all suggestions are good don't hesitate\n
-        **`*ping`** - View bot latency\n
-        **`*about`** - Bot info\n
-        **`*donate`** - Link to support me\n
-        **`*vote`** - An other way to support me\n
-        **`*support`** - Discord support if you need help or want to discuss with me\n
-        **`*invite`** - View bot link invite\n
-        **`<*help | *h>`** - View bot commands"""
+        prefix = read_prefix(ctx.guild.id)
+        trade_command = f"""**`<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
+        **`<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)\n
+        **`{prefix}ducats`** - View 12 worth it items to sell in ducats\n"""
+        ws_command = f"""**`<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>`** - View current fissures available\n
+        **`{prefix}sortie`** - View current sortie\n
+        **`{prefix}baro`** - View baro ki'teer inventory and dates\n
+        **`{prefix}news`** - View news about Warframe\n"""
+        other_commands = f"""**`{prefix}bug [MESSAGE]`** - Send me a bug report, this will helps to improve the bot\n
+        **`{prefix}suggestion [MESSAGE]`** - Suggestion to add for the bot, all suggestions are good don't hesitate\n
+        **`{prefix}ping`** - View bot latency\n
+        **`{prefix}about`** - Bot info\n
+        **`{prefix}donate`** - Link to support me\n
+        **`{prefix}vote`** - An other way to support me\n
+        **`{prefix}support`** - Discord support if you need help or want to discuss with me\n
+        **`{prefix}invite`** - View bot link invite\n
+        **`<{prefix}help | {prefix}h>`** - View bot commands"""
 
         toReact = ['⏪', '<:wf_market:641718306260385792>', '<:ws:641721981292773376>',u"\u2699"]
         # emojis = await ctx.guild.fetch_emojis()
-        embed = self.embed_pagination(ctx)
+        embed = self.embed_pagination(ctx, prefix)
         pagination = await ctx.send(embed=embed)
         while True:
             for reaction in toReact:
@@ -95,15 +95,16 @@ class Help(commands.Cog):
             try:
                 reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=300.0)
             except asyncio.TimeoutError:
+                await ctx.message.delete()
                 return await pagination.delete()
             if '⏪' in str(reaction.emoji):
-                embed = self.embed_pagination(ctx)
+                embed = self.embed_pagination(ctx, prefix)
             elif '<:wf_market:641718306260385792>' in str(reaction.emoji):
                 embed = discord.Embed(title="<:wf_market:641718306260385792> Market",
                                     description=trade_command,
                                     color=self.colour)
             elif '<:ws:641721981292773376>' in str(reaction.emoji):
-                embed = discord.Embed(title="<:ws:641721981292773376> Worldstat",
+                embed = discord.Embed(title="<:ws:641721981292773376> Worldstate",
                                     description=ws_command,
                                     color=self.colour)
 
@@ -122,73 +123,71 @@ class Help(commands.Cog):
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def invite(self,ctx):
-        settings = read_settings((ctx.guild.id,))[0]
+        to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(
                         title='**Invite me** :',
-                        description='[**here**](https://discordapp.com/oauth2/authorize?client_id=551446491886125059&scope=bot&permissions=8)',
+                        description='[**here**](https://discordapp.com/oauth2/authorize?client_id=593364281572196353&scope=bot&permissions=470083648)',
                         colour=self.colour
                     )
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)", icon_url=ctx.guild.me.avatar_url)
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command(pass_context=True)
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def vote(self,ctx):
-        settings = read_settings((ctx.guild.id,))[0]
-        print(settings)
+        to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='**Vote for Warframe Trader**',
                               description='[**Click here**](https://discordbots.org/bot/551446491886125059/vote)',
                               colour=self.colour)
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)", icon_url=ctx.guild.me.avatar_url)
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command(pass_context=True)
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def support(self,ctx):
-        settings = read_settings((ctx.guild.id,))[0]
+        to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='Discord support',
                                description='[Taki Support Server](https://discordapp.com/invite/wTxbQYb)',
                                 colour=self.colour)
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
-        embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)", icon_url=ctx.guild.me.avatar_url)
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
+        embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                        icon_url=ctx.guild.me.avatar_url)
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command(pass_context=True)
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def donate(self, ctx):
-        settings = read_settings((ctx.guild.id,))[0]
+        to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='Donate',
                               colour=self.colour)
         embed.add_field(name="Patreon", value='[Click here](https://www.patreon.com/takitsu)')
         embed.add_field(name="Buy me a Kofi", value="[Click here](https://ko-fi.com/takitsu)")
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)", icon_url=ctx.guild.me.avatar_url)
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command(pass_context=True)
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def about(self, ctx):
-        settings = read_settings((ctx.guild.id,))[0]
-
+        to_delete, delay = read_settings(ctx.guild.id)
+        prefix = read_prefix(ctx.guild.id)
         embed = discord.Embed(
                             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                             color=self.colour
                         )
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
-        embed.add_field(name="Vote",
-                        value="[Click here](https://discordbots.org/bot/551446491886125059/vote)")
         embed.add_field(name="Invite Warframe Trader",
-                        value="[Click here](https://discordapp.com/oauth2/authorize?client_id=551446491886125059&scope=bot&permissions=1543825472)")
+                        value="[Click here](https://discordapp.com/oauth2/authorize?client_id=593364281572196353&scope=bot&permissions=470083648)")
         embed.add_field(name="Discord Support",
                         value="[Click here](https://discordapp.com/invite/wTxbQYb)")
         embed.add_field(name="Donate",value="[Patreon](https://www.patreon.com/takitsu)\n[Kofi](https://ko-fi.com/takitsu)")
-        embed.add_field(name="Help command",value="*help")
+        embed.add_field(name="Help command",value=f"{prefix}help")
         nb_users = 0
         for s in self.bot.guilds:
             nb_users += len(s.members)
@@ -198,83 +197,105 @@ class Help(commands.Cog):
         embed.add_field(name="**Creator**", value="Taki#0853")
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                         icon_url=ctx.guild.me.avatar_url)
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
-
-    @commands.command()
-    async def table(self, ctx, *, table):
-        print(read_table((table, )))
-        delete, delay = read_settings((ctx.guild.id,))
-        print(delete, delay)
-
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command()
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(administrator=True)
     async def settings(self, ctx, *args):
-        
-        settings = read_settings((ctx.guild.id,))[0]
-        if not len(settings):
-            i_guild_settings((ctx.guild.id, False, None))
-        if len(args) == 2 and args[0] == '--delay':
+        arg_l = len(args)
+        if not arg_l:
+            to_delete, delay = read_settings(ctx.guild.id)
+            embed = discord.Embed(
+                title="Settings",
+                description=f"Here is your guild settings ({ctx.guild.id})",
+                timestamp=datetime.datetime.utcfromtimestamp(time.time()),
+                color=self.colour
+            )
+            embed.set_thumbnail(url=ctx.guild.icon_url)
+            embed.add_field(name="Delete messages", value=convert_str(to_delete))
+            embed.add_field(name="Delay", value=delay)
+            embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                        icon_url=ctx.guild.me.avatar_url)
+            return await e_send(ctx, to_delete, embed=embed, delay=delay)
+        elif arg_l == 2 and args[0] == '--delay':
             try:
                 delay = abs(int(args[1]))
-                u_guild_settings((True, delay, ctx.guild.id,))
+                u_guild_settings(ctx.guild.id, 1, delay)
                 embed = discord.Embed(
                     title="Settings Updated",
                     description=f"Your guild settings ({ctx.guild.id}) has been updated",
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                     color=self.colour
                 )
+                embed.set_thumbnail(url=ctx.guild.icon_url)
                 embed.add_field(name="Delete messages", value='Yes')
                 embed.add_field(name="Delay", value=delay)
-                settings = read_settings((ctx.guild.id,))[0]
-                return await e_send(ctx, settings[0], embed=embed, delay=settings[1])
-            except TypeError:
+                embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                        icon_url=ctx.guild.me.avatar_url)
+                return await e_send(ctx, 1, embed=embed, delay=delay)
+            except (TypeError, ValueError):
                 await ctx.send("Syntax error\nRetry with `*settings --delay [TIME_IN_SECOND]`")
-        elif len(args) == 2 and args[0] == '--delete':
+        elif arg_l == 2 and args[0] == '--delete':
             try:
                 delete = convert_str(args[1])
                 delete_bool = convert_bool(args[1])
-                u_guild_settings((delete_bool, None, ctx.guild.id,))
+                u_guild_settings(ctx.guild.id, delete_bool, None)
                 embed = discord.Embed(
                     title="Settings Updated",
                     description=f"Your guild settings ({ctx.guild.id}) has been updated",
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                     color=self.colour
                 )
+                embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                        icon_url=ctx.guild.me.avatar_url)
+                embed.set_thumbnail(url=ctx.guild.icon_url)
                 embed.add_field(name="Delete messages", value=delete)
-                settings = read_settings((ctx.guild.id,))[0]
-                return await e_send(ctx, delete_bool, embed=embed, delay=settings[1])
+                to_delete, delay = read_settings(ctx.guild.id)
+                return await e_send(ctx, to_delete, embed=embed, delay=delay)
             except TypeError:
                 await ctx.send("Syntax error\nRetry with `*settings --delete [y | n]`")
-
-
+        else:
+            to_delete, delay = read_settings(ctx.guild.id)
+            prefix = read_prefix(ctx.guild.id)
+            embed = discord.Embed(
+                    title=f"{prefix}settings",
+                    description=f"`{prefix}settings [--delete] [y | n]`\n"
+                                f"`{prefix}settings [--delay] [TIME_IN_SECOND]`",
+                    timestamp=datetime.datetime.utcfromtimestamp(time.time()),
+                    color=self.colour
+                )
+            embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                    icon_url=ctx.guild.me.avatar_url)
+            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+            return await e_send(ctx, to_delete, embed=embed, delay=delay)
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def setprefix(self, ctx, *, prefixes=""):
-        prefix = read_prefix((ctx.guild.id,))
-        if not len(prefix):
-            i_prefix((ctx.guild.id, prefixes,))
-        else:
-            u_prefix((ctx.guild.id, prefixes,))
+        u_prefix(ctx.guild.id, prefixes)
         await ctx.send(f"New prefix set : `{prefixes}`")
 
     @commands.command()
+    @commands.is_owner()
+    async def init_db(self, ctx):
+        for s in self.bot.guilds:
+            try:
+                i_guild_settings(s.id, '*', 0, None)
+            except:
+                pass
+
+    @commands.command()
     async def getprefix(self, ctx):
-        settings = read_settings((ctx.guild.id,))
-        if not len(settings):
-            i_guild_settings((ctx.guild.id, False, 0,))
-        settings = read_settings((ctx.guild.id,))
-        prefix = read_prefix((ctx.guild.id,))
+        to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(
             title="Prefix",
-            description=prefix[0][0],
+            description=read_prefix(ctx.guild.id),
             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
             color=self.colour
         )
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
 def setup(bot):
     bot.add_cog(Help(bot))

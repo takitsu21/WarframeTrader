@@ -8,6 +8,8 @@ from discord.ext import commands
 from src.graphical_rendering import *
 from src.wf_market_responses import *
 from src.decorators import trigger_typing
+from src.sql import *
+from src._discord import *
 
 
 class Statistics(commands.Cog):
@@ -22,38 +24,52 @@ class Statistics(commands.Cog):
         graph = GraphProcess(fargs, args_endpoint)
         graph.save_graph(api.data())
 
-    def embed_graph(self, ctx, item_name, icon):
-        embed = discord.Embed(
-            title=f"{item_name} Graphic",
-            timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-            description="Will be deleted in 5 mins!",
-            colour=self.colour
-        )
-        embed.set_thumbnail(url=icon)
-        embed.set_footer(
-            text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
-            icon_url=ctx.guild.me.avatar_url
-        )
-        return embed
+    def generate_msg(self, ctx, to_delete, delay, fargs):
+        msg = f"{ctx.author.mention}"
+        if to_delete:
+            if delay >= 60:
+                msg += f"\nThe graph of {fargs} will be deleted in {delay//60} mins"
+            else:
+                msg = f"\nThe graph of {fargs} will be deleted in {delay} seconds"
+        else:
+            msg += f"You can see the graph of {fargs} below"
+        return msg
 
     @commands.command(aliases=["st"])
     @trigger_typing
     async def stats(self, ctx, *args):
-        args_endpoint = '_'.join(args).lower()
-        thumb = WfmApi("pc", "items", args_endpoint)
-        capitalize_args = [x.capitalize() for x in args]
-        fargs = ' '.join(capitalize_args)
-        graphs_path = "graphs/"+args_endpoint+".png"
-        self.make_graph(args_endpoint, fargs)
-        embed = self.embed_graph(ctx, fargs, thumb.icon_endpoint())
-        with open(graphs_path, 'rb') as p:
-            await ctx.message.delete()
-            await ctx.send(
-                embed=embed,
-                file=discord.File(p, graphs_path),
-                delete_after=300
+        to_delete, delay = read_settings(ctx.guild.id)
+        if len(args):
+            try:
+                args_endpoint = '_'.join(args).lower()
+                capitalize_args = [x.capitalize() for x in args]
+                fargs = ' '.join(capitalize_args)
+                graphs_path = f"./graphs/{args_endpoint}.png"
+                self.make_graph(args_endpoint, fargs)
+                msg = self.generate_msg(ctx, to_delete, delay, fargs)           
+                with open(graphs_path, 'rb') as p:
+                    await ctx.message.delete(delay)
+                    await ctx.send(
+                        msg,
+                        file=discord.File(p, graphs_path),
+                        delete_after=delay
+                        )
+                os.remove(graphs_path)
+            except Exception as e:
+                print(f"{type(e).__name__} : {e}")
+                embed = discord.Embed(
+                    title='❌Error❌',
+                    colour=0xFF0026,
+                    timestamp=datetime.datetime.utcfromtimestamp(time.time()),
+                    description="You might have spelled a wrong item name`🤔`"
                 )
-        os.remove(graphs_path)
+                embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+                embed.set_footer(
+                    text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
+                    icon_url=ctx.guild.me.avatar_url
+                )
+                await e_send(ctx, to_delete, embed=embed, delay=delay)
+
 
 def setup(bot):
     bot.add_cog(Statistics(bot))

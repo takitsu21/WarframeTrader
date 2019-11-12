@@ -7,6 +7,7 @@ from discord.ext import commands
 from src.worldstate import *
 from src._discord import *
 from src.decorators import trigger_typing
+from src.sql import *
 
 
 class WorldState(commands.Cog):
@@ -20,8 +21,8 @@ class WorldState(commands.Cog):
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def fissures(self, ctx, platform: str=None):
+        to_delete, delay = read_settings(ctx.guild.id)
         if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:
-            delay = 300
             platform = platform.lower()
             data = ws_data(platform, "fissures")
             embed = discord.Embed(
@@ -45,17 +46,17 @@ class WorldState(commands.Cog):
                         text=self.footer_ws,
                         icon_url=ctx.guild.me.avatar_url
                     )
-            await e_send(ctx, embed=embed, delay=delay)
+            await e_send(ctx, to_delete, embed=embed, delay=delay)
         elif platform is None:
-            await e_send(ctx, message=f"{ctx.author.mention} Please provide a platform `<pc | ps4 | xb1 | swi>`", delay=60)
+            await e_send(ctx, to_delete, message=f"{ctx.author.mention} Please provide a platform `<pc | ps4 | xb1 | swi>`", delay=delay)
         else:
-            await e_send(ctx, message=f"{ctx.author.mention} Platform invalid!\nRetry with `*fissures <pc | ps4 | xb1 | swi>`", delay=60)
+            await e_send(ctx, to_delete, message=f"{ctx.author.mention} Platform invalid!\nRetry with `*fissures <pc | ps4 | xb1 | swi>`", delay=delay)
 
     @commands.command()
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def sortie(self, ctx):
-        delay = 300
+        to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'sortie')
         embed = discord.Embed(
             title='Sortie',
@@ -78,20 +79,19 @@ class WorldState(commands.Cog):
                 text=self.footer_ws,
                 icon_url=ctx.guild.me.avatar_url
                 )
-        await e_send(ctx, embed=embed, delay=delay)
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command()
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def arbitration(self, ctx):
-        delay = 300
+        to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'arbitration')
         embed = discord.Embed(
             title='Arbitration',
             colour = self.colour,
             timestamp = datetime.datetime.utcfromtimestamp(time.time()),
             description=arbitration_eta(data["expiry"])
-            # description=f'Mission type : **{data["type"]}**\nFaction : **{data["enemy"]}**\n{arbitration_eta(data["expiry"])}\n{data["node"]}'
         )
         embed.add_field(name="Mission Type", value=f"{data['type']}")
         embed.add_field(name='Node', value=f"{data['node']}")
@@ -101,13 +101,13 @@ class WorldState(commands.Cog):
             icon_url=ctx.guild.me.avatar_url
             )
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
-        await e_send(ctx, embed=embed, delay=delay)
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
     
     @commands.command()
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def baro(self, ctx):
-        delay = 600
+        to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'voidTrader')
         if not len(data['inventory']):
             embed = discord.Embed(
@@ -138,11 +138,12 @@ class WorldState(commands.Cog):
             text=self.footer_ws,
             icon_url=ctx.guild.me.avatar_url
             )
-        await e_send(ctx, embed=embed, delay=delay)
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command()
     @trigger_typing
     async def news(self, ctx, platform: str = None):
+        to_delete, delay = read_settings(ctx.guild.id)
         if platform is not None and platform.lower() in ['pc', 'ps4', 'xb1', 'swi']:
             delay = 300
             desc = ''
@@ -160,11 +161,12 @@ class WorldState(commands.Cog):
                 text=self.footer_ws,
                 icon_url=ctx.guild.me.avatar_url
                 )
-            await e_send(ctx, embed=embed, delay=delay)
+            await e_send(ctx, to_delete, embed=embed, delay=delay)
         elif platform is None:
-            await e_send(ctx, message=f"{ctx.author.mention} Please provide a platform `<pc | ps4 | xb1 | swi>`", delay=60)
+            await e_send(ctx, to_delete, message=f"{ctx.author.mention} Please provide a platform `<pc | ps4 | xb1 | swi>`", delay=delay)
         else:
-            await e_send(ctx, message=f"{ctx.author.mention} Platform invalid!\nRetry with `*news <pc | ps4 | xb1 | swi>`", delay=60)
+            await e_send(ctx, to_delete, message=f"{ctx.author.mention} Platform invalid!\nRetry with `*news <pc | ps4 | xb1 | swi>`", delay=delay)
+
     # @commands.command(aliases=["a"])
     # async def alerts(self, ctx, platform: str=None):
     #     if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:

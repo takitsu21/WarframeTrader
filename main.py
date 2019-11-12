@@ -67,10 +67,10 @@ def get_orbisCycle(data: dict) -> list:
 def _get_prefix(bot, message):
     if not message.guild:
         return when_mentioned_or('*')(bot, message)
-    prefix = read_prefix((message.guild.id, ))
+    prefix = read_prefix(message.guild.id)
     if not len(prefix):
         return when_mentioned_or('*')(bot, message)
-    return when_mentioned_or(prefix[0][0])(bot, message)
+    return when_mentioned_or(prefix)(bot, message)
 
 class WarframeTrader(commands.Bot):
     def __init__(self):
@@ -102,8 +102,7 @@ class WarframeTrader(commands.Bot):
                 logger.exception(f"Fail to load {file}")
 
     async def on_guild_remove(self, guild: discord.Guild):
-        d_guild((guild.id,))
-        d_prefix((guild.id,))
+        d_guild(guild.id)
 
     @commands.is_owner()
     async def reload(self, ctx):
@@ -112,13 +111,9 @@ class WarframeTrader(commands.Bot):
 
     async def on_guild_join(self, guild: discord.Guild):
         try:
-            i_prefix((guild.id, '*', ))
-        except: 
-            pass
-        try:
-            i_guild_settings((guild.id, False, None,))
-        except:
-            pass
+            i_guild_settings(guild.id, '*', 0, None)
+        except Exception as e:
+            logger.exception(e, exc_info=True)
         general = find(lambda x: x.name == "general", guild.text_channels)
         embed = discord.Embed(
                         title='**Nice to meet you!**',

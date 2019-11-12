@@ -21,7 +21,7 @@ class Trader(commands.Cog):
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def wtb(self, ctx, platform: str=None, *args):
-        settings = read_settings((ctx.guild.id,))[0]
+        to_delete, delay = read_settings(ctx.guild.id)
         if platform is None:
             return await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | xbox | ps4 | swi>`")
         try:
@@ -64,7 +64,7 @@ class Trader(commands.Cog):
                 )
             else:
                 msg = f"{ctx.author.mention}Wrong platform try with `<pc | xbox | ps4 | swi>`"
-                return await e_send(ctx, settings[0], message=msg, delay=settings[1])
+                return await e_send(ctx, to_delete, message=msg, delay=delay)
         except StatusError as e:
             embed = discord.Embed(
                     title='❌Error❌',
@@ -77,15 +77,16 @@ class Trader(commands.Cog):
                 text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                 icon_url=ctx.guild.me.avatar_url
             )
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
 
     @commands.command(aliases=["s"])
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def wts(self, ctx, platform: str=None, *args):
+        to_delete, delay = read_settings(ctx.guild.id)
         if platform is None:
-            return await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | xbox | ps4 | swi>`")
+            return await e_send(ctx, to_delete, message=f"{ctx.author.mention} Please provide a platform `<pc | xbox | ps4 | swi>`", delay=delay)
         try:
             platform = platform.lower()
             if platform in ["pc", "xbox", "ps4", "swi"]:
@@ -96,7 +97,7 @@ class Trader(commands.Cog):
                 item_thumb = api_icons.icon_endpoint()
                 capitalize_args = [x.capitalize() for x in args]
                 formatted_args = ' '.join(capitalize_args)
-                settings = read_settings((ctx.guild.id,))[0]
+                
                 embed = discord.Embed(
                     title=f'`💰`WTS {formatted_args}`💰` (Online in game - Sort by prices)',
                     colour=self.colour,
@@ -126,7 +127,7 @@ class Trader(commands.Cog):
                 )
             else:
                 msg = f"{ctx.author.mention}Wrong platform try with `<pc | xbox | ps4 | swi>`"
-                return await e_send(ctx, settings[0], message=msg, delay=settings[1])
+                return await e_send(ctx, to_delete, message=msg, delay=delay)
         except StatusError as e:
             embed = discord.Embed(
                     title='❌Error❌',
@@ -139,13 +140,13 @@ class Trader(commands.Cog):
                 text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                 icon_url=ctx.guild.me.avatar_url
             )
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command()
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def ducats(self, ctx):
-        settings = read_settings((ctx.guild.id,))[0]
+        to_delete, delay = read_settings(ctx.guild.id)
         ducats = WfmApi('pc', 'tools', 'ducats')
         items = WfmApi('pc', 'items')
         ducats_data = ducats.data()
@@ -174,7 +175,13 @@ class Trader(commands.Cog):
             text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
             icon_url=ctx.guild.me.avatar_url
         )         
-        await e_send(ctx, settings[0], embed=embed, delay=settings[1])
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
+
+    # @commands.command()
+    # @commands.command(manage_messages=True)
+    # async def riven(self, ctx, *args):
+    #     pass
+
 
 def setup(bot):
     bot.add_cog(Trader(bot))

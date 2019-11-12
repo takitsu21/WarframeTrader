@@ -9,6 +9,8 @@ class GraphProcess:
         self.url_name = url_name
 
     def save_graph(self, data: dict) -> bytes:
+        # with open('graph.json', 'w') as f:
+        #     f.write(str(data))
         try:
             if isinstance(
                     data["payload"]["statistics_closed"]["90days"][0]["mod_rank"],
@@ -22,11 +24,11 @@ class GraphProcess:
             if is_mod:
                 if i % 2 != 0:
                     y.append(stats["wa_price"])
-                    z.append(stats["moving_avg"])
+                    z.append(stats["avg_price"])
                     d.append(stats["volume"])
             else:
                 y.append(stats["wa_price"])
-                z.append(stats["moving_avg"])
+                z.append(stats["avg_price"])
                 d.append(stats["volume"])
 
         x = np.arange(len(y))

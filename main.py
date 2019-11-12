@@ -65,11 +65,7 @@ def get_orbisCycle(data: dict) -> list:
     return timeLeft, icon
 
 def _get_prefix(bot, message):
-    if not message.guild:
-        return when_mentioned_or('*')(bot, message)
     prefix = read_prefix(message.guild.id)
-    if not len(prefix):
-        return when_mentioned_or('*')(bot, message)
     return when_mentioned_or(prefix)(bot, message)
 
 class WarframeTrader(commands.Bot):
@@ -197,7 +193,9 @@ class WarframeTrader(commands.Bot):
             except asyncio.CancelledError:
                 logger.debug("Pending tasks has been cancelled.")
             finally:
-                logger.error("Shutting down")
+                conn.close()
+                logger.info("Connection closed")
+                logger.info("Shutting down")
 
 if __name__ == "__main__":
     bot = WarframeTrader()

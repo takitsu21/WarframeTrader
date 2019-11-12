@@ -30,7 +30,7 @@ class Statistics(commands.Cog):
             if delay >= 60:
                 msg += f"\nThe graph of {fargs} will be deleted in {delay//60} mins"
             else:
-                msg = f"\nThe graph of {fargs} will be deleted in {delay} seconds"
+                msg += f"\nThe graph of {fargs} will be deleted in {delay} seconds"
         else:
             msg += f"You can see the graph of {fargs} below"
         return msg
@@ -48,7 +48,7 @@ class Statistics(commands.Cog):
                 self.make_graph(args_endpoint, fargs)
                 msg = self.generate_msg(ctx, to_delete, delay, fargs)           
                 with open(graphs_path, 'rb') as p:
-                    await ctx.message.delete(delay)
+                    await ctx.message.delete(delay=delay)
                     await ctx.send(
                         msg,
                         file=discord.File(p, graphs_path),
@@ -69,7 +69,6 @@ class Statistics(commands.Cog):
                     icon_url=ctx.guild.me.avatar_url
                 )
                 await e_send(ctx, to_delete, embed=embed, delay=delay)
-
 
 def setup(bot):
     bot.add_cog(Statistics(bot))

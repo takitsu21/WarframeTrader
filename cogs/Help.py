@@ -59,7 +59,7 @@ class Help(commands.Cog):
     async def emojis(self, ctx):
         emojis = await ctx.guild.fetch_emojis()
         await ctx.send(emojis)
-        await ctx.send("<:wf_market:641718306260385792>")
+        await ctx.send("<:_red_circle:643936812527779850>, <:_green_circle:643936852327530548>, <:_purple_circle:643936797222764554> ")
 
     @commands.command(aliases=["h"])
     @commands.bot_has_permissions(manage_messages=True, add_reactions=True)

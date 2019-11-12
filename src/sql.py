@@ -1,5 +1,6 @@
 # import sqlite3
 import pymysql
+from decouple import *
 
 def u_prefix(_id, prefix):
     cur = conn.cursor()
@@ -61,10 +62,12 @@ def d_guild(_id):
 
 try:
     conn = pymysql.connect(
-                    host='node03.cluster.stan-tab.fr',
-                    user='dylann_wf',
-                    password='nK2sgPWGx7nRQ01W',
-                    db='dylann_wf'
+                    host=config('db_host'),
+                    user=config('user'),
+                    password=config('password'),
+                    db=config('db')
                     )
 except pymysql.Error as error:
     print("Error while connecting to sqlite", error)
+    conn.close()
+    print('Connection closed')

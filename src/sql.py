@@ -1,5 +1,5 @@
 # import sqlite3
-import psycopg2
+import pymysql
 
 def clean_db():
     cur = conn.cursor()
@@ -52,27 +52,27 @@ def read_settings(values):
     print('read_settings', rows)
     return rows, rows
 
-def i_guild_settings(values):
+def i_guild_settings(_id: int, prefix: str, to_delete: int, delay: int):
     cursor = conn.cursor()
-    sql = """INSERT INTO settings(id, delete, delay) VALUES(%s, %s, %s)"""
-    cursor.execute(sql, values)
+    sql = """INSERT INTO guild_settings(id, prefix, to_delete, delay) VALUES(%s, %s, %s, %s)"""
+    cursor.execute(sql, (_id, prefix, to_delete, delay, ))
     conn.commit()
 
 def read_table(table):
-    sql = "SELECT delete, delay FROM settings"
+    sql = """SELECT * FROM `guild_settings`"""
     cur = conn.cursor()
     cur.execute(sql)
     conn.commit()
     rows = cur.fetchall()
     return rows
 
-def u_guild_settings(values):
+def u_guild_settings(_id: int, to_delete: int, delay: int):
     cursor = conn.cursor()
-    sql = """UPDATE settings SET 
-            delete=%s,
+    sql = """UPDATE guild_settings SET 
+            to_delete=%s,
             delay=%s
             WHERE id=%s"""
-    cursor.execute(sql, values)
+    cursor.execute(sql, (to_delete, delay, _id))
     conn.commit()
 
 def d_guild(values):
@@ -89,8 +89,14 @@ def d_prefix(values):
 
 try:
     # conn = sqlite3.connect('./db/settings.db')
-    conn = psycopg2.connect('postgres://tlmugcbktybmrk:9495720bb66625b4ceb47d5520a3a1784c5d6583d2cca376f030f1f8102c5a1f@ec2-46-137-187-23.eu-west-1.compute.amazonaws.com:5432/d2bj38648d3ukp')
-    print(read_table('settings'))
+    conn = pymysql.connect(
+                    host='node03.cluster.stan-tab.fr',
+                    user='dylann_wf',
+                    password='nK2sgPWGx7nRQ01W',
+                    db='dylann_wf'
+                    )
+    # print(i_guild_settings(1111111111, '*', 0, None))
+    # u_guild_settings(1111111111, 1, 200)
     # clean_db()
     # clean_prefix()
     # u_prefix((55555555, 'a',))
@@ -98,5 +104,5 @@ try:
     # clean_db()
     # create_prefix()
     # print(read_prefix((146952202815012864,)))
-except psycopg2.Error as error:
+except pymysql.Error as error:
     print("Error while connecting to sqlite", error)

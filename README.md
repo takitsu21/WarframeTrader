@@ -9,10 +9,11 @@
 This bot has many features for warframe, he provide Worldstate data and use warframe.market API to trade using discord.
 
 ## Commands
+
 | Command | Description |
 | ------- | ----------- |
-| **`<*wtb / *b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** | View 7 sellers sort by prices and status (Online in game) |
-| **`<*wts / *s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** | View 7 buyers sort by prices and status (Online in game) |
+| **`<*wtb / *b> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | View 7 sellers sort by prices and status (Online in game) |
+| **`<*wts / *s> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | View 7 buyers sort by prices and status (Online in game) |
 | **`<*riven / *r> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | Views 6 riven mod sorted by ascending prices and status (Online in game) |
 | **`<*ducats / *d>`** | View 12 worth it items to sell in ducats |
 | **`<*fissures / *f> <pc / ps4 / xb1 / swi>`** | View current fissures available |

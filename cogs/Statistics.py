@@ -32,7 +32,7 @@ class Statistics(commands.Cog):
             else:
                 msg += f"\nThe graph of {fargs} will be deleted in {delay} seconds"
         else:
-            msg += f"You can see the graph of {fargs} below"
+            msg += f" You can see the graph of {fargs} below"
         return msg
 
     @commands.command(aliases=["st"])
@@ -48,7 +48,8 @@ class Statistics(commands.Cog):
                 self.make_graph(args_endpoint, fargs)
                 msg = self.generate_msg(ctx, to_delete, delay, fargs)           
                 with open(graphs_path, 'rb') as p:
-                    await ctx.message.delete(delay=delay)
+                    if delay:
+                        await ctx.message.delete(delay=delay)
                     await ctx.send(
                         msg,
                         file=discord.File(p, graphs_path),

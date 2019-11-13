@@ -43,7 +43,7 @@ This bot has many features for warframe, he provide Worldstate data and use warf
 
 ![Arbitration](https://i.imgur.com/w7UUkbk.png)
 
-![Graph stats](https://i.imgur.com/XbKNADB.png)
+![Graph stats](https://i.imgur.com/S0OMk4z.png)
 
 ## Built With
 

@@ -41,7 +41,7 @@ class WorldState(commands.Cog):
                             value=f" **{f['node']}** - {f['enemy']}",
                             inline=False
                         )
-            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+            embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
             embed.set_footer(
                         text=self.footer_ws,
                         icon_url=ctx.guild.me.avatar_url
@@ -68,7 +68,7 @@ class WorldState(commands.Cog):
             name='Sortie',
             icon_url='https://vignette.wikia.nocookie.net/warframe/images/1/15/Sortie_b.png/revision/latest?cb=20151217134250'
             )
-        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+        embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
         for i, c in enumerate(data["variants"], start=1):
             embed.add_field(
                 name=f'• __Part {i}__',
@@ -100,7 +100,7 @@ class WorldState(commands.Cog):
             text=self.footer_ws,
             icon_url=ctx.guild.me.avatar_url
             )
-        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+        embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
         await e_send(ctx, to_delete, embed=embed, delay=delay)
     
     @commands.command()
@@ -133,7 +133,7 @@ class WorldState(commands.Cog):
             embed.add_field(name='Location', value=data['location'])
             for c in data['inventory']:
                 embed.add_field(name=c['item'], value=str(c['ducats']) + '<:du:641336909989281842> + ' + str(c['credits']) + ' credits')
-        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+        embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
         embed.set_footer(
             text=self.footer_ws,
             icon_url=ctx.guild.me.avatar_url
@@ -156,7 +156,7 @@ class WorldState(commands.Cog):
                 timestamp = datetime.datetime.utcfromtimestamp(time.time()),
                 description=desc
                 )
-            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+            embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
             embed.set_footer(
                 text=self.footer_ws,
                 icon_url=ctx.guild.me.avatar_url

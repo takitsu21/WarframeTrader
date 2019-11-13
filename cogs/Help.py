@@ -24,7 +24,7 @@ class Help(commands.Cog):
         """Ping's Bot"""
         to_delete, delay = read_settings(ctx.guild.id)
         before = time.monotonic()
-        message = await e_send(ctx, to_delete, delay=delay, message="🏓Pong!")
+        message = await ctx.send("🏓Pong!", delete_after=delay)
         ping = (time.monotonic() - before) * 1000
         embed = discord.Embed(colour=0xff00,
                             title="Warframe Trader ping",
@@ -34,9 +34,10 @@ class Help(commands.Cog):
             text="Made with ❤️ by Taki#0853 (WIP)",
             icon_url=ctx.guild.me.avatar_url
         )
+        await ctx.message.delete(delay=delay)
         await message.edit(content="", embed=embed)
 
-    def embed_pagination(self, ctx, prefix):
+    def embed_pagination(self, ctx):
         embed = discord.Embed(title="Help hub",
                             description="[Vote here](https://top.gg/bot/551446491886125059) to support me if you ❤️ the bot\n"
                             "`[RequiredArgument] <ParameterToChoose>`",
@@ -44,7 +45,6 @@ class Help(commands.Cog):
         embed.add_field(name='<:wf_market:641718306260385792> Warframe Market', value="View commands about warframe.market(WTS, WTB, stats).")
         embed.add_field(name='<:ws:641721981292773376> Worldstat', value="View commands about arbitration, sortie, baro etc...")
         embed.add_field(name=u"\u2699 About Warframe Trader", value="View commands about the bot")
-        embed.add_field(name="Prefix", value=f"`{prefix}`")
         embed.add_field(
             name="If you want to support me",
             value="[Kofi](https://ko-fi.com/takitsu)"
@@ -68,6 +68,7 @@ class Help(commands.Cog):
         prefix = read_prefix(ctx.guild.id)
         trade_command = f"""**`<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
         **`<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)\n
+        **`{prefix}riven <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Views 6 riven mod sorted by ascending prices and status (Online in game)\n
         **`{prefix}ducats`** - View 12 worth it items to sell in ducats\n"""
         ws_command = f"""**`<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>`** - View current fissures available\n
         **`{prefix}sortie`** - View current sortie\n
@@ -84,8 +85,7 @@ class Help(commands.Cog):
         **`<{prefix}help | {prefix}h>`** - View bot commands"""
 
         toReact = ['⏪', '<:wf_market:641718306260385792>', '<:ws:641721981292773376>',u"\u2699"]
-        # emojis = await ctx.guild.fetch_emojis()
-        embed = self.embed_pagination(ctx, prefix)
+        embed = self.embed_pagination(ctx)
         pagination = await ctx.send(embed=embed)
         while True:
             for reaction in toReact:
@@ -98,7 +98,7 @@ class Help(commands.Cog):
                 await ctx.message.delete()
                 return await pagination.delete()
             if '⏪' in str(reaction.emoji):
-                embed = self.embed_pagination(ctx, prefix)
+                embed = self.embed_pagination(ctx)
             elif '<:wf_market:641718306260385792>' in str(reaction.emoji):
                 embed = discord.Embed(title="<:wf_market:641718306260385792> Market",
                                     description=trade_command,

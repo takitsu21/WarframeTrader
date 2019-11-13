@@ -34,11 +34,12 @@ class Trader(commands.Cog):
                 item_thumb = api_icons.icon_endpoint()
                 capitalize_args = [x.capitalize() for x in args]
                 formatted_args = ' '.join(capitalize_args)
+                prefix = read_prefix(ctx.guild.id)
                 embed = discord.Embed(
-                    title=f'`💰`WTB {formatted_args}`💰` (Online in game - Sort by prices)',
+                    title=f'💰WTB {formatted_args}💰 (Online in game - Sort by prices)',
                     colour=self.colour,
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-                    description=f"Will be deleted in 5 minutes!\nYou can get stats with the following command\n**`*stats {' '.join(args)}`**"
+                    description=f"**`{prefix}stats {' '.join(args)}`**"
                 )
 
                 if len(item_data["data"]):
@@ -46,11 +47,11 @@ class Trader(commands.Cog):
                         pl = int(d["platinum"])
                         embed.add_field(
                             name="{0}. **{1}** | "
-                                 "+**{2}**`🙂` for **{3}** <:pl:632332600538824724> x "
+                                 "+**{2}**🙂 for **{3}** <:pl:632332600538824724> x "
                                  "**{4}** pieces".format(i, d["name"], d["rep"], pl, d["quantity"]),
                             value="||`/w {0} Hi! I want to buy: {1} "
                                   "for {2} platinum. (warframe.market - https://discordapp.com/invite/wTxbQYb)`||"
-                                  .format(d["name"], formatted_args, pl)
+                                  .format(d["name"], formatted_args, pl), inline=False
                         )
                 else:
                     embed.add_field(
@@ -96,19 +97,19 @@ class Trader(commands.Cog):
                 item_thumb = api_icons.icon_endpoint()
                 capitalize_args = [x.capitalize() for x in args]
                 formatted_args = ' '.join(capitalize_args)
-                
+                prefix = read_prefix(ctx.guild.id)
                 embed = discord.Embed(
-                    title=f'`💰`WTS {formatted_args}`💰` (Online in game - Sort by prices)',
+                    title=f'💰WTS {formatted_args}💰 (Online in game - Sort by prices)',
                     colour=self.colour,
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-                    description=f"Will be deleted in 5 minutes!\nYou can get stats with the following command\n**`*stats {' '.join(args)}`**"
+                    description=f"**`{prefix}stats {' '.join(args)}`**"
                 )
                 if len(item_data["data"]):
                     for i, d in enumerate(item_data["data"], start=1):
                         pl = int(d["platinum"])
                         embed.add_field(
                             name="{0}. **{1}** | "
-                                 "+**{2}**`🙂` for **{3}** <:pl:632332600538824724> x "
+                                 "+**{2}**🙂 for **{3}** <:pl:632332600538824724> x "
                                  "**{4}** pieces".format(i, d["name"], d["rep"], pl, d["quantity"]),
                             value="||`/w {0} Hi! I want to sell: {1} "
                                   "for {2} platinum. (warframe.market - https://discordapp.com/invite/wTxbQYb)`||"
@@ -134,7 +135,7 @@ class Trader(commands.Cog):
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                     description=f"{type(e).__name__} : ERROR {e} (You might have spelled a wrong item name or the API is down)`🤔`"
                 )
-            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+            embed.set_thumbnail(url='https://warframe.market/static/assets/frontend/logo_icon_only.png')
             embed.set_footer(
                 text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                 icon_url=ctx.guild.me.avatar_url
@@ -159,7 +160,7 @@ class Trader(commands.Cog):
             name="Ducanator",
             icon_url='https://image.winudf.com/v2/image1/Y29tLm1vcmhhbS5kdWNhdHNvcHRpbWl6ZXJfaWNvbl8xNTQxNTI1NjY3XzA2MA/icon.png?w=170&fakeurl=1'
             )
-        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+        embed.set_thumbnail(url='https://warframe.market/static/assets/frontend/logo_icon_only.png')
         for i, du in enumerate(ducats_data['payload']['previous_day'], start=1):
             for x in items_data['payload']['items']:
                 if x['id'] == du['item']:
@@ -176,14 +177,17 @@ class Trader(commands.Cog):
         )         
         await e_send(ctx, to_delete, embed=embed, delay=delay)
 
-    def convert_polarity(self, polarity_name):
+    @staticmethod
+    def convert_polarity(polarity_name):
         return {'madurai': '<:madurai:643915728818405396>', 'naramon': '<:naramon:643915707364409354>', 'vazarin': '<:vazarin:643848307348602905>'}[polarity_name]
 # <:_red_circle:643936812527779850>, <:_green_circle:643936852327530548>, <:_purple_circle:643936797222764554>
     @commands.command()
     @commands.bot_has_permissions(manage_messages=True)
-    async def riven(self, ctx, platform, *args):
+    async def riven(self, ctx, platform: str = None, *args):
         to_delete, delay = read_settings(ctx.guild.id)
-        if platform in ["pc", "xbox", "ps4", "swi"]:
+        if platform is None:
+            await e_send(ctx, to_delete, message=f"{ctx.author.mention} Wrong platform try with `<pc | xbox | ps4 | swi>`")
+        elif platform in ["pc", "xbox", "ps4", "swi"]:
             args = [x.lower() for x in args]
             fargs = '_'.join(args)
             auction_query = WfmApi(platform, 'auctions', f'search?type=riven&weapon_url_name={fargs}&polarity=any&sort_by=price_asc')
@@ -193,15 +197,15 @@ class Trader(commands.Cog):
                 timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                 colour=self.colour
             )
-            embed.set_author(name="Riven auctions", url='https://warframe.fandom.com/wiki/Riven_Mods', icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
+            embed.set_author(name=f"Riven auctions for {' '.join(args)}", url='https://warframe.fandom.com/wiki/Riven_Mods', icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
             attributes = '```diff\n'
             i = 0
             for auction_iter in data['payload']['auctions']:
                 if auction_iter['owner']['status'] == 'ingame':
                     embed.add_field(
-                    name=f"**Riven {auction_iter['item']['name']}** <:_purple_circle:643936797222764554>",
-                    value=f"Buyout price {auction_iter['buyout_price']} | Starting price {auction_iter['starting_price']} | Top bid {auction_iter['top_bid']}\nPolarity {self.convert_polarity(auction_iter['item']['polarity'])}\nMR {auction_iter['item']['mod_rank']}\nRe-rolls {auction_iter['item']['re_rolls']}\n[View Riven](https://warframe.market/auction/{auction_iter['id']})\n|| `/w {auction_iter['owner']['ingame_name']} Hi!` ||",
-                    inline=False
+                        name=f"**Riven {auction_iter['item']['name']}** <:_purple_circle:643936797222764554>",
+                        value=f"Buyout price {auction_iter['buyout_price']} | Starting price {auction_iter['starting_price']} | Top bid {auction_iter['top_bid']}\nPolarity {self.convert_polarity(auction_iter['item']['polarity'])}\nMR {auction_iter['item']['mod_rank']}\nRe-rolls {auction_iter['item']['re_rolls']}\n[View Riven](https://warframe.market/auction/{auction_iter['id']})\n|| `/w {auction_iter['owner']['ingame_name']} Hi!` ||",
+                        inline=False
                     )
                     for attribute in auction_iter['item']['attributes']:
                         attr = attribute['url_name'].replace('_/_', ' ')
@@ -223,7 +227,7 @@ class Trader(commands.Cog):
                 text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
                 icon_url=ctx.guild.me.avatar_url
             )
-            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+            embed.set_thumbnail(url='https://warframe.market/static/assets/frontend/logo_icon_only.png')
             await e_send(ctx, to_delete, embed=embed, delay=delay)
 
 def setup(bot):

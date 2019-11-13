@@ -16,6 +16,7 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.colour = 0x87DABC
+        self._id = 162200556234866688
 
     @commands.command()
     @trigger_typing
@@ -40,11 +41,11 @@ class Help(commands.Cog):
     def embed_pagination(self, ctx):
         embed = discord.Embed(title="Help hub",
                             description="[Vote here](https://top.gg/bot/551446491886125059) to support me if you ❤️ the bot\n"
-                            "`[RequiredArgument] <ParameterToChoose>`",
+                            "`[RequiredArgument] <Parameter | To | Choose>`",
                             color=self.colour)
         embed.add_field(name='<:wf_market:641718306260385792> Warframe Market', value="View commands about warframe.market(WTS, WTB, stats).")
-        embed.add_field(name='<:ws:641721981292773376> Worldstat', value="View commands about arbitration, sortie, baro etc...")
-        embed.add_field(name=u"\u2699 About Warframe Trader", value="View commands about the bot")
+        embed.add_field(name='<:ws:641721981292773376> Worldstate', value="View commands about arbitration, sortie, baro etc...", inline=False)
+        embed.add_field(name=u"\u2699 Warframe Trader utility", value="View commands about the bot")
         embed.add_field(
             name="If you want to support me",
             value="[Kofi](https://ko-fi.com/takitsu)"
@@ -68,12 +69,13 @@ class Help(commands.Cog):
         prefix = read_prefix(ctx.guild.id)
         trade_command = f"""**`<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
         **`<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)\n
-        **`{prefix}riven <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Views 6 riven mod sorted by ascending prices and status (Online in game)\n
-        **`{prefix}ducats`** - View 12 worth it items to sell in ducats\n"""
+        **`<{prefix}riven | {prefix}r> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Views 6 riven mod sorted by ascending prices and status (Online in game)\n
+        **`{prefix}ducats`** - View 12 worth it items to sell in ducats"""
         ws_command = f"""**`<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>`** - View current fissures available\n
         **`{prefix}sortie`** - View current sortie\n
         **`{prefix}baro`** - View baro ki'teer inventory and dates\n
-        **`{prefix}news`** - View news about Warframe\n"""
+        **`<{prefix}news <pc | xbox | ps4 | swi>`** - View news about Warframe\n
+        **`{prefix}earth`** - View earth cycle"""
         other_commands = f"""**`{prefix}bug [MESSAGE]`** - Send me a bug report, this will helps to improve the bot\n
         **`{prefix}suggestion [MESSAGE]`** - Suggestion to add for the bot, all suggestions are good don't hesitate\n
         **`{prefix}ping`** - View bot latency\n
@@ -82,6 +84,8 @@ class Help(commands.Cog):
         **`{prefix}vote`** - An other way to support me\n
         **`{prefix}support`** - Discord support if you need help or want to discuss with me\n
         **`{prefix}invite`** - View bot link invite\n
+        **`{prefix}set_prefix [PREFIX]`** - Set new prefix\n
+        **`{prefix}get_prefix`** - View actual guild prefix\n
         **`<{prefix}help | {prefix}h>`** - View bot commands"""
 
         toReact = ['⏪', '<:wf_market:641718306260385792>', '<:ws:641721981292773376>',u"\u2699"]
@@ -125,8 +129,8 @@ class Help(commands.Cog):
     async def invite(self,ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(
-                        title='**Invite me** :',
-                        description='[**here**](https://discordapp.com/oauth2/authorize?client_id=593364281572196353&scope=bot&permissions=470083648)',
+                        title='Invite me',
+                        description='[Click here](https://discordapp.com/oauth2/authorize?client_id=593364281572196353&scope=bot&permissions=470083648)',
                         colour=self.colour
                     )
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
@@ -138,8 +142,8 @@ class Help(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     async def vote(self,ctx):
         to_delete, delay = read_settings(ctx.guild.id)
-        embed = discord.Embed(title='**Vote for Warframe Trader**',
-                              description='[**Click here**](https://discordbots.org/bot/551446491886125059/vote)',
+        embed = discord.Embed(title='Vote for Warframe Trader',
+                              description='[Click here](https://discordbots.org/bot/551446491886125059/vote)',
                               colour=self.colour)
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)", icon_url=ctx.guild.me.avatar_url)
@@ -151,7 +155,7 @@ class Help(commands.Cog):
     async def support(self,ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='Discord support',
-                               description='[Taki Support Server](https://discordapp.com/invite/wTxbQYb)',
+                               description='[Click here](https://discordapp.com/invite/wTxbQYb)',
                                 colour=self.colour)
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
@@ -273,7 +277,7 @@ class Help(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    async def setprefix(self, ctx, *, prefixes=""):
+    async def set_prefix(self, ctx, *, prefixes=""):
         u_prefix(ctx.guild.id, prefixes)
         await ctx.send(f"New prefix set : `{prefixes}`")
 
@@ -286,8 +290,9 @@ class Help(commands.Cog):
             except:
                 pass
 
+    @trigger_typing
     @commands.command()
-    async def getprefix(self, ctx):
+    async def get_prefix(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(
             title="Prefix",
@@ -296,6 +301,58 @@ class Help(commands.Cog):
             color=self.colour
         )
         await e_send(ctx, to_delete, embed=embed, delay=delay)
+
+    @trigger_typing
+    @commands.command()
+    async def suggestion(self, ctx, *message):
+        to_delete, delay = read_settings(ctx.guild.id)
+        await ctx.message.delete(delay=delay)
+        if not len(message) or len(message) < 3:
+            embed = discord.Embed(title='**Suggestion**',
+                                colour=self.colour,
+                                description=f"{ctx.author.mention} Message too short!\nAt least 3 words required",
+                                icon_url=ctx.guild.me.avatar_url)
+            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+            embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                            icon_url=ctx.guild.me.avatar_url)
+            return await ctx.send(embed=embed, delete_after=delay)
+        dm = self.bot.get_user(self._id)
+        message = ' '.join(message)
+        await dm.send(f"[{ctx.author} - SUGGEST] -> {message}")
+        embed = discord.Embed(title='**Suggestion**',
+                            colour=self.colour,
+                            description=f"{ctx.author.mention} Your suggestion has been sent @Taki#0853\nThanks for the feedback",
+                            icon_url=ctx.guild.me.avatar_url)
+        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+        embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                        icon_url=ctx.guild.me.avatar_url)
+        return await ctx.send(embed=embed, delete_after=delay)
+
+    @trigger_typing
+    @commands.command()
+    async def bug(self, ctx, *message):
+        to_delete, delay = read_settings(ctx.guild.id)
+        await ctx.message.delete(delay=delay)
+        if not len(message) or len(message) < 3:
+            embed = discord.Embed(title='**Bug Report**',
+                    colour=self.colour,
+                    description=f"{ctx.author.mention} Message too short!\nAt least 3 words required",
+                    icon_url=ctx.guild.me.avatar_url)
+            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+            embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                            icon_url=ctx.guild.me.avatar_url)
+            return await ctx.send(embed=embed, delete_after=delay)
+        dm = self.bot.get_user(self._id)
+        message = ' '.join(message)
+        await dm.send(f"[{ctx.author} - BUG] -> {message}")
+        embed = discord.Embed(title='**Bug Report**',
+                            colour=self.colour,
+                            description=f"{ctx.author.mention} Your bug report has been sent @Taki#0853\nThanks for the feedback",
+                            icon_url=ctx.guild.me.avatar_url)
+        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+        embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                        icon_url=ctx.guild.me.avatar_url)
+        return await ctx.send(embed=embed, delete_after=delay)
 
 def setup(bot):
     bot.add_cog(Help(bot))

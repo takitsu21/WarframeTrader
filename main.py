@@ -99,15 +99,17 @@ class WarframeTrader(commands.Bot):
 
     async def on_guild_remove(self, guild: discord.Guild):
         d_guild(guild.id)
+        logger.info(f"guild {guild.id} removed")
 
-    @commands.is_owner()
-    async def reload(self, ctx):
-        self._unload_extensions()
-        self._load_extensions()           
+    # @commands.is_owner()
+    # async def reload(self, ctx):
+    #     self._unload_extensions()
+    #     self._load_extensions()           
 
     async def on_guild_join(self, guild: discord.Guild):
         try:
             i_guild_settings(guild.id, '*', 0, None)
+            logger.info(f"guild {guild.id} added")
         except Exception as e:
             logger.exception(e, exc_info=True)
         general = find(lambda x: x.name == "general", guild.text_channels)
@@ -118,7 +120,7 @@ class WarframeTrader(commands.Bot):
                     )
         embed.add_field(name="Prefix", value="`*`")
         embed.add_field(name="About Warframe Trader",
-                        value="Type `*help` to get all the commands!")
+                        value="Type `*help` to get all commands!")
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)")
         await guild.owner.send(embed=embed)
         if general and general.permissions_for(guild.me).send_messages:
@@ -132,12 +134,13 @@ class WarframeTrader(commands.Bot):
             # embed.add_field(name="Vote",
             #                 value="[Click here](https://discordbots.org/bot/551446491886125059/vote)")
             embed.add_field(name="Invite Warframe Trader",
-                            value="[Click here](https://discordapp.com/oauth2/authorize?client_id=551446491886125059&scope=bot&permissions=1543825472)")
+                            value="[Click here](https://discordapp.com/oauth2/authorize?client_id=593364281572196353&scope=bot&permissions=470083648)")
             embed.add_field(name="Discord Support",
                             value="[Click here](https://discordapp.com/invite/wTxbQYb)")
             embed.add_field(name="Donate",value="[Patreon](https://www.patreon.com/takitsu)\n[Kofi](https://ko-fi.com/takitsu)")
             # embed.add_field(name = "Source code and commands", value="[Click here](https://takitsu21.github.io/ApexStats/)")
             embed.add_field(name="Help command",value="*help")
+            embed.add_field(name="Default prefix",value="*")
             nb_users = 0
             for s in self.guilds:
                 nb_users += len(s.members)

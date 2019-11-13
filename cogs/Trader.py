@@ -142,7 +142,7 @@ class Trader(commands.Cog):
             )
         await e_send(ctx, to_delete, embed=embed, delay=delay)
 
-    @commands.command()
+    @commands.command(aliases=["d"])
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
     async def ducats(self, ctx):
@@ -178,33 +178,49 @@ class Trader(commands.Cog):
         await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @staticmethod
-    def convert_polarity(polarity_name):
-        return {'madurai': '<:madurai:643915728818405396>', 'naramon': '<:naramon:643915707364409354>', 'vazarin': '<:vazarin:643848307348602905>'}[polarity_name]
+    def convert_polarity(polarity_name: str):
+        return {
+            'madurai': '<:madurai:643915728818405396>',
+            'naramon': '<:naramon:643915707364409354>',
+            'vazarin': '<:vazarin:643848307348602905>'
+            }[polarity_name]
+
+    @staticmethod
+    def convert_status(status: str):
+        d = {
+            'offline': ('<:_red_circle:643936812527779850>', 'Offline'),
+            'online': ('<:_green_circle:643936852327530548>', 'Online'),
+            'ingame': ('<:_purple_circle:643936797222764554>', 'Online in game')
+        }[status]
+        return d[0], d[1]
+
 # <:_red_circle:643936812527779850>, <:_green_circle:643936852327530548>, <:_purple_circle:643936797222764554>
-    @commands.command()
+    @commands.command(aliases=["r"])
     @commands.bot_has_permissions(manage_messages=True)
     async def riven(self, ctx, platform: str = None, *args):
         to_delete, delay = read_settings(ctx.guild.id)
         if platform is None:
             await e_send(ctx, to_delete, message=f"{ctx.author.mention} Wrong platform try with `<pc | xbox | ps4 | swi>`")
-        elif platform in ["pc", "xbox", "ps4", "swi"]:
+        elif platform in ["pc", "xbox", "ps4", "swi"]:   
             args = [x.lower() for x in args]
             fargs = '_'.join(args)
             auction_query = WfmApi(platform, 'auctions', f'search?type=riven&weapon_url_name={fargs}&polarity=any&sort_by=price_asc')
             data = auction_query.data()
             embed = discord.Embed(
-                description="Online in game",
+                description=f"<:_green_circle:643936852327530548> Online | Online in game <:_purple_circle:643936797222764554>",
                 timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                 colour=self.colour
             )
-            embed.set_author(name=f"Riven auctions for {' '.join(args)}", url='https://warframe.fandom.com/wiki/Riven_Mods', icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
+            item_c = ' '.join(args).capitalize()
+            embed.set_author(name=f"Riven auctions for {item_c}", url='https://warframe.fandom.com/wiki/Riven_Mods', icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
             attributes = '```diff\n'
             i = 0
             for auction_iter in data['payload']['auctions']:
-                if auction_iter['owner']['status'] == 'ingame':
+                if auction_iter['owner']['status'] in ["ingame", "online"]:
+                    status_emoji, status_game = self.convert_status(auction_iter['owner']['status'])
                     embed.add_field(
-                        name=f"**Riven {auction_iter['item']['name']}** <:_purple_circle:643936797222764554>",
-                        value=f"Buyout price {auction_iter['buyout_price']} | Starting price {auction_iter['starting_price']} | Top bid {auction_iter['top_bid']}\nPolarity {self.convert_polarity(auction_iter['item']['polarity'])}\nMR {auction_iter['item']['mod_rank']}\nRe-rolls {auction_iter['item']['re_rolls']}\n[View Riven](https://warframe.market/auction/{auction_iter['id']})\n|| `/w {auction_iter['owner']['ingame_name']} Hi!` ||",
+                        name=f"**{item_c} {auction_iter['item']['name']}** {status_emoji}",
+                        value=f"Buyout price {auction_iter['buyout_price']} | Starting price {auction_iter['starting_price']} | Top bid {auction_iter['top_bid']}\nPolarity {self.convert_polarity(auction_iter['item']['polarity'])} | MR {auction_iter['item']['mastery_level']}\nRe-rolls {auction_iter['item']['re_rolls']} | Mod rank {auction_iter['item']['mod_rank']}\n[View Riven](https://warframe.market/auction/{auction_iter['id']})\n|| `/w {auction_iter['owner']['ingame_name']} Hi!` ||",
                         inline=False
                     )
                     for attribute in auction_iter['item']['attributes']:
@@ -217,7 +233,7 @@ class Trader(commands.Cog):
                             attributes += f"- {value} {attr}\n"
                         
                     attributes += '\n```'
-                    embed.add_field(name='Attribute', value=attributes, inline=False)
+                    embed.add_field(name='Attributes', value=attributes, inline=False)
                     attributes = '```diff\n'
                     if i == 5:
                         break
@@ -229,6 +245,8 @@ class Trader(commands.Cog):
             )
             embed.set_thumbnail(url='https://warframe.market/static/assets/frontend/logo_icon_only.png')
             await e_send(ctx, to_delete, embed=embed, delay=delay)
+        else:
+            return await e_send(ctx, to_delete, message="Invalid arguments, refer to the help command")
 
 def setup(bot):
     bot.add_cog(Trader(bot))

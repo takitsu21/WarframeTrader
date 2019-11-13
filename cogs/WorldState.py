@@ -73,7 +73,7 @@ class WorldState(commands.Cog):
             embed.add_field(
                 name=f'• __Part {i}__',
                 value=f'**{c["missionType"]}** mission on **{c["node"]}**'
-                      f'\n**{c["modifierDescription"]}**'
+                      f'\n**{c["modifierDescription"]}**', inline=False
                 )
         embed.set_footer(
                 text=self.footer_ws,
@@ -142,10 +142,10 @@ class WorldState(commands.Cog):
 
     @commands.command()
     @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
     async def news(self, ctx, platform: str = None):
         to_delete, delay = read_settings(ctx.guild.id)
         if platform is not None and platform.lower() in ['pc', 'ps4', 'xb1', 'swi']:
-            delay = 300
             desc = ''
             data = ws_data(platform, 'news')
             for c in reversed(data):
@@ -166,6 +166,37 @@ class WorldState(commands.Cog):
             await e_send(ctx, to_delete, message=f"{ctx.author.mention} Please provide a platform `<pc | ps4 | xb1 | swi>`", delay=delay)
         else:
             await e_send(ctx, to_delete, message=f"{ctx.author.mention} Platform invalid!\nRetry with `*news <pc | ps4 | xb1 | swi>`", delay=delay)
+
+
+    @commands.command()
+    @trigger_typing
+    @commands.bot_has_permissions(manage_messages=True)
+    async def earth(self, ctx):
+        to_delete, delay = read_settings(ctx.guild.id)
+        data = ws_data('pc', 'earthCycle')
+        timeLeft = data["timeLeft"]
+        if timeLeft.startswith('-'):
+            timeLeft = "0m"
+        if data["isDay"]:
+            state = " to night 🌙"
+            actual = "☀️"
+        else:
+            state = " to day ☀️"
+            actual = "🌙"
+        timeLeft += state
+        embed = discord.Embed(
+            colour = self.colour,
+            timestamp = datetime.datetime.utcfromtimestamp(time.time()),
+            description=timeLeft
+        )
+        embed.set_author(name="Earth Cycle", icon_url="https://vignette.wikia.nocookie.net/warframe/images/1/1e/Earth.png/revision/latest?cb=20161016212227")
+        embed.add_field(name="State", value=f"{data['state'].capitalize()} {actual}")
+        embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
+        embed.set_footer(
+                    text=self.footer_ws,
+                    icon_url=ctx.guild.me.avatar_url
+                )
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     # @commands.command(aliases=["a"])
     # async def alerts(self, ctx, platform: str=None):

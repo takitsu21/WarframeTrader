@@ -1,6 +1,10 @@
 # import sqlite3
 import pymysql
 from decouple import config
+import logging
+
+
+logger = logging.getLogger('warframe')
 
 def u_prefix(_id, prefix):
     with conn.cursor() as cur:
@@ -57,7 +61,7 @@ def d_guild(_id):
     with conn.cursor() as cur:
         sql = """DELETE FROM guild_settings WHERE id=%s"""
         cur.execute(sql, (_id,))
-        print(_id, 'removed')
+        logger.info(_id, 'removed')
         conn.commit()
 
 try:
@@ -68,8 +72,8 @@ try:
                     db=config('db')
                     )
 except pymysql.Error as error:
-    print("Error while connecting to sqlite", error)
+    logger.error(error, exc_info=True)
     conn.close()
-    print('Connection closed')
+    logger.info('Connection closed')
 except KeyboardInterrupt:
     conn.close()

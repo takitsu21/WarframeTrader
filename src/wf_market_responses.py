@@ -2,6 +2,7 @@
 # coding:utf-8
 import requests
 from src.exceptions import *
+from decouple import config
 
 class WfmApi:
     """
@@ -19,7 +20,7 @@ class WfmApi:
         Fetch data from warframe market
         """
         HEADERS = {
-            "Authorization": "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiI1MnpmU3daV1RBYTNsOUFkdWswU2RDSkI1UlRtWUpkdSIsImNzcmZfdG9rZW4iOiI3YzI2YzNkMjE0NGZmNGZlNjZhYTE3YzczMTUwODJkNjdmZGEzYjE5IiwiZXhwIjoxNTY1MzQ3MjEyLCJpYXQiOjE1NjAxNjMyMTIsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6ZmFsc2UsImp3dF9pZGVudGl0eSI6InBMc0RiQU9wS2hoMkMwRzNZeVlVcXZ1Q1FtQk5kMGVBIiwibG9naW5fdWEiOiJiJ01vemlsbGEvNS4wIChXaW5kb3dzIE5UIDEwLjA7IFdpbjY0OyB4NjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS83NC4wLjM3MjkuMTY5IFNhZmFyaS81MzcuMzYnIiwibG9naW5faXAiOiJiJzJhMDE6ZTM1OjJlYTg6YTJjMDpkZGQzOjFiMzQ6MTQ0MDo5Y2UnIn0.Lon4TLmsk5fx6MltPCMY11ONUZT3dKeyMVkfR81p8n4",
+            "Authorization": f"JWT {config('jwt')}",
             "Platform": self.platform,
             "Language": "en"
         }
@@ -28,10 +29,12 @@ class WfmApi:
             return r.json()
         raise StatusError(r.status_code)
 
-    def icon_endpoint(self, icon: bool = True) -> str:
+    def icon_endpoint(self, url_name) -> str:
         responses = self.data()
-        return self.icon_root + [x["icon"] for x in responses["payload"]["item"]["items_in_set"]][0] if icon else \
-               self.icon_root + [x["thumb"] for x in responses["payload"]["item"]["items_in_set"]][0]
+        for x in responses["payload"]["item"]["items_in_set"]:
+            if url_name == x["url_name"]:
+                return self.icon_root + x["sub_icon"]
+        return responses["payload"]["item"]["items_in_set"][0]["icon"]
 
 def check_status(status: str) -> int:
     return {"ingame": 3, "online": 2, "offline": 1}[status]

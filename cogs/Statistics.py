@@ -28,7 +28,7 @@ class Statistics(commands.Cog):
         msg = f"{ctx.author.mention}"
         if to_delete:
             if delay >= 60:
-                msg += f"\nThe graph of {fargs} will be deleted in {delay//60} mins"
+                msg += f"\nThe graph of {fargs} will be deleted in {round(delay/60, 2)} mins"
             else:
                 msg += f"\nThe graph of {fargs} will be deleted in {delay} seconds"
         else:
@@ -62,11 +62,11 @@ class Statistics(commands.Cog):
                     title='❌Error❌',
                     colour=0xFF0026,
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-                    description="You might have spelled a wrong item name`🤔`"
+                    description="You might have spelled a wrong item name 🤔"
                 )
-                embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+                embed.set_thumbnail(url='https://warframe.market/static/assets/frontend/logo_icon_only.png')
                 embed.set_footer(
-                    text="Made with ❤️ by Taki#0853 (WIP) | using api.warframe.market",
+                    text="Made with ❤️ by Taki#0853 (WIP) | api.warframe.market",
                     icon_url=ctx.guild.me.avatar_url
                 )
                 await e_send(ctx, to_delete, embed=embed, delay=delay)

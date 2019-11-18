@@ -23,22 +23,22 @@ class GraphProcess:
         for i, stats in enumerate(data["payload"]["statistics_closed"]["90days"]):
             if is_mod:
                 if i % 2 != 0:
-                    y.append(stats["wa_price"])
+                    y.append(stats["moving_avg"])
                     z.append(stats["avg_price"])
                     d.append(stats["volume"])
             else:
-                y.append(stats["wa_price"])
+                y.append(stats["moving_avg"])
                 z.append(stats["avg_price"])
                 d.append(stats["volume"])
 
-        x = np.arange(len(y))
+        x = np.arange(0, len(y))
         plt.figure(figsize=(8, 7))
         plt.subplot(2, 1, 1)
-        plt.plot(x, y, "-")
-        plt.plot(x, z, ":")
+        plt.plot(x, y, "b-.")
+        plt.plot(x, z, "r-")
 
         plt.title(self.title)
-        plt.legend(["Average selling price", "Moving average selling price"])
+        plt.legend(["Moving average price", "Average selling price"])
         plt.xlabel("Time(last 90 days)")
         plt.ylabel("Prices(platinum)")
 

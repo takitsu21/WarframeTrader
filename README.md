@@ -31,6 +31,8 @@ This bot has many features for warframe, he provide Worldstate data and use warf
 | **`*invite`** | View bot link invite |
 | **`*set_prefix [PREFIX]`** | Set new prefix |
 | **`*get_prefix`** | View actual guild prefix |
+| **`*settings [--delete] [n | no]`** | Change message settings (Only admin) |
+| **`*settings [--delay] [TIME_IN_SECOND]`** | Change message delay setting (Only admin) |
 | **`<*help / *h>`** | View bot commands |
 
 ## Few examples

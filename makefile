@@ -2,7 +2,7 @@ OSFLAG :=
 ifeq ($(OS), Windows_NT)
 	python = python
 else
-	python = python3
+	python = python3.7
 endif
 
 clean:

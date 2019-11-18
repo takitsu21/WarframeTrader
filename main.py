@@ -169,14 +169,14 @@ class WarframeTrader(commands.Bot):
             try:
                 await self.change_presence(
                     activity=discord.Activity(
-                        name="{0} | {1} | [*help]".format(cetus_string, vallis_string),
+                        name="{0} | {1} | [*help] & [@Mention help]".format(cetus_string, vallis_string),
                         type=3
                         )
                     )
             except:
                 await self.change_presence(
                     activity=discord.Activity(
-                        name="syncing... | [*help]",
+                        name="Synchronization... | [*help] & [@Mention help]",
                         type=3
                         )
                     )

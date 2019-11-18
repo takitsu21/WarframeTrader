@@ -18,6 +18,22 @@ class Help(commands.Cog):
         self.colour = 0x87DABC
         self._id = 162200556234866688
 
+    def embed_exceptions(self, ctx, command, description: list=[]):
+        prefix = read_prefix(ctx.guild.id)
+        command = f"{prefix}{command}"
+        embed = discord.Embed(
+            title=command,
+            color=self.colour,
+            description='\n'.join(list((f"`{command} {x}`") for x in description)),
+            timestamp=datetime.datetime.utcfromtimestamp(time.time())
+        )
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(
+            text="Made with ❤️ by Taki#0853 (WIP)",
+            icon_url=ctx.guild.me.avatar_url
+        )
+        return embed
+
     @commands.command()
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
@@ -86,6 +102,8 @@ class Help(commands.Cog):
         **`{prefix}invite`** - View bot link invite\n
         **`{prefix}set_prefix [PREFIX]`** - Set new prefix\n
         **`{prefix}get_prefix`** - View actual guild prefix\n
+        **`{prefix}settings [--delete] [n | no]`** - Change message settings (Only admin)\n
+        **`{prefix}settings [--delay] [TIME_IN_SECOND]`** - Change message delay setting (Only admin)\n
         **`<{prefix}help | {prefix}h>`** - View bot commands"""
 
         toReact = ['⏪', '<:wf_market:641718306260385792>', '<:ws:641721981292773376>',u"\u2699"]
@@ -152,7 +170,7 @@ class Help(commands.Cog):
     @commands.command(pass_context=True)
     @trigger_typing
     @commands.bot_has_permissions(manage_messages=True)
-    async def support(self,ctx):
+    async def support(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='Discord support',
                                description='[Click here](https://discordapp.com/invite/wTxbQYb)',
@@ -239,8 +257,10 @@ class Help(commands.Cog):
                 embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                         icon_url=ctx.guild.me.avatar_url)
                 return await e_send(ctx, 1, embed=embed, delay=delay)
-            except (TypeError, ValueError):
-                await ctx.send("Syntax error\nRetry with `*settings --delay [TIME_IN_SECOND]`")
+            except:
+                to_delete, delay = read_settings(ctx.guild.id)
+                embed = self.embed_exceptions(ctx, "settings", description=["[--delay] [TIME_IN_SECOND]"])
+                await e_send(ctx, to_delete, embed=embed, delay=delay)
         elif arg_l == 2 and args[0] == '--delete':
             try:
                 delete = convert_str(args[1])
@@ -258,22 +278,15 @@ class Help(commands.Cog):
                 embed.add_field(name="Delete messages", value=delete)
                 to_delete, delay = read_settings(ctx.guild.id)
                 return await e_send(ctx, to_delete, embed=embed, delay=delay)
-            except TypeError:
-                await ctx.send("Syntax error\nRetry with `*settings --delete [y | n]`")
+            except:
+                to_delete, delay = read_settings(ctx.guild.id)
+                embed = self.embed_exceptions(ctx, "settings", description=["[--delete] [y | n]"])
+                await e_send(ctx, to_delete, embed=embed, delay=delay)
         else:
             to_delete, delay = read_settings(ctx.guild.id)
-            prefix = read_prefix(ctx.guild.id)
-            embed = discord.Embed(
-                    title=f"{prefix}settings",
-                    description=f"`{prefix}settings [--delete] [y | n]`\n"
-                                f"`{prefix}settings [--delay] [TIME_IN_SECOND]`",
-                    timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-                    color=self.colour
-                )
-            embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
-                    icon_url=ctx.guild.me.avatar_url)
-            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
-            return await e_send(ctx, to_delete, embed=embed, delay=delay)
+            embed = self.embed_exceptions(ctx, "settings", description=["[--delete] [y | n]", "[--delay] [TIME_IN_SECOND]"])
+            await e_send(ctx, to_delete, embed=embed, delay=delay)
+
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
@@ -290,8 +303,8 @@ class Help(commands.Cog):
             except:
                 pass
 
-    @trigger_typing
     @commands.command()
+    @trigger_typing
     async def get_prefix(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(

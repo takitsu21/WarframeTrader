@@ -2,3 +2,4 @@ discord.py
 matplotlib
 requests
 numpy
+PyMysql

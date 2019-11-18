@@ -1,2 +1,2 @@
-#!/bin/bash
-sudo docker build -t wfbot . && sudo docker run wfbot./
+#!/usr/bin/bash
+sudo docker build -t wfbot . && sudo docker run wfbot ./

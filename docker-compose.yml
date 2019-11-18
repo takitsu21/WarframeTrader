@@ -1,6 +1,6 @@
 version: '2.1'
 
 services:
-  warframetrader:
-    image: wfbot
+  warframetrader-v0.0.2:
+    image: warframetrader-v0.0.2
     build: .

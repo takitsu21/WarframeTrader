@@ -170,7 +170,6 @@ class Trader(commands.Cog):
         ducats_data = ducats.data()
         items_data = items.data()
         embed = discord.Embed(
-            description="This is the top 12 worth it items to sell in ducats",
             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
             colour=self.colour
         )
@@ -187,7 +186,7 @@ class Trader(commands.Cog):
                         value=f'**{du["ducats_per_platinum_wa"]}** <:du:641336909989281842>/<:pl:632332600538824724>\n**{du["wa_price"]}** WA Price\n**{du["ducats"]}** <:du:641336909989281842>'
                     )
                     continue
-            if i == 12:
+            if i == 18:
                 break
         embed.set_footer(
             text="Made with ❤️ by Taki#0853 (WIP) | api.warframe.market",

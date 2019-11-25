@@ -6,7 +6,8 @@
 
 # WarframeTrader
 
-This bot has many features for warframe, he provide Worldstate data and use warframe.market API to trade using discord.
+This bot has many features for warframe, he provide Worldstate data and use warframe.market API to trade using discord. 
+More features are coming.
 
 ## Commands
 

@@ -31,10 +31,12 @@ class WfmApi:
 
     def icon_endpoint(self, url_name) -> str:
         responses = self.data()
-        for x in responses["payload"]["item"]["items_in_set"]:
-            if url_name == x["url_name"]:
-                return self.icon_root + x["sub_icon"]
-        return responses["payload"]["item"]["items_in_set"][0]["icon"]
+        try:
+            for x in responses["payload"]["item"]["items_in_set"]:
+                if url_name == x["url_name"]:
+                    return self.icon_root + x["sub_icon"]
+        except:
+            return self.icon_root + responses["payload"]["item"]["items_in_set"][0]["thumb"]
 
 def check_status(status: str) -> int:
     return {"ingame": 3, "online": 2, "offline": 1}[status]

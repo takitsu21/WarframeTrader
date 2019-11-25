@@ -76,42 +76,53 @@ class Help(commands.Cog):
     async def emojis(self, ctx):
         emojis = await ctx.guild.fetch_emojis()
         await ctx.send(emojis)
-        await ctx.send("<:_red_circle:643936812527779850>, <:_green_circle:643936852327530548>, <:_purple_circle:643936797222764554> ")
+
+    @staticmethod
+    def _add_field(embed: object, command: dict):
+        for k, v in command.items():
+            embed.add_field(name=k, value=v, inline=False)
 
     @commands.command(aliases=["h"])
     @commands.bot_has_permissions(manage_messages=True, add_reactions=True)
     @trigger_typing
     async def help(self, ctx):
         prefix = read_prefix(ctx.guild.id)
-        trade_command = f"""**`<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)\n
-        **`<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)\n
-        **`<{prefix}riven | {prefix}r> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Views 6 riven mod sorted by ascending prices and status (Online in game)\n
-        **`{prefix}ducats`** - View 12 worth it items to sell in ducats"""
-        ws_command = f"""**`<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>`** - View current fissures available\n
-        **`{prefix}sortie`** - View current sortie\n
-        **`{prefix}baro`** - View baro ki'teer inventory and dates\n
-        **`<{prefix}news <pc | xbox | ps4 | swi>`** - View news about Warframe\n
-        **`{prefix}earth`** - View earth cycle"""
-        other_commands = f"""**`{prefix}bug [MESSAGE]`** - Send me a bug report, this will helps to improve the bot\n
-        **`{prefix}suggestion [MESSAGE]`** - Suggestion to add for the bot, all suggestions are good don't hesitate\n
-        **`{prefix}ping`** - View bot latency\n
-        **`{prefix}about`** - Bot info\n
-        **`{prefix}donate`** - Link to support me\n
-        **`{prefix}vote`** - An other way to support me\n
-        **`{prefix}support`** - Discord support if you need help or want to discuss with me\n
-        **`{prefix}invite`** - View bot link invite\n
-        **`{prefix}set_prefix [PREFIX]`** - Set new prefix\n
-        **`{prefix}get_prefix`** - View actual guild prefix\n
-        **`{prefix}settings [--delete] [n | no]`** - Change message settings (Only admin)\n
-        **`{prefix}settings [--delay] [TIME_IN_SECOND]`** - Change message delay setting (Only admin)\n
-        **`<{prefix}help | {prefix}h>`** - View bot commands"""
+        trade_command = {
+            f"<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "View 7 sellers sort by prices and status (Online in game)",
+            f"<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "View 7 buyers sort by prices and status (Online in game)",
+            f"<{prefix}riven | {prefix}r> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "Views 6 riven mod sorted by ascending prices and status (Online in game)",
+            f"{prefix}ducats" : "View 12 worth it items to sell in ducats"
+        }
+        ws_command = {
+            f"<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>" : "View current fissures available",
+            f"{prefix}sortie" : "View current sortie",
+            f"{prefix}baro" : "View baro ki'teer inventory and dates",
+            f"{prefix}news <pc | xbox | ps4 | swi>" : "View news about Warframe",
+            f"{prefix}earth" : "View earth cycle"
+        }
+        other_commands = {
+            f"{prefix}bug [MESSAGE]" : "Send me a bug report, this will helps to improve the bot",
+            f"{prefix}suggestion [MESSAGE]" : "Suggestion to add for the bot, all suggestions are good don't hesitate",
+            f"{prefix}ping" : "View bot latency",
+            f"{prefix}about" : "Bot info",
+            f"{prefix}donate" : "Link to support me",
+            f"{prefix}vote" : "An other way to support me",
+            f"{prefix}support" : "Discord support if you need help or want to discuss with me",
+            f"{prefix}invite" : "View bot link invite",
+            f"{prefix}set_prefix [PREFIX]" : "Set new prefix",
+            f"{prefix}get_prefix" : "View actual guild prefix",
+            f"{prefix}settings [--delete] [n | no]" : "Change message settings, Only admins",
+            f"{prefix}settings [--delay] [TIME_IN_SECOND]" : "Change message delay setting, Only admins",
+            f"<{prefix}help | {prefix}h>" : "View bot commands"
+        }
 
         toReact = ['⏪', '<:wf_market:641718306260385792>', '<:ws:641721981292773376>',u"\u2699"]
         embed = self.embed_pagination(ctx)
         pagination = await ctx.send(embed=embed)
-        while True:
-            for reaction in toReact:
+        for reaction in toReact:
                 await pagination.add_reaction(reaction)
+        while True:
+            
             def check(reaction, user):
                 return user == ctx.message.author and str(reaction.emoji) in toReact
             try:
@@ -121,25 +132,77 @@ class Help(commands.Cog):
                 return await pagination.delete()
             if '⏪' in str(reaction.emoji):
                 embed = self.embed_pagination(ctx)
+                thumb = ctx.guild.me.avatar_url
             elif '<:wf_market:641718306260385792>' in str(reaction.emoji):
-                embed = discord.Embed(title="<:wf_market:641718306260385792> Market",
-                                    description=trade_command,
+                embed = discord.Embed(title="<:wf_market:641718306260385792> Warframe Market",
                                     color=self.colour)
+                self._add_field(embed, trade_command)
+                thumb = "https://warframe.market/static/assets/frontend/logo_icon_only.png"
+                
             elif '<:ws:641721981292773376>' in str(reaction.emoji):
                 embed = discord.Embed(title="<:ws:641721981292773376> Worldstate",
-                                    description=ws_command,
                                     color=self.colour)
-
-                
-                await pagination.edit(embed=embed)
+                self._add_field(embed, ws_command)
+                thumb = "https://avatars2.githubusercontent.com/u/24436369?s=280&v=4"
             elif u"\u2699" in str(reaction.emoji):
-                embed = discord.Embed(title=u"\u2699 Bot",
-                                    description=other_commands,
+                embed = discord.Embed(title=u"\u2699 Bot commands",
                                     color=self.colour)
-            embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+                self._add_field(embed, other_commands)
+                thumb = ctx.guild.me.avatar_url
+            embed.set_thumbnail(url=thumb)
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                             icon_url=ctx.guild.me.avatar_url)
+            await pagination.remove_reaction(reaction.emoji, user)
             await pagination.edit(embed=embed)
+
+
+    @help.error
+    async def help_error(self, ctx, error):
+        prefix = read_prefix(ctx.guild.id)
+        trade_command = f"""**`<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)
+        **`<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)
+        **`<{prefix}riven | {prefix}r> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Views 6 riven mod sorted by ascending prices and status (Online in game)
+        **`{prefix}ducats`** - View 12 worth it items to sell in ducats"""
+        ws_command = f"""**`<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>`** - View current fissures available
+        **`{prefix}sortie`** - View current sortie
+        **`{prefix}baro`** - View baro ki'teer inventory and dates
+        **`{prefix}news <pc | xbox | ps4 | swi>`** - View news about Warframe
+        **`{prefix}earth`** - View earth cycle"""
+        other_commands = f"""**`{prefix}bug [MESSAGE]`** - Send me a bug report, this will helps to improve the bot
+        **`{prefix}suggestion [MESSAGE]`** - Suggestion to add for the bot, all suggestions are good don't hesitate
+        **`{prefix}ping`** - View bot latency
+        **`{prefix}about`** - Bot info
+        **`{prefix}donate`** - Link to support me
+        **`{prefix}vote`** - An other way to support me
+        **`{prefix}support`** - Discord support if you need help or want to discuss with me
+        **`{prefix}invite`** - View bot link invite
+        **`{prefix}set_prefix [PREFIX]`** - Set new prefix
+        **`{prefix}get_prefix`** - View actual guild prefix
+        **`{prefix}settings [--delete] [n | no]`** - Change message settings (Only admin)
+        **`{prefix}settings [--delay] [TIME_IN_SECOND]`** - Change message delay setting (Only admin)
+        **`<{prefix}help | {prefix}h>`** - View bot commands"""
+        embed = discord.Embed(title='Available commands',
+                            colour=self.colour,
+                            description="`[RequiredArgument] <Parameter | To | Choose>`\n[Source code and commands](https://takitsu21.github.io/WarframeTrader/)")
+        embed.add_field(name="Warframe Market commands", value=trade_command, inline=False)
+        embed.add_field(name="Worldstate commands", value=ws_command, inline=False)
+        embed.add_field(name="Bot commands", value=other_commands, inline=False)
+        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+        embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+                        icon_url=ctx.guild.me.avatar_url)
+        await ctx.author.send(embed=embed)
+        # await ctx.owner.send("help command has been successfully sent (without the entire feature) because the" + error)
+        # await ctx.author.send(error)
+        # embed = discord.Embed(title="Permissions missing",
+        #                     description="Please could you provide the following permissions "
+        #                     "to Apex Stats to have access to all of the features\n-> Manage messages, Add reactions, Manage nicknames\nThank you!",
+        #                     colour=self.colour)
+
+        # embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
+        #                 icon_url=ctx.guild.me.avatar_url)
+        # embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+
+        # await ctx.guild.owner.send(embed=embed)
 
     @commands.command(pass_context=True)
     @trigger_typing

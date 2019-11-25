@@ -1,5 +1,3 @@
-
-
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U7U1RSV5) 
 
 [![PyPI pyversions](https://img.shields.io/badge/python-3.7-blue)](https://www.python.org/)  ![AppVeyor](https://img.shields.io/appveyor/ci/takitsu21/WarframeTrader) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1f714471f70140e3a551936af53e9ea9)](https://app.codacy.com/app/takitsu21/WarframeTrader?utm_source=github.com&utm_medium=referral&utm_content=takitsu21/WarframeTrader&utm_campaign=Badge_Grade_Dashboard) [![Discord](https://img.shields.io/discord/556268083681951759?color=blue&label=discord)](http://discord.gg/wTxbQYb) [![GitHub](https://img.shields.io/github/license/takitsu21/WarframeTrader)](LICENCE)
@@ -10,6 +8,8 @@ This bot has many features for warframe, he provide Worldstate data and use warf
 More features are coming.
 
 ## Commands
+
+Prefix : * or custom or @mention
 
 | Command | Description |
 | ------- | ----------- |
@@ -38,15 +38,16 @@ More features are coming.
 
 ## Few examples
 
-![Example WTB ](https://i.imgur.com/lxGf1yV.png)
+![Example WTB ](https://i.imgur.com/iwMiNwA.png)
 
-![Riven list](https://i.imgur.com/9snGQwF.png)
+![Graph stats](https://i.imgur.com/MsoIiRW.png)
 
-![Sortie](https://i.imgur.com/65B1kYU.png)
+![Riven list](https://i.imgur.com/rLhuSxk.png)
 
-![Arbitration](https://i.imgur.com/w7UUkbk.png)
+![Sortie](https://i.imgur.com/JxSJ9wh.png)
 
-![Graph stats](https://i.imgur.com/S0OMk4z.png)
+![Arbitration](https://i.imgur.com/mgaqfMh.png)
+
 
 ## Built With
 

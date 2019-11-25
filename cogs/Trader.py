@@ -82,7 +82,7 @@ class Trader(commands.Cog):
                 )
             else:
                 embed = self.embed_exceptions(ctx, "wtb", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
-                await e_send(ctx, to_delete, embed=embed, delay=delay)
+                return await e_send(ctx, to_delete, embed=embed, delay=delay)
         except StatusError as e:
             embed = discord.Embed(
                     title='❌Error❌',
@@ -145,7 +145,7 @@ class Trader(commands.Cog):
                 )
             else:
                 embed = self.embed_exceptions(ctx, "wts", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
-                await e_send(ctx, to_delete, embed=embed, delay=delay)
+                return await e_send(ctx, to_delete, embed=embed, delay=delay)
         except StatusError as e:
             embed = discord.Embed(
                     title='❌Error❌',

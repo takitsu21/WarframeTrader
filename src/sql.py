@@ -81,7 +81,4 @@ try:
                     )
 except pymysql.Error as error:
     logger.error(error, exc_info=True)
-    conn.close()
     logger.info('Connection closed')
-except KeyboardInterrupt:
-    conn.close()

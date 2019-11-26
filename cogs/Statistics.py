@@ -28,11 +28,11 @@ class Statistics(commands.Cog):
         msg = f"{ctx.author.mention}"
         if to_delete:
             if delay >= 60:
-                msg += f"\nThe graph of {fargs} will be deleted in {round(delay/60, 2)} mins"
+                msg += f"\n{fargs} will be deleted in {round(delay/60, 2)} mins"
             else:
-                msg += f"\nThe graph of {fargs} will be deleted in {delay} seconds"
+                msg += f"\n{fargs} will be deleted in {delay} seconds"
         else:
-            msg += f" You can see the graph of {fargs} below"
+            msg += f" Here is {fargs} graph below"
         return msg
 
     @commands.command(aliases=["st"])

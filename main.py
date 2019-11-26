@@ -47,7 +47,7 @@ def ttc_c(time, icon_type):
 def get_cetusCycle(data: dict) -> list:
     timeLeft = data["timeLeft"]
     if timeLeft.startswith('-'):
-        timeLeft = "0m"
+        timeLeft = "0m:"
     if data["isDay"]:
         icon = "🌙"
     else:
@@ -57,7 +57,7 @@ def get_cetusCycle(data: dict) -> list:
 def get_orbisCycle(data: dict) -> list:
     timeLeft = data["timeLeft"]
     if timeLeft.startswith('-'):
-        timeLeft = '0m'
+        timeLeft = '0m:'
     if data["isWarm"]:
         icon = "❄️"
     else:

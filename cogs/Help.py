@@ -378,8 +378,9 @@ class Help(commands.Cog):
         )
         await e_send(ctx, to_delete, embed=embed, delay=delay)
 
-    @trigger_typing
     @commands.command()
+    @trigger_typing
+
     async def suggestion(self, ctx, *message):
         to_delete, delay = read_settings(ctx.guild.id)
         await ctx.message.delete(delay=delay)
@@ -391,7 +392,7 @@ class Help(commands.Cog):
             embed.set_thumbnail(url=ctx.guild.me.avatar_url)
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                             icon_url=ctx.guild.me.avatar_url)
-            return await ctx.send(embed=embed, delete_after=delay)
+            return await e_send(ctx, to_delete, embed=embed, delay=delay)
         dm = self.bot.get_user(self._id)
         message = ' '.join(message)
         await dm.send(f"[{ctx.author} - SUGGEST] -> {message}")
@@ -402,10 +403,10 @@ class Help(commands.Cog):
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                         icon_url=ctx.guild.me.avatar_url)
-        return await ctx.send(embed=embed, delete_after=delay)
+        return await e_send(ctx, to_delete, embed=embed, delay=delay)
 
-    @trigger_typing
     @commands.command()
+    @trigger_typing
     async def bug(self, ctx, *message):
         to_delete, delay = read_settings(ctx.guild.id)
         await ctx.message.delete(delay=delay)
@@ -417,7 +418,7 @@ class Help(commands.Cog):
             embed.set_thumbnail(url=ctx.guild.me.avatar_url)
             embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                             icon_url=ctx.guild.me.avatar_url)
-            return await ctx.send(embed=embed, delete_after=delay)
+            return await e_send(ctx, to_delete, embed=embed, delay=delay)
         dm = self.bot.get_user(self._id)
         message = ' '.join(message)
         await dm.send(f"[{ctx.author} - BUG] -> {message}")
@@ -428,7 +429,7 @@ class Help(commands.Cog):
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                         icon_url=ctx.guild.me.avatar_url)
-        return await ctx.send(embed=embed, delete_after=delay)
+        return await e_send(ctx, to_delete, embed=embed, delay=delay)
 
 def setup(bot):
     bot.add_cog(Help(bot))

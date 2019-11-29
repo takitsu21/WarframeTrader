@@ -44,7 +44,7 @@ Prefix : * or custom or @mention
 
 ![Riven list](https://i.imgur.com/rLhuSxk.png)
 
-![Sortie](https://i.imgur.com/JxSJ9wh.png)
+![Sortie](https://i.imgur.com/nRcdDLQ.png)
 
 ![Arbitration](https://i.imgur.com/mgaqfMh.png)
 

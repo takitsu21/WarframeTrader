@@ -7,6 +7,7 @@ import logging
 logger = logging.getLogger('warframe')
 
 def u_prefix(_id, prefix):
+    conn.ping(reconnect=True)
     cur = conn.cursor()
     sql = """UPDATE guild_settings SET prefix=%s WHERE id=%s"""
     cur.execute(sql, (prefix, _id,))
@@ -14,6 +15,7 @@ def u_prefix(_id, prefix):
     cur.close()
     
 def i_prefix(values):
+    conn.ping(reconnect=True)
     cur = conn.cursor()
     sql = """INSERT INTO guild_settings(id, prefix) VALUES(%s, %s)"""
     cur.execute(sql, values)
@@ -21,6 +23,7 @@ def i_prefix(values):
     cur.close()
 
 def read_prefix(_id: int):
+    conn.ping(reconnect=True)
     cur = conn.cursor()
     sql = """SELECT prefix FROM guild_settings WHERE id=%s"""
     cur.execute(sql, (_id,))
@@ -29,6 +32,7 @@ def read_prefix(_id: int):
     return rows
 
 def read_settings(_id):
+    conn.ping(reconnect=True)
     sql = """SELECT to_delete, delay FROM guild_settings WHERE id=%s"""
     cur = conn.cursor()
     cur.execute(sql, (_id,))
@@ -37,6 +41,7 @@ def read_settings(_id):
     return rows[0], rows[1]
 
 def i_guild_settings(_id: int, prefix: str, to_delete: int, delay: int):
+    conn.ping(reconnect=True)
     cur = conn.cursor()
     sql = """INSERT INTO guild_settings(id, prefix, to_delete, delay)
     VALUES(%s, %s, %s, %s)"""
@@ -45,6 +50,7 @@ def i_guild_settings(_id: int, prefix: str, to_delete: int, delay: int):
     cur.close()
 
 def read_table(*selector):
+    conn.ping(reconnect=True)
     selector = ', '.join(selector)
     sql = """SELECT %s FROM `guild_settings`"""
     cur = conn.cursor()
@@ -55,6 +61,7 @@ def read_table(*selector):
     return rows
 
 def u_guild_settings(_id: int, to_delete: int, delay: int):
+    conn.ping(reconnect=True)
     cur = conn.cursor()
     sql = """UPDATE guild_settings SET 
             to_delete=%s,
@@ -65,6 +72,7 @@ def u_guild_settings(_id: int, to_delete: int, delay: int):
     cur.close()
 
 def d_guild(_id):
+    conn.ping(reconnect=True)
     cur = conn.cursor()
     sql = """DELETE FROM guild_settings WHERE id=%s"""
     cur.execute(sql, (_id,))

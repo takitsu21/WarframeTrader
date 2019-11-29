@@ -59,21 +59,19 @@ class WorldState(commands.Cog):
         to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'sortie')
         embed = discord.Embed(
-            title='Sortie',
             colour = self.colour,
             timestamp = datetime.datetime.utcfromtimestamp(time.time()),
-            description=f'Faction : **{data["faction"]}**\nTime left **{data["eta"]}**'
+            description=f'Faction : **{data["faction"]}**\nTime left **{data["eta"]}**\n In-progress : **{data["boss"]}**'
         )
         embed.set_author(
             name='Sortie',
             icon_url='https://vignette.wikia.nocookie.net/warframe/images/1/15/Sortie_b.png/revision/latest?cb=20151217134250'
             )
         embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
-        for i, c in enumerate(data["variants"], start=1):
+        for c in data["variants"]:
             embed.add_field(
-                name=f'• __Part {i}__',
-                value=f'**{c["missionType"]}** mission on **{c["node"]}**'
-                      f'\n**{c["modifierDescription"]}**', inline=False
+                name=f'• {c["missionType"]} - {c["node"]}',
+                value=f'{c["modifier"]}', inline=False
                 )
         embed.set_footer(
                 text=self.footer_ws,

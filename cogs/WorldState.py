@@ -19,7 +19,6 @@ class WorldState(commands.Cog):
 
     @commands.command(aliases=["f"])
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def fissures(self, ctx, platform: str=None):
         to_delete, delay = read_settings(ctx.guild.id)
         if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:
@@ -54,7 +53,6 @@ class WorldState(commands.Cog):
 
     @commands.command()
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def sortie(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'sortie')
@@ -81,7 +79,6 @@ class WorldState(commands.Cog):
 
     @commands.command()
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def arbitration(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'arbitration')
@@ -91,9 +88,7 @@ class WorldState(commands.Cog):
             timestamp = datetime.datetime.utcfromtimestamp(time.time()),
             description=arbitration_eta(data["expiry"])
         )
-        embed.add_field(name="Mission Type", value=f"{data['type']}")
-        embed.add_field(name='Node', value=f"{data['node']}")
-        embed.add_field(name='Faction', value=f'{data["enemy"]}')
+        embed.add_field(name=f"{data['type']} - {data['node']}", value=f"{data['enemy']}")
         embed.set_footer(
             text=self.footer_ws,
             icon_url=ctx.guild.me.avatar_url
@@ -103,7 +98,6 @@ class WorldState(commands.Cog):
     
     @commands.command()
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def baro(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'voidTrader')
@@ -140,7 +134,6 @@ class WorldState(commands.Cog):
 
     @commands.command()
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def news(self, ctx, platform: str = None):
         to_delete, delay = read_settings(ctx.guild.id)
         if platform is not None and platform.lower() in ['pc', 'ps4', 'xb1', 'swi']:
@@ -165,10 +158,8 @@ class WorldState(commands.Cog):
         else:
             await e_send(ctx, to_delete, message=f"{ctx.author.mention} Platform invalid!\nRetry with `*news <pc | ps4 | xb1 | swi>`", delay=delay)
 
-
     @commands.command()
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def earth(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'earthCycle')

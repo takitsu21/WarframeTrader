@@ -1,10 +1,19 @@
-# import sqlite3
 import pymysql
 from decouple import config
 import logging
-
+import uuid
+import datetime
+import time    
 
 logger = logging.getLogger('warframe')
+
+def create_lobby(_id, lobbyname, player1, tagplayer1, date, expiry):
+    conn.ping(reconnect=True)
+    cur = conn.cursor()
+    sql = """INSERT INTO lobby(id, lobbyname, lobbykey, player1, tagplayer1, date, expiry) VALUES(%s, %s, %s, %s, %s, %s, %s)"""
+    cur.execute(sql, (_id, lobbyname, str(uuid.uuid4()), player1, tagplayer1, date, expiry,))
+    conn.commit()
+    cur.close()
 
 def u_prefix(_id, prefix):
     conn.ping(reconnect=True)
@@ -87,6 +96,10 @@ try:
                     password=config('password'),
                     db=config('db')
                     )
+    # n = datetime.datetime.now()
+    # expiry = n + datetime.timedelta(hours=1)
+    # create_lobby(111119456, "test", "ash", "azeqs#3131", time.strftime('%Y-%m-%d %H:%M:%S'), expiry.strftime('%Y-%m-%d %H:%M:%S'))
 except pymysql.Error as error:
     logger.error(error, exc_info=True)
     logger.info('Connection closed')
+

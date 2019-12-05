@@ -36,7 +36,6 @@ class Help(commands.Cog):
 
     @commands.command()
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def ping(self, ctx):
         """Ping's Bot"""
         to_delete, delay = read_settings(ctx.guild.id)
@@ -206,7 +205,6 @@ class Help(commands.Cog):
 
     @commands.command(pass_context=True)
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def invite(self,ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(
@@ -220,7 +218,6 @@ class Help(commands.Cog):
 
     @commands.command(pass_context=True)
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def vote(self,ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='Vote for Warframe Trader',
@@ -232,7 +229,6 @@ class Help(commands.Cog):
 
     @commands.command(pass_context=True)
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def support(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='Discord support',
@@ -245,7 +241,6 @@ class Help(commands.Cog):
 
     @commands.command(pass_context=True)
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def donate(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='Donate',
@@ -258,7 +253,6 @@ class Help(commands.Cog):
 
     @commands.command(pass_context=True)
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def about(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         prefix = read_prefix(ctx.guild.id)
@@ -286,7 +280,6 @@ class Help(commands.Cog):
 
     @commands.command()
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(administrator=True)
     async def settings(self, ctx, *args):
         arg_l = len(args)
@@ -380,7 +373,6 @@ class Help(commands.Cog):
 
     @commands.command()
     @trigger_typing
-
     async def suggestion(self, ctx, *message):
         to_delete, delay = read_settings(ctx.guild.id)
         await ctx.message.delete(delay=delay)

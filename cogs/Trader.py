@@ -35,7 +35,6 @@ class Trader(commands.Cog):
 
     @commands.command(aliases=["b"])
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def wtb(self, ctx, platform: str=None, *args):
         to_delete, delay = read_settings(ctx.guild.id)
         if platform is None:
@@ -99,7 +98,6 @@ class Trader(commands.Cog):
 
     @commands.command(aliases=["s"])
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def wts(self, ctx, platform: str=None, *args):
         to_delete, delay = read_settings(ctx.guild.id)
         if platform is None:
@@ -162,7 +160,6 @@ class Trader(commands.Cog):
 
     @commands.command(aliases=["d"])
     @trigger_typing
-    @commands.bot_has_permissions(manage_messages=True)
     async def ducats(self, ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         ducats = WfmApi('pc', 'tools', 'ducats')
@@ -212,7 +209,6 @@ class Trader(commands.Cog):
         return d[0], d[1]
 
     @commands.command(aliases=["r"])
-    @commands.bot_has_permissions(manage_messages=True)
     async def riven(self, ctx, platform: str = None, *args):
         to_delete, delay = read_settings(ctx.guild.id)
         if platform is None:

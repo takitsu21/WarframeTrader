@@ -40,22 +40,23 @@ class Help(commands.Cog):
         """Ping's Bot"""
         to_delete, delay = read_settings(ctx.guild.id)
         before = time.monotonic()
-        message = await ctx.send("🏓Pong!", delete_after=delay)
+        message = await ctx.send("🏓Ping!", delete_after=delay)
         ping = (time.monotonic() - before) * 1000
         embed = discord.Embed(colour=0xff00,
                             title="Warframe Trader ping",
-                            description=f"🏓{int(ping)} ms")
-        embed.set_thumbnail(url=ctx.guild.me.avatar_url)
+                            description=f"🏓Pong!\n{int(ping)} ms")
         embed.set_footer(
             text="Made with ❤️ by Taki#0853 (WIP)",
             icon_url=ctx.guild.me.avatar_url
         )
-        await ctx.message.delete(delay=delay)
+        try:
+            await ctx.message.delete(delay=delay)
+        except: pass
         await message.edit(content="", embed=embed)
 
     def embed_pagination(self, ctx):
         embed = discord.Embed(title="Help hub",
-                            description="[Vote here](https://top.gg/bot/551446491886125059) to support me if you ❤️ the bot\n"
+                            description="[Vote here](https://top.gg/bot/593364281572196353) to support me if you ❤️ the bot\n"
                             "`[RequiredArgument] <Parameter | To | Choose>`",
                             color=self.colour)
         embed.add_field(name='<:wf_market:641718306260385792> Warframe Market', value="View commands about warframe.market(WTS, WTB, stats).")
@@ -221,7 +222,7 @@ class Help(commands.Cog):
     async def vote(self,ctx):
         to_delete, delay = read_settings(ctx.guild.id)
         embed = discord.Embed(title='Vote for Warframe Trader',
-                              description='[Click here](https://discordbots.org/bot/551446491886125059/vote)',
+                              description='[Click here](https://top.gg/bot/593364281572196353/vote)',
                               colour=self.colour)
         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)", icon_url=ctx.guild.me.avatar_url)
@@ -375,8 +376,7 @@ class Help(commands.Cog):
     @trigger_typing
     async def suggestion(self, ctx, *message):
         to_delete, delay = read_settings(ctx.guild.id)
-        await ctx.message.delete(delay=delay)
-        if not len(message) or len(message) < 3:
+        if len(message) < 3:
             embed = discord.Embed(title='**Suggestion**',
                                 colour=self.colour,
                                 description=f"{ctx.author.mention} Message too short!\nAt least 3 words required",
@@ -401,8 +401,7 @@ class Help(commands.Cog):
     @trigger_typing
     async def bug(self, ctx, *message):
         to_delete, delay = read_settings(ctx.guild.id)
-        await ctx.message.delete(delay=delay)
-        if not len(message) or len(message) < 3:
+        if len(message) < 3:
             embed = discord.Embed(title='**Bug Report**',
                     colour=self.colour,
                     description=f"{ctx.author.mention} Message too short!\nAt least 3 words required",

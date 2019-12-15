@@ -87,12 +87,12 @@ class WarframeTrader(commands.Bot):
                     logger.info(f"{file} loaded")
             except Exception:
                 logger.exception(f"Fail to load {file}")
-            
+
     def _unload_extensions(self):
         for file in os.listdir("cogs/"):
             try:
                 if file.endswith(".py"):
-                    self.load_extension(f'cogs.{file[:-3]}')
+                    self.unload_extension(f'cogs.{file[:-3]}')
                     logger.info(f"{file} loaded")
             except Exception:
                 logger.exception(f"Fail to load {file}")

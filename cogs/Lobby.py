@@ -5,7 +5,7 @@ from discord.ext import commands
 from src.worldstate import *
 from src._discord import *
 from src.decorators import trigger_typing
-from src.sql import *
+from src.sql import all_lobbys, insert_player_lobby, get_lobby, create_lobby
 
 
 WARFRAME_LIST = [
@@ -83,15 +83,38 @@ class Lobby(commands.Cog):
     """
     Lobby handler
     """
-    def __init__(self, bot):
-        self.bot = bot
-        self.colour = 0x87DABC
+    pass
+    # def __init__(self, bot):
+    #     self.bot = bot
+    #     self.colour = 0x87DABC
+
+    # def parse_lobby(args):
+    #     lobbuffer = []
+    #     data = {"lobbys":lobbuffer}
+    #     lobbys = all_lobbys()
+    #     l = ('id', 'lobbyname', 'lobbykey',
+    #          'mode', 'player1', 'player2',
+    #          'player3', 'player4', 'tagplayer1',
+    #          'tagplayer2', 'tagplayer3', 'tagplayer4',
+    #          'activation', 'expiry')
+    #     for lobby in lobbys:
+    #         zz = zip(lobby, l)
+    #         # print(list())
+    #         parser = {
+    #             "name": getattr(zz, 'lobbyname')
+    #         }
+    #         print(parser)
+
+
+    # def lobby_embed(self, ctx, lobby_data):
+    #     pass
 
     # @commands.command()
     # @trigger_typing
     # async def lobby(self, ctx, *, args):
     #     if not len(args):
     #         pass
+        
 
 def setup(bot):
     bot.add_cog(Lobby(bot))

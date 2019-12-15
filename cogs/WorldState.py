@@ -149,7 +149,7 @@ class WorldState(commands.Cog):
                 )
             embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
             embed.set_footer(
-                text=self.footer_ws,
+            text=self.footer_ws,
                 icon_url=ctx.guild.me.avatar_url
                 )
             await e_send(ctx, to_delete, embed=embed, delay=delay)
@@ -165,7 +165,7 @@ class WorldState(commands.Cog):
         data = ws_data('pc', 'earthCycle')
         timeLeft = data["timeLeft"]
         if timeLeft.startswith('-'):
-            timeLeft = "0m"
+            timeLeft = "0m:"
         if data["isDay"]:
             state = " to night 🌙"
             actual = "☀️"
@@ -181,6 +181,25 @@ class WorldState(commands.Cog):
         embed.set_author(name="Earth Cycle", icon_url="https://vignette.wikia.nocookie.net/warframe/images/1/1e/Earth.png/revision/latest?cb=20161016212227")
         embed.add_field(name="State", value=f"{data['state'].capitalize()} {actual}")
         embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
+        embed.set_footer(
+                    text=self.footer_ws,
+                    icon_url=ctx.guild.me.avatar_url
+                )
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
+
+    @commands.command()
+    @trigger_typing
+    async def wiki(self, ctx, *wiki_query):
+        to_delete, delay = read_settings(ctx.guild.id)
+        base_uri = "https://warframe.fandom.com/wiki/"
+        wiki_uri = '_'.join(x.capitalize() for x in wiki_query)
+        embed = discord.Embed(
+            title=f"{wiki_uri.replace('_', ' ')} Wiki",
+            description=f"{base_uri + wiki_uri}",
+            colour = self.colour,
+            timestamp = datetime.datetime.utcfromtimestamp(time.time())
+        )
+        embed.set_thumbnail(url="https://vignette.wikia.nocookie.net/central/images/8/8d/FANDOM_heart.png/revision/latest?cb=20171003155851""https://vignette.wikia.nocookie.net/central/images/8/8d/FANDOM_heart.png/revision/latest?cb=20171003155851")
         embed.set_footer(
                     text=self.footer_ws,
                     icon_url=ctx.guild.me.avatar_url

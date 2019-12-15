@@ -1,5 +1,7 @@
-https://github.com/Rapptz/discord.py
+aiohttp==3.5.0
+git+https://github.com/Rapptz/discord.py
 matplotlib
 requests
 numpy
 PyMysql
+dblpy

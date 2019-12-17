@@ -5,14 +5,13 @@ import asyncio
 import logging
 from decouple import config
 
-dbl_token = config('dbl_token')
 
 class DiscordBotsOrgAPI(commands.Cog):
     """Handles interactions with the discordbots.org API"""
 
     def __init__(self, bot):
         self.bot = bot
-        self.token = dbl_token # set this to your DBL token
+        self.token = config('dbl_token') # set this to your DBL token
         self.dblpy = dbl.Client(self.bot, self.token)
         self.updating = self.bot.loop.create_task(self.update_stats())
 

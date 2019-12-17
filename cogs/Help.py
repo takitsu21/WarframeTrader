@@ -56,12 +56,13 @@ class Help(commands.Cog):
 
     def embed_pagination(self, ctx):
         embed = discord.Embed(title="Help hub",
-                            description="[Vote here](https://top.gg/bot/593364281572196353) to support me if you ❤️ the bot\n"
-                            "`[RequiredArgument] <Parameter | To | Choose>`",
+                            description="[Vote here](https://top.gg/bot/593364281572196353) to support my work if you ❤️ the bot\n"
+                            "`[RequiredArgument] <Parameter | To | Choose>`\n"
+                            "[Source code and commands](https://takitsu21.github.io/WarframeTrader/)",
                             color=self.colour)
-        embed.add_field(name='<:wf_market:641718306260385792> Warframe Market', value="View commands about warframe.market(WTS, WTB, stats).")
-        embed.add_field(name='<:ws:641721981292773376> Worldstate', value="View commands about arbitration, sortie, baro etc...", inline=False)
-        embed.add_field(name=u"\u2699 Warframe Trader utility", value="View commands about the bot")
+        embed.add_field(name='<:wf_market:641718306260385792> Warframe Market', value="Views commands about warframe.market(WTS, WTB, stats).")
+        embed.add_field(name='<:ws:641721981292773376> Worldstate', value="Views commands about arbitration, sortie, baro etc...", inline=False)
+        embed.add_field(name=u"\u2699 Warframe Trader utility", value="Views commands about the bot")
         embed.add_field(
             name="If you want to support me",
             value="[Kofi](https://ko-fi.com/takitsu)"
@@ -88,32 +89,34 @@ class Help(commands.Cog):
     async def help(self, ctx):
         prefix = read_prefix(ctx.guild.id)
         trade_command = {
-            f"<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "View 7 sellers sort by prices and status (Online in game)",
-            f"<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "View 7 buyers sort by prices and status (Online in game)",
-            f"<{prefix}riven | {prefix}r> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "Views 6 riven mod sorted by ascending prices and status (Online in game)",
-            f"{prefix}ducats" : "View 12 worth it items to sell in ducats"
+            f"<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "Views 7 sellers sort by prices and status (Online in game)",
+            f"<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "Views 7 buyers sort by prices and status (Online in game)",
+            f"<{prefix}riven | {prefix}r> <pc | xbox | ps4 | swi> [ITEM_NAME]" : "Viewss 6 riven mod sorted by ascending prices and status (Online in game)",
+            f"{prefix}ducats" : "Views 18 worth it items to sell in ducats"
         }
         ws_command = {
-            f"<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>" : "View current fissures available",
-            f"{prefix}sortie" : "View current sortie",
-            f"{prefix}baro" : "View baro ki'teer inventory and dates",
-            f"{prefix}news <pc | xbox | ps4 | swi>" : "View news about Warframe",
-            f"{prefix}earth" : "View earth cycle"
+            f"<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>" : "Views current fissures available",
+            f"{prefix}sortie" : "Views current sortie",
+            f"{prefix}baro" : "Views baro ki'teer inventory and dates",
+            f"{prefix}news <pc | xbox | ps4 | swi>" : "Views news about Warframe",
+            f"{prefix}earth" : "Views earth cycle",
+            f"{prefix}wiki [QUERY]" : "Views wiki url according to the query",
+            f"{prefix}event <pc | xbox | ps4 | swi>" : "Views current events"
         }
         other_commands = {
             f"{prefix}bug [MESSAGE]" : "Send me a bug report, this will helps to improve the bot",
             f"{prefix}suggestion [MESSAGE]" : "Suggestion to add for the bot, all suggestions are good don't hesitate",
-            f"{prefix}ping" : "View bot latency",
+            f"{prefix}ping" : "Views bot latency",
             f"{prefix}about" : "Bot info",
             f"{prefix}donate" : "Link to support me",
             f"{prefix}vote" : "An other way to support me",
             f"{prefix}support" : "Discord support if you need help or want to discuss with me",
-            f"{prefix}invite" : "View bot link invite",
-            f"{prefix}set_prefix [PREFIX]" : "Set new prefix",
-            f"{prefix}get_prefix" : "View actual guild prefix",
+            f"{prefix}invite" : "Views bot link invite",
+            f"{prefix}set_prefix [PREFIX]" : "Set new prefix, Only admins",
+            f"{prefix}get_prefix" : "Views actual guild prefix",
             f"{prefix}settings [--delete] [n | no]" : "Change message settings, Only admins",
             f"{prefix}settings [--delay] [TIME_IN_SECOND]" : "Change message delay setting, Only admins",
-            f"<{prefix}help | {prefix}h>" : "View bot commands"
+            f"<{prefix}help | {prefix}h>" : "Views bot commands"
         }
 
         toReact = ['⏪', '<:wf_market:641718306260385792>', '<:ws:641721981292773376>',u"\u2699"]
@@ -127,24 +130,28 @@ class Help(commands.Cog):
                 return user == ctx.message.author and str(reaction.emoji) in toReact
             try:
                 reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=300.0)
+                emoji = str(reaction.emoji)
             except asyncio.TimeoutError:
-                await ctx.message.delete()
+                try:
+                    await ctx.message.delete()
+                except:
+                    pass
                 return await pagination.delete()
-            if '⏪' in str(reaction.emoji):
+            if '⏪' in emoji:
                 embed = self.embed_pagination(ctx)
                 thumb = ctx.guild.me.avatar_url
-            elif '<:wf_market:641718306260385792>' in str(reaction.emoji):
+            elif '<:wf_market:641718306260385792>' in emoji:
                 embed = discord.Embed(title="<:wf_market:641718306260385792> Warframe Market",
                                     color=self.colour)
                 self._add_field(embed, trade_command)
                 thumb = "https://warframe.market/static/assets/frontend/logo_icon_only.png"
                 
-            elif '<:ws:641721981292773376>' in str(reaction.emoji):
+            elif '<:ws:641721981292773376>' in emoji:
                 embed = discord.Embed(title="<:ws:641721981292773376> Worldstate",
                                     color=self.colour)
                 self._add_field(embed, ws_command)
                 thumb = "https://avatars2.githubusercontent.com/u/24436369?s=280&v=4"
-            elif u"\u2699" in str(reaction.emoji):
+            elif u"\u2699" in emoji:
                 embed = discord.Embed(title=u"\u2699 Bot commands",
                                     color=self.colour)
                 self._add_field(embed, other_commands)
@@ -155,32 +162,33 @@ class Help(commands.Cog):
             await pagination.remove_reaction(reaction.emoji, user)
             await pagination.edit(embed=embed)
 
-
     @help.error
     async def help_error(self, ctx, error):
         prefix = read_prefix(ctx.guild.id)
-        trade_command = f"""**`<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 sellers sort by prices and status (Online in game)
-        **`<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - View 7 buyers sort by prices and status (Online in game)
-        **`<{prefix}riven | {prefix}r> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Views 6 riven mod sorted by ascending prices and status (Online in game)
-        **`{prefix}ducats`** - View 12 worth it items to sell in ducats"""
-        ws_command = f"""**`<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>`** - View current fissures available
-        **`{prefix}sortie`** - View current sortie
-        **`{prefix}baro`** - View baro ki'teer inventory and dates
-        **`{prefix}news <pc | xbox | ps4 | swi>`** - View news about Warframe
-        **`{prefix}earth`** - View earth cycle"""
+        trade_command = f"""**`<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Views 7 sellers sort by prices and status (Online in game)
+        **`<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Views 7 buyers sort by prices and status (Online in game)
+        **`<{prefix}riven | {prefix}r> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - Viewss 6 riven mod sorted by ascending prices and status (Online in game)
+        **`{prefix}ducats`** - Views 12 worth it items to sell in ducats"""
+        ws_command = f"""**`<{prefix}fissures | {prefix}f> <pc | ps4 | xb1 | swi>`** - Views current fissures available
+        **`{prefix}sortie`** - Views current sortie
+        **`{prefix}baro`** - Views baro ki'teer inventory and dates
+        **`{prefix}news <pc | xbox | ps4 | swi>`** - Views news about Warframe
+        **`{prefix}earth`** - Views earth cycle
+        **`{prefix}wiki [QUERY]`** - Views wiki url according to the query
+        **`{prefix}event <pc | xbox | ps4 | swi>`** - Views current events"""
         other_commands = f"""**`{prefix}bug [MESSAGE]`** - Send me a bug report, this will helps to improve the bot
         **`{prefix}suggestion [MESSAGE]`** - Suggestion to add for the bot, all suggestions are good don't hesitate
-        **`{prefix}ping`** - View bot latency
+        **`{prefix}ping`** - Views bot latency
         **`{prefix}about`** - Bot info
         **`{prefix}donate`** - Link to support me
         **`{prefix}vote`** - An other way to support me
         **`{prefix}support`** - Discord support if you need help or want to discuss with me
-        **`{prefix}invite`** - View bot link invite
-        **`{prefix}set_prefix [PREFIX]`** - Set new prefix
-        **`{prefix}get_prefix`** - View actual guild prefix
+        **`{prefix}invite`** - Views bot link invite
+        **`{prefix}set_prefix [PREFIX]`** - Set new prefix, Only admins
+        **`{prefix}get_prefix`** - Views actual guild prefix
         **`{prefix}settings [--delete] [n | no]`** - Change message settings (Only admin)
         **`{prefix}settings [--delay] [TIME_IN_SECOND]`** - Change message delay setting (Only admin)
-        **`<{prefix}help | {prefix}h>`** - View bot commands"""
+        **`<{prefix}help | {prefix}h>`** - Views bot commands"""
         embed = discord.Embed(title='Available commands',
                             colour=self.colour,
                             description="`[RequiredArgument] <Parameter | To | Choose>`\n[Source code and commands](https://takitsu21.github.io/WarframeTrader/)")
@@ -191,18 +199,6 @@ class Help(commands.Cog):
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                         icon_url=ctx.guild.me.avatar_url)
         await ctx.author.send(embed=embed)
-        # await ctx.owner.send("help command has been successfully sent (without the entire feature) because the" + error)
-        # await ctx.author.send(error)
-        # embed = discord.Embed(title="Permissions missing",
-        #                     description="Please could you provide the following permissions "
-        #                     "to Apex Stats to have access to all of the features\n-> Manage messages, Add reactions, Manage nicknames\nThank you!",
-        #                     colour=self.colour)
-
-        # embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
-        #                 icon_url=ctx.guild.me.avatar_url)
-        # embed.set_thumbnail(url=ctx.guild.me.avatar_url)
-
-        # await ctx.guild.owner.send(embed=embed)
 
     @commands.command(pass_context=True)
     @trigger_typing
@@ -275,6 +271,7 @@ class Help(commands.Cog):
         embed.add_field(name="Servers", value=len(self.bot.guilds))
         embed.add_field(name="Members", value=nb_users)
         embed.add_field(name="**Creator**", value="Taki#0853")
+        embed.add_field(name="IGName", value="Takitsu21")
         embed.set_footer(text="Made with ❤️ by Taki#0853 (WIP)",
                         icon_url=ctx.guild.me.avatar_url)
         await e_send(ctx, to_delete, embed=embed, delay=delay)

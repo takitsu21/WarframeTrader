@@ -138,7 +138,7 @@ class WarframeTrader(commands.Bot):
             embed.add_field(name="Discord Support",
                             value="[Click here](https://discordapp.com/invite/wTxbQYb)")
             embed.add_field(name="Donate",value="[Patreon](https://www.patreon.com/takitsu)\n[Kofi](https://ko-fi.com/takitsu)")
-            # embed.add_field(name = "Source code and commands", value="[Click here](https://takitsu21.github.io/ApexStats/)")
+            embed.add_field(name = "Source code and commands", value="[Click here](https://takitsu21.github.io/WarframeTrader/)")
             embed.add_field(name="Help command",value="*help")
             embed.add_field(name="Default prefix",value="*")
             nb_users = 0
@@ -196,8 +196,11 @@ class WarframeTrader(commands.Bot):
             except asyncio.CancelledError:
                 logger.debug("Pending tasks has been cancelled.")
             finally:
-                conn.close()
-                logger.info("Connection closed")
+                try:
+                    conn.close()
+                    logger.info("Connection closed")
+                except Exception as e:
+                    logger.exception(e, exc_info=True)
                 logger.info("Shutting down")
 
 if __name__ == "__main__":

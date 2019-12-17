@@ -16,6 +16,7 @@ class WorldState(commands.Cog):
         self.bot = bot
         self.colour = 0x87DABC
         self.footer_ws = "Made with ❤️ by Taki#0853 (WIP) | using api.warframestat.us"
+        self.thumb_dev_comm = 'https://avatars2.githubusercontent.com/u/24436369?s=280&v=4'
 
     @commands.command(aliases=["f"])
     @trigger_typing
@@ -40,7 +41,7 @@ class WorldState(commands.Cog):
                             value=f" **{f['node']}** - {f['enemy']}",
                             inline=False
                         )
-            embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
+            embed.set_thumbnail(url=self.thumb_dev_comm)
             embed.set_footer(
                         text=self.footer_ws,
                         icon_url=ctx.guild.me.avatar_url
@@ -65,7 +66,7 @@ class WorldState(commands.Cog):
             name='Sortie',
             icon_url='https://vignette.wikia.nocookie.net/warframe/images/1/15/Sortie_b.png/revision/latest?cb=20151217134250'
             )
-        embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
+        embed.set_thumbnail(url=self.thumb_dev_comm)
         for c in data["variants"]:
             embed.add_field(
                 name=f'• {c["missionType"]} - {c["node"]}',
@@ -93,7 +94,7 @@ class WorldState(commands.Cog):
             text=self.footer_ws,
             icon_url=ctx.guild.me.avatar_url
             )
-        embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
+        embed.set_thumbnail(url=self.thumb_dev_comm)
         await e_send(ctx, to_delete, embed=embed, delay=delay)
     
     @commands.command()
@@ -125,7 +126,7 @@ class WorldState(commands.Cog):
             embed.add_field(name='Location', value=data['location'])
             for c in data['inventory']:
                 embed.add_field(name=c['item'], value=str(c['ducats']) + '<:du:641336909989281842> + ' + str(c['credits']) + ' credits')
-        embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
+        embed.set_thumbnail(url=self.thumb_dev_comm)
         embed.set_footer(
             text=self.footer_ws,
             icon_url=ctx.guild.me.avatar_url
@@ -147,7 +148,7 @@ class WorldState(commands.Cog):
                 timestamp = datetime.datetime.utcfromtimestamp(time.time()),
                 description=desc
                 )
-            embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
+            embed.set_thumbnail(url=self.thumb_dev_comm)
             embed.set_footer(
             text=self.footer_ws,
                 icon_url=ctx.guild.me.avatar_url
@@ -180,7 +181,7 @@ class WorldState(commands.Cog):
         )
         embed.set_author(name="Earth Cycle", icon_url="https://vignette.wikia.nocookie.net/warframe/images/1/1e/Earth.png/revision/latest?cb=20161016212227")
         embed.add_field(name="State", value=f"{data['state'].capitalize()} {actual}")
-        embed.set_thumbnail(url='https://avatars2.githubusercontent.com/u/24436369?s=280&v=4')
+        embed.set_thumbnail(url=self.thumb_dev_comm)
         embed.set_footer(
                     text=self.footer_ws,
                     icon_url=ctx.guild.me.avatar_url
@@ -206,37 +207,74 @@ class WorldState(commands.Cog):
                 )
         await e_send(ctx, to_delete, embed=embed, delay=delay)
 
-    # @commands.command(aliases=["a"])
-    # async def alerts(self, ctx, platform: str=None):
-    #     if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:
-    #         platform = platform.lower()
-    #         data = ws_data(platform, "alerts")
-    #         embed = discord.Embed(
-    #                         colour=self.colour,
-    #                         timestamp=datetime.datetime.utcfromtimestamp(time.time())
-    #                     )
-    #         embed.set_author(
-    #                     name=f"[{platform.upper()}] - Fissures",
-    #                     url="https://warframe.fandom.com/wiki/Void_Fissure",
-    #                     icon_url=ctx.guild.me.avatar_url
-    #                 )
-    #         for f in data:
-    #             if f["active"]:
-    #                 embed.add_field(
-    #                         name=f"• **{f['missionType']}** - **{f['tier']}** *{f['eta']}* remaining",
-    #                         value=f" **{f['node']}** - *{f['enemy']}*",
-    #                         inline=False
-    #                     )
-    #         embed.set_thumbnail(url=ctx.guild.me.avatar_url)
-    #         embed.set_footer(
-    #                     text=self.footer_ws,
-    #                     icon_url=ctx.guild.me.avatar_url
-    #                 )
-    #         await e_send(ctx, embed=embed, delay=10)
-    #     elif platform is None:
-    #         await ctx.send(f"{ctx.author.mention}Please provide a platform `<pc | ps4 | xb1 | swi>`")
-    #     else:
-    #         await ctx.send(f"{ctx.author.mention}Platform invalid!\nRetry with `*fissures <pc | ps4 | xb1 | swi>`")
+    @staticmethod
+    def _to_string_time(expiry) -> list:
+        f = "%Y-%m-%dT%H:%M:%S.%fZ"
+        de = datetime.datetime.strptime(expiry, f)
+        da = datetime.datetime.now()
+        delta = de - da
+        days, seconds = delta.days, delta.seconds
+        hours = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        seconds = seconds % 60
+        return days, hours, minutes, seconds
+
+    @commands.command(aliases=["events"])
+    @trigger_typing
+    async def event(self, ctx):
+        to_delete, delay = read_settings(ctx.guild.id)
+        data = ws_data('pc', 'events')
+        embed = discord.Embed(
+            title=f"Events [PC]",
+            colour = self.colour,
+            timestamp = datetime.datetime.utcfromtimestamp(time.time())
+        )
+        embed.set_thumbnail(url=self.thumb_dev_comm)
+        embed.set_footer(
+                text=self.footer_ws,
+                icon_url=ctx.guild.me.avatar_url
+            )
+        if len(data):
+            for x in data:
+                try:
+                    progression = round(x['currentScore'] / x['maximumScore'], 2) * 100
+                    days, hours, minutes, seconds = self._to_string_time(x['expiry'])
+                    expire_msg = f'Expire in {days}d {hours}h {minutes}mn {seconds}s'
+                    embed.add_field(name='• ' + x['node'], value=x['description'], inline=False)
+                    embed.add_field(name='Rewards', value='\n'.join([z['asString'] for z in x['rewards']]), inline=False)
+                    embed.add_field(name='Progression', value=f'{progression}%\n{expire_msg}', inline=False)
+                except:
+                    continue
+        else:
+            embed.description = 'There is no events for now\nCome back later tenno!'
+        return await e_send(ctx, to_delete, embed=embed, delay=delay)
+
+    @commands.command()
+    @trigger_typing
+    async def nightwave(self, ctx):
+        try:
+            to_delete, delay = read_settings(ctx.guild.id)
+            uri_emblem = "https://vignette.wikia.nocookie.net/warframe/images/e/e0/NightwaveSyndicate.png/revision/latest?cb=20190727121305"
+            data = ws_data('pc', 'nightwave')
+            days, hours, minutes, seconds = self._to_string_time(data['expiry'])
+            days_p, hours_p, minutes_p, seconds_p = self._to_string_time(data['activeChallenges'][0]['expiry'])
+            embed = discord.Embed(
+                description=f'This season expire in **{days}d {hours}h {minutes}mn {seconds}s**\n'
+                            f'Week challenges expire in **{days_p}d {hours_p}h {minutes_p}mn {seconds_p}s**'.replace('-', ''),
+                colour = self.colour,
+                timestamp = datetime.datetime.utcfromtimestamp(time.time())
+            )
+            embed.set_author(name=f"Nightwave season {data['season']}", icon_url=uri_emblem)
+            embed.set_thumbnail(url=self.thumb_dev_comm)
+            embed.set_footer(
+                    text=self.footer_ws,
+                    icon_url=ctx.guild.me.avatar_url
+                )
+            for x in reversed(data['activeChallenges']):
+                embed.add_field(name='• ' + x['title'], value=x['desc'] + f'\n**{x["reputation"]}** reputation', inline=False)
+        except:
+            return await e_send(ctx, to_delete, message=f"{ctx.author} There is no nightwave operation for now!", delay=delay)
+        return await e_send(ctx, to_delete, embed=embed, delay=delay)
 
 
 def setup(bot):

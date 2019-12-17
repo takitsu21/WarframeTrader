@@ -13,28 +13,30 @@ Prefix : * or custom or @mention
 
 | Command | Description |
 | ------- | ----------- |
-| **`<*wtb / *b> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | View 7 sellers sort by prices and status (Online in game) |
-| **`<*wts / *s> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | View 7 buyers sort by prices and status (Online in game) |
-| **`<*riven / *r> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | Views 6 riven mod sorted by ascending prices and status (Online in game) |
-| **`<*ducats / *d>`** | View 12 worth it items to sell in ducats |
-| **`<*fissures / *f> <pc / ps4 / xb1 / swi>`** | View current fissures available |
-| **`*sortie`** | View current sortie |
-| **`*baro`** | View baro ki'teer inventory and dates |
-| **`*news <pc / ps4 / xb1 / swi>`** | View news about Warframe |
-| **`*earth`** | View earth cycle |
+| **`<*wtb / *b> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | Views 7 sellers sort by prices and status (Online in game) |
+| **`<*wts / *s> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | Views 7 buyers sort by prices and status (Online in game) |
+| **`<*riven / *r> <pc / xbox / ps4 / swi> [ITEM_NAME]`** | Viewss 6 riven mod sorted by ascending prices and status (Online in game) |
+| **`<*ducats / *d>`** | Views 12 worth it items to sell in ducats |
+| **`<*fissures / *f> <pc / ps4 / xb1 / swi>`** | Views current fissures available |
+| **`*sortie`** | Views current sortie |
+| **`*baro`** | Views baro ki'teer inventory and dates |
+| **`*news <pc / ps4 / xb1 / swi>`** | Views news about Warframe |
+| **`*earth`** | Views earth cycle |
+| **`*wiki [QUERY]`** | Views wiki url according to the query |
+| **`*event`** | Views current running events |
 | **`*bug [MESSAGE]`** | Send me a bug report, this will helps to improve the bot |
 | **`*suggestion [MESSAGE]`** | Suggestion to add for the bot, all suggestions are good don't hesitate |
-| **`*ping`** | View bot latency |
+| **`*ping`** | Views bot latency |
 | **`*about`** | Bot info |
 | **`*donate`** | Link to support me |
 | **`*vote`** | An other way to support me |
 | **`*support`** | Discord support if you need help or want to discuss with me |
-| **`*invite`** | View bot link invite |
+| **`*invite`** | Views bot link invite |
 | **`*set_prefix [PREFIX]`** | Set new prefix |
-| **`*get_prefix`** | View actual guild prefix |
-| **`*settings [--delete] [n | no]`** | Change message settings (Only admin) |
+| **`*get_prefix`** | Views actual guild prefix |
+| **`*settings [--delete] [n / no]`** | Change message settings (Only admin) |
 | **`*settings [--delay] [TIME_IN_SECOND]`** | Change message delay setting (Only admin) |
-| **`<*help / *h>`** | View bot commands |
+| **`<*help / *h>`** | Views bot commands |
 
 ## Few examples
 

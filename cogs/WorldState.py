@@ -225,7 +225,7 @@ class WorldState(commands.Cog):
         to_delete, delay = read_settings(ctx.guild.id)
         data = ws_data('pc', 'events')
         embed = discord.Embed(
-            title=f"Events [PC]",
+            title=f"Current Events",
             colour = self.colour,
             timestamp = datetime.datetime.utcfromtimestamp(time.time())
         )
@@ -237,12 +237,7 @@ class WorldState(commands.Cog):
         if len(data):
             for x in data:
                 try:
-                    progression = round(x['currentScore'] / x['maximumScore'], 2) * 100
-                    days, hours, minutes, seconds = self._to_string_time(x['expiry'])
-                    expire_msg = f'Expire in {days}d {hours}h {minutes}mn {seconds}s'
-                    embed.add_field(name='• ' + x['node'], value=x['description'], inline=False)
-                    embed.add_field(name='Rewards', value='\n'.join([z['asString'] for z in x['rewards']]), inline=False)
-                    embed.add_field(name='Progression', value=f'{progression}%\n{expire_msg}', inline=False)
+                    embed.add_field(name='• ' + x['description'], value=x['asString'], inline=False)
                 except:
                     continue
         else:
@@ -276,6 +271,33 @@ class WorldState(commands.Cog):
             return await e_send(ctx, to_delete, message=f"{ctx.author} There is no nightwave operation for now!", delay=delay)
         return await e_send(ctx, to_delete, embed=embed, delay=delay)
 
+    @commands.command()
+    @trigger_typing
+    async def sentient(self, ctx):
+        to_delete, delay = read_settings(ctx.guild.id)
+        Tmp = ws_offi()['Tmp']
+        if Tmp != '[]':
+            embed = discord.Embed(
+                title="Sentient ship active",
+                description="Sentient ship on {}".format(sentient_node(Tmp)),
+                colour = self.colour,
+                timestamp = datetime.datetime.utcfromtimestamp(time.time())
+            )
+        else:
+            Tmp = Tmp.replace('[', '').replace(']', '').replace('\n', '')
+            d = datetime.datetime.now()
+            embed = discord.Embed(
+                title="Sentient ship inactive",
+                description="Last update {} GMT +0100 Central Europe".format(d.strftime("%Y-%m-%d %H:%M:%S")),
+                colour = self.colour,
+                timestamp = datetime.datetime.utcfromtimestamp(time.time())
+            )
+        embed.set_thumbnail(url=self.thumb_dev_comm)
+        embed.set_footer(
+                text=self.footer_ws,
+                icon_url=ctx.guild.me.avatar_url
+            )
+        return await e_send(ctx, to_delete, embed=embed, delay=delay)
 
 def setup(bot):
     bot.add_cog(WorldState(bot))

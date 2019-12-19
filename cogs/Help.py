@@ -101,7 +101,7 @@ class Help(commands.Cog):
             f"{prefix}news <pc | xbox | ps4 | swi>" : "Views news about Warframe",
             f"{prefix}earth" : "Views earth cycle",
             f"{prefix}wiki [QUERY]" : "Views wiki url according to the query",
-            f"{prefix}event <pc | xbox | ps4 | swi>" : "Views current events"
+            f"{prefix}event" : "Views current events"
         }
         other_commands = {
             f"{prefix}bug [MESSAGE]" : "Send me a bug report, this will helps to improve the bot",
@@ -175,7 +175,7 @@ class Help(commands.Cog):
         **`{prefix}news <pc | xbox | ps4 | swi>`** - Views news about Warframe
         **`{prefix}earth`** - Views earth cycle
         **`{prefix}wiki [QUERY]`** - Views wiki url according to the query
-        **`{prefix}event <pc | xbox | ps4 | swi>`** - Views current events"""
+        **`{prefix}event`** - Views current events"""
         other_commands = f"""**`{prefix}bug [MESSAGE]`** - Send me a bug report, this will helps to improve the bot
         **`{prefix}suggestion [MESSAGE]`** - Suggestion to add for the bot, all suggestions are good don't hesitate
         **`{prefix}ping`** - Views bot latency

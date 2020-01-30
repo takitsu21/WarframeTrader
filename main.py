@@ -5,7 +5,6 @@ import os
 import asyncio
 import logging
 from discord.ext import commands
-from cogs import *
 from src.worldstate import *
 import decouple
 from discord.ext.commands import when_mentioned_or
@@ -13,7 +12,9 @@ import datetime
 import time
 from discord.utils import find
 from src.sql import *
-
+from aiohttp import ClientSession
+import nest_asyncio
+nest_asyncio.apply()
 
 __version__ = "0.0.1"
 logger = logging.getLogger('warframe')
@@ -28,6 +29,8 @@ handler.setFormatter(logging.Formatter(
         )
     )
 logger.addHandler(handler)
+
+API_WARFRAME_STAT = "https://api.warframestat.us/"
 
 def ttc_c(time, icon_type):
     if time is None:
@@ -64,9 +67,28 @@ def get_orbisCycle(data: dict) -> list:
         icon = "🔥"
     return timeLeft, icon
 
+async def fetcher():
+    urls = [
+            API_WARFRAME_STAT + "pc/cetusCycle",
+            API_WARFRAME_STAT + "pc/vallisCycle",
+            "http://content.warframe.com/dynamic/worldState.php"
+            ]
+    tasks = []
+    async with ClientSession() as session:
+        for u in urls:
+            task = asyncio.ensure_future(fetch(session, u))
+            tasks.append(task)
+        responses = asyncio.gather(*tasks)
+        await responses
+    return responses
+
 def _get_prefix(bot, message):
-    prefix = read_prefix(message.guild.id)
-    return when_mentioned_or(prefix)(bot, message)
+    try:
+        prefix = read_prefix(message.guild.id)
+        return when_mentioned_or(prefix)(bot, message)
+    except Exception as e:
+        logger.exception(e, exc_info=True)
+        return when_mentioned_or('*')(bot, message)
 
 class WarframeTrader(commands.Bot):
     def __init__(self):
@@ -78,7 +100,7 @@ class WarframeTrader(commands.Bot):
         self.remove_command("help")
         self._load_extensions()
         self.colour = 0x87DAB
-        
+
     def _load_extensions(self):
         for file in os.listdir("cogs/"):
             try:
@@ -93,18 +115,13 @@ class WarframeTrader(commands.Bot):
             try:
                 if file.endswith(".py"):
                     self.unload_extension(f'cogs.{file[:-3]}')
-                    logger.info(f"{file} loaded")
+                    logger.info(f"{file} unloaded")
             except Exception:
-                logger.exception(f"Fail to load {file}")
+                logger.exception(f"Fail to unload {file}")
 
     async def on_guild_remove(self, guild: discord.Guild):
         d_guild(guild.id)
         logger.info(f"guild {guild.id} removed")
-
-    # @commands.is_owner()
-    # async def reload(self, ctx):
-    #     self._unload_extensions()
-    #     self._load_extensions()           
 
     async def on_guild_join(self, guild: discord.Guild):
         try:
@@ -126,7 +143,7 @@ class WarframeTrader(commands.Bot):
         if general and general.permissions_for(guild.me).send_messages:
             embed = discord.Embed(
                     title="Nice to meet you!",
-                    description="Below are the infos about Apex Stats",
+                    description="Below are the infos about Warframe Trader",
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                     color=self.colour
                 )
@@ -157,19 +174,24 @@ class WarframeTrader(commands.Bot):
         await self.wait_until_ready()
         while True:
             try:
-                cetus_time = get_cetusCycle(ws_data("pc", "cetusCycle"))                    
+                responses = asyncio.run(fetcher()).result()
+                c = responses.pop(0) # Cetus cycle
+                cetus_time = get_cetusCycle(c)
                 cetus_string = ttc_c(cetus_time[0], cetus_time[1])
-            except Exception as e:
-                logger.exception(e, exc_info=True)
-            try:
-                vallis_time = get_orbisCycle(ws_data("pc", "vallisCycle"))
+                c = responses.pop(0) # Fortuna cycle
+                vallis_time = get_orbisCycle(c)
                 vallis_string = ttc_c(vallis_time[0], vallis_time[1])
+                c = responses.pop(0)['Tmp'] # Sentient ship
+                node = ""
+                if c != '[]':
+                    code = int(Tmp[7:10])
+                    node = sentient_node(code) + " | "
             except Exception as e:
                 logger.exception(e, exc_info=True)
             try:
                 await self.change_presence(
                     activity=discord.Activity(
-                        name="{0} | {1} | [*help] & [@Mention help]".format(cetus_string, vallis_string),
+                        name="{0}{1} | {2} | [*help] & [@Mention help]".format(node, cetus_string, vallis_string),
                         type=3
                         )
                     )
@@ -184,7 +206,7 @@ class WarframeTrader(commands.Bot):
 
     def run(self, *args, **kwargs):
         try:
-            self.loop.run_until_complete(self.start(decouple.config("token")))
+            self.loop.run_until_complete(self.start(decouple.config("debug_token")))
         except KeyboardInterrupt:
             self.loop.run_until_complete(self.logout())
             for task in asyncio.all_tasks(self.loop):

@@ -3,8 +3,11 @@
 import requests
 from src.exceptions import *
 from decouple import config
+from discord.ext import commands
+import os
 
-class WfmApi:
+
+class WfmApi(commands.Cog):
     """
     Returns warframe.market data
     """

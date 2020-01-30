@@ -3,7 +3,7 @@
 import discord
 import datetime
 import time
-import os
+import os, sys
 from discord.ext import commands
 from src.graphical_rendering import *
 from src.wf_market_responses import *
@@ -46,7 +46,7 @@ class Statistics(commands.Cog):
                 fargs = ' '.join(capitalize_args)
                 graphs_path = f"./graphs/{args_endpoint}.png"
                 self.make_graph(args_endpoint, fargs)
-                msg = self.generate_msg(ctx, to_delete, delay, fargs)           
+                msg = self.generate_msg(ctx, to_delete, delay, fargs)
                 with open(graphs_path, 'rb') as p:
                     if delay:
                         await ctx.message.delete(delay=delay)

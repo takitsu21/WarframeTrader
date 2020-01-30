@@ -8,6 +8,9 @@ from src.worldstate import *
 from src._discord import *
 from src.decorators import trigger_typing
 from src.sql import *
+import logging
+
+logger = logging.getLogger('warframe')
 
 
 class WorldState(commands.Cog):
@@ -96,7 +99,7 @@ class WorldState(commands.Cog):
             )
         embed.set_thumbnail(url=self.thumb_dev_comm)
         await e_send(ctx, to_delete, embed=embed, delay=delay)
-    
+
     @commands.command()
     @trigger_typing
     async def baro(self, ctx):
@@ -277,27 +280,81 @@ class WorldState(commands.Cog):
         to_delete, delay = read_settings(ctx.guild.id)
         Tmp = ws_offi()['Tmp']
         if Tmp != '[]':
+            Tmp = int(Tmp[7:10])
             embed = discord.Embed(
                 title="Sentient ship active",
                 description="Sentient ship on {}".format(sentient_node(Tmp)),
                 colour = self.colour,
                 timestamp = datetime.datetime.utcfromtimestamp(time.time())
             )
+            embed.add_field(
+                name="NOTE",
+                value="When the sentient ship appear you will see" \
+                      " the planet concerned on the bot activity"\
+                      " beside cetus and fortuna cycle's datas"
+                )
         else:
-            Tmp = Tmp.replace('[', '').replace(']', '').replace('\n', '')
             d = datetime.datetime.now()
             embed = discord.Embed(
                 title="Sentient ship inactive",
-                description="Last update {} GMT +0100 Central Europe".format(d.strftime("%Y-%m-%d %H:%M:%S")),
+                description="Last update {} GMT +0000".format(d.strftime("%Y-%m-%d %H:%M:%S")),
                 colour = self.colour,
                 timestamp = datetime.datetime.utcfromtimestamp(time.time())
             )
+            embed.add_field(
+                name="NOTE",
+                value="If sentient ship appear you will see" \
+                      " the planet concerned on the bot activity"\
+                      " beside cetus and fortuna cycle's datas"
+                )
         embed.set_thumbnail(url=self.thumb_dev_comm)
         embed.set_footer(
                 text=self.footer_ws,
                 icon_url=ctx.guild.me.avatar_url
             )
         return await e_send(ctx, to_delete, embed=embed, delay=delay)
+
+    @commands.command()
+    @trigger_typing
+    async def fish(self, ctx, location):
+        to_delete, delay = read_settings(ctx.guild.id)
+        if location.lower() == "fortuna":
+            embed = discord.Embed(
+                title="Fortuna fishing map",
+                colour=self.colour,
+            )
+            embed.set_image(url="https://semlar.com/fishing_map8.jpg")
+            embed.set_footer(
+                    text="Made with ❤️ by Taki#0853 (WIP) | from semlar.com",
+                    icon_url=ctx.guild.me.avatar_url
+                )
+            return await e_send(ctx, to_delete, embed=embed, delay=delay)
+        if location.lower() == "cetus":
+            to_delete, delay = read_settings(ctx.guild.id)
+            embed = discord.Embed(
+                title="Cetus fishing map",
+                colour=self.colour,
+            )
+            embed.set_image(url="https://semlar.com/fishing_map.jpg")
+            embed.set_footer(
+                    text="Made with ❤️ by Taki#0853 (WIP) | from semlar.com",
+                    icon_url=ctx.guild.me.avatar_url
+                )
+            return await e_send(ctx, to_delete, embed=embed, delay=delay)
+        else:
+            msg = f"{ctx.author.mention} Please provide a valid map location like `fortuna` or `cetus`"
+            return await e_send(ctx, to_delete, message=msg, delay=delay)
+
+    # @commands.command()
+    # @trigger_typing
+    # @commands.has_permissions(administrator=True)
+    # async def track(self, ctx, track_command):
+    #     VALID_TRACKER = ['sortie', 'baro', 'sentient']
+    #     # to_delete, delay = read_settings(ctx.guild.id)
+    #     if track_command in VALID_TRACKER:
+    #         channel = self.bot.get_channel(ctx.message.channel.id)
+    #         await ctx.send(content=f"{ctx.message.channel.id} {channel}")
+    #         await channel.send(content="yay")
 
 def setup(bot):
     bot.add_cog(WorldState(bot))

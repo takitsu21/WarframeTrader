@@ -188,7 +188,7 @@ class Trader(commands.Cog):
         embed.set_footer(
             text="Made with ❤️ by Taki#0853 (WIP) | api.warframe.market",
             icon_url=ctx.guild.me.avatar_url
-        )         
+        )
         await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @staticmethod
@@ -227,7 +227,11 @@ class Trader(commands.Cog):
                         colour=self.colour
                     )
                     item_c = ' '.join(args).capitalize()
-                    embed.set_author(name=f"Riven auctions for {item_c}", url='https://warframe.fandom.com/wiki/Riven_Mods', icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
+                    embed.set_author(
+                        name=f"Riven auctions for {item_c}",
+                        url='https://warframe.fandom.com/wiki/Riven_Mods',
+                        icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png'
+                        )
                     attributes = '```diff\n'
                     i = 0
                     for auction_iter in data['payload']['auctions']:
@@ -245,7 +249,7 @@ class Trader(commands.Cog):
                                 else:
                                     value = abs(attribute['value'])
                                     attributes += f"- {value} {attr}\n"
-                                
+
                             attributes += '\n```'
                             embed.add_field(name='Attributes', value=attributes, inline=False)
                             attributes = '```diff\n'

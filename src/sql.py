@@ -123,6 +123,26 @@ def d_guild(_id):
     conn.commit()
     cur.close()
 
+def update_tracker(_id, channel_id, tracker, response_text):
+    conn.ping(reconnect=True)
+    cur = conn.cursor()
+    sql = """UPDATE tracker SET 
+            id=%s,
+            channel=%s
+            %s=%s"""
+    cur.execute(sql, (_id, channel_id, tracker, response_text, ))
+    conn.commit()
+    cur.close()
+
+def insert_tracker(_id, channel_id, tracker, response_text):
+    conn.ping(reconnect=True)
+    cur = conn.cursor()
+    sql = """INSERT INTO tracker(id, channel, %s)
+    VALUES(%s, %s, %s)"""
+    cur.execute(sql, (tracker, _id, channel_id, response_text, ))
+    conn.commit()
+    cur.close()
+
 try:
     conn = pymysql.connect(
                     host=config('db_host'),

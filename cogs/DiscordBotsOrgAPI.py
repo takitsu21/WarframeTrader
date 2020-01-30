@@ -1,6 +1,5 @@
 import dbl
 from discord.ext import commands
-
 import asyncio
 import logging
 from decouple import config
@@ -28,5 +27,5 @@ class DiscordBotsOrgAPI(commands.Cog):
 
 def setup(bot):
     global logger
-    logger = logging.getLogger('apex-stats')
+    logger = logging.getLogger('warframe')
     bot.add_cog(DiscordBotsOrgAPI(bot))

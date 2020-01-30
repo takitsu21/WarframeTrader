@@ -5,3 +5,5 @@ requests
 numpy
 PyMysql
 dblpy
+nest_asyncio
+python-decouple

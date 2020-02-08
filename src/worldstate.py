@@ -2,18 +2,17 @@ import requests
 from src.exceptions import *
 import datetime
 import os
-import aiohttp
 import json
 
 
 ROOT = "https://api.warframestat.us/"
 FORMAT_DATE = "%Y-%m-%dT%H:%M:%S.%fZ"
 
-async def fetch(session, url):
-    async with session.get(url) as r:
-        txt = await r.text()
-        loaded = json.loads(txt)
-        return loaded
+# async def fetch(session, url):
+#     async with session.get(url) as r:
+#         txt = await r.text()
+#         loaded = json.loads(txt)
+#         return loaded
 
 def ws_data(platform: str="pc", *endpoints: list) -> dict:
     endpoint = platform + "/" + '/'.join(endpoints)

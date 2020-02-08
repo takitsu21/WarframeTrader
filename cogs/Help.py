@@ -30,7 +30,7 @@ class Help(commands.Cog):
         embed.set_thumbnail(url=ctx.author.avatar_url)
         embed.set_footer(
             text="Made with ❤️ by Taki#0853 (WIP)",
-            icon_url=ctx.guild.me.avatar_url
+            icon_url=ctx.guild.me.avatar_url<
         )
         return embed
 
@@ -187,6 +187,7 @@ class Help(commands.Cog):
             await ctx.send(message=msg)
 
     @commands.command()
+    @commands.is_owner()
     async def reload(self, ctx):
         self.bot._unload_extensions()
         self.bot._load_extensions()

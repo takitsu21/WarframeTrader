@@ -23,9 +23,11 @@ class WorldState(commands.Cog):
 
     @commands.command(aliases=["f"])
     @trigger_typing
-    async def fissures(self, ctx, platform: str=None):
+    async def fissures(self, ctx, platform: str=None, *highlight):
         to_delete, delay = read_settings(ctx.guild.id)
         if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:
+            if len(highlight):
+                highlight = [x.lower() for x in highlight]
             platform = platform.lower()
             data = ws_data(platform, "fissures")
             embed = discord.Embed(
@@ -39,11 +41,24 @@ class WorldState(commands.Cog):
                     )
             for f in data:
                 if f["active"]:
-                    embed.add_field(
-                            name=f"• **{f['missionType']}** - **{f['tier']}** {f['eta']} remaining",
-                            value=f" **{f['node']}** - {f['enemy']}",
-                            inline=False
-                        )
+                    mission_type = f['missionType']
+                    tier = f['tier']
+                    faction = f['enemy']
+                    if not len(highlight):
+                        embed.add_field(
+                                name=f"• **{mission_type}** - **{tier}** {f['eta']} left",
+                                value=f" **{f['node']}** - {faction}",
+                                inline=False
+                            )
+                    else:
+                        for h in highlight:
+                            if h in mission_type.lower() or h in tier.lower() or \
+                                h in faction.lower():
+                                embed.add_field(
+                                    name=f"• **{mission_type}** - **{tier}** {f['eta']} left",
+                                    value=f" **{f['node']}** - {faction}",
+                                    inline=False
+                                )
             embed.set_thumbnail(url=self.thumb_dev_comm)
             embed.set_footer(
                         text=self.footer_ws,
@@ -256,9 +271,11 @@ class WorldState(commands.Cog):
             data = ws_data('pc', 'nightwave')
             days, hours, minutes, seconds = self._to_string_time(data['expiry'])
             days_p, hours_p, minutes_p, seconds_p = self._to_string_time(data['activeChallenges'][0]['expiry'])
+            season_deadline = f"**{days}d {hours}h {minutes}mn {seconds}s**"
+            challenges_deadline = f"**{days_p}d {hours_p}h {minutes_p}mn {seconds_p}s**"
             embed = discord.Embed(
-                description=f'This season expire in **{days}d {hours}h {minutes}mn {seconds}s**\n'
-                            f'Week challenges expire in **{days_p}d {hours_p}h {minutes_p}mn {seconds_p}s**'.replace('-', ''),
+                description=f'This season expire in {season_deadline}\n'
+                            f'Week challenges expire in {challenges_deadline}'.replace('-', ''),
                 colour = self.colour,
                 timestamp = datetime.datetime.utcfromtimestamp(time.time())
             )
@@ -271,7 +288,7 @@ class WorldState(commands.Cog):
             for x in reversed(data['activeChallenges']):
                 embed.add_field(name='• ' + x['title'], value=x['desc'] + f'\n**{x["reputation"]}** reputation', inline=False)
         except:
-            return await e_send(ctx, to_delete, message=f"{ctx.author} There is no nightwave operation for now!", delay=delay)
+            return await e_send(ctx, to_delete, message=f"{ctx.author.mention} There is no nightwave operation for now!", delay=delay)
         return await e_send(ctx, to_delete, embed=embed, delay=delay)
 
     @commands.command()

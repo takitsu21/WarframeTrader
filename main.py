@@ -12,9 +12,7 @@ import datetime
 import time
 from discord.utils import find
 from src.sql import *
-from aiohttp import ClientSession
-import nest_asyncio
-nest_asyncio.apply()
+
 
 __version__ = "0.0.1"
 logger = logging.getLogger('warframe')
@@ -66,21 +64,6 @@ def get_orbisCycle(data: dict) -> list:
     else:
         icon = "🔥"
     return timeLeft, icon
-
-async def fetcher():
-    urls = [
-            API_WARFRAME_STAT + "pc/cetusCycle",
-            API_WARFRAME_STAT + "pc/vallisCycle",
-            "http://content.warframe.com/dynamic/worldState.php"
-            ]
-    tasks = []
-    async with ClientSession() as session:
-        for u in urls:
-            task = asyncio.ensure_future(fetch(session, u))
-            tasks.append(task)
-        responses = asyncio.gather(*tasks)
-        await responses
-    return responses
 
 def _get_prefix(bot, message):
     try:
@@ -148,14 +131,14 @@ class WarframeTrader(commands.Bot):
                     color=self.colour
                 )
             embed.set_thumbnail(url=guild.me.avatar_url)
-            # embed.add_field(name="Vote",
-            #                 value="[Click here](https://discordbots.org/bot/551446491886125059/vote)")
+            embed.add_field(name="Vote",
+                            value="[Click here](https://top.gg/bot/593364281572196353/vote)")
             embed.add_field(name="Invite Warframe Trader",
                             value="[Click here](https://discordapp.com/oauth2/authorize?client_id=593364281572196353&scope=bot&permissions=470083648)")
             embed.add_field(name="Discord Support",
                             value="[Click here](https://discordapp.com/invite/wTxbQYb)")
             embed.add_field(name="Donate",value="[Patreon](https://www.patreon.com/takitsu)\n[Kofi](https://ko-fi.com/takitsu)")
-            embed.add_field(name = "Source code and commands", value="[Click here](https://takitsu21.github.io/WarframeTrader/)")
+            embed.add_field(name = "Source code and commands", value="[Click here](https://github.com/takitsu21/WarframeTrader)")
             embed.add_field(name="Help command",value="*help")
             embed.add_field(name="Default prefix",value="*")
             nb_users = 0
@@ -174,17 +157,20 @@ class WarframeTrader(commands.Bot):
         await self.wait_until_ready()
         while True:
             try:
-                responses = asyncio.run(fetcher()).result()
-                c = responses.pop(0) # Cetus cycle
-                cetus_time = get_cetusCycle(c)
+                cetus_time = get_cetusCycle(ws_data("pc", "cetusCycle"))
                 cetus_string = ttc_c(cetus_time[0], cetus_time[1])
-                c = responses.pop(0) # Fortuna cycle
-                vallis_time = get_orbisCycle(c)
+            except Exception as e:
+                logger.exception(e, exc_info=True)
+            try:
+                vallis_time = get_orbisCycle(ws_data("pc", "vallisCycle"))
                 vallis_string = ttc_c(vallis_time[0], vallis_time[1])
-                c = responses.pop(0)['Tmp'] # Sentient ship
+            except Exception as e:
+                logger.exception(e, exc_info=True)
+            try:
+                sentient_code = ws_offi()['Tmp']
                 node = ""
-                if c != '[]':
-                    code = int(Tmp[7:10])
+                if sentient_code != '[]':
+                    code = int(sentient_code[7:10])
                     node = sentient_node(code) + " | "
             except Exception as e:
                 logger.exception(e, exc_info=True)

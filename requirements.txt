@@ -1,4 +1,4 @@
-aiohttp==3.5.0
+aiohttp
 git+https://github.com/Rapptz/discord.py
 matplotlib
 requests

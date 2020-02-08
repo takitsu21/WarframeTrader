@@ -29,7 +29,7 @@
     "help_settings_delete": "Change message settings, Only admins",
     "help_settings_delay": "Change message delay setting, Only admins",
     "help_help": "Views bot commands, you can provide argument `all` if you want all the commands in one",
-    // HELP COG
+
     "command_vote_title": "Vote for Warframe Trader",
     "command_about_title": "Help command",
     "command_settings_delete_title": "Delete messages",
@@ -43,9 +43,9 @@
     "command_suggestion_sent": "{0} Your suggestion has been sent @Taki#0853\nThanks for the feedback!",
     "command_bug_title": "Bug report",
     "command_bug_sent": "{0} Your bug report has been sent @Taki#0853\nThanks for the feedback!",
-    // STATISTICS COG
+
     "command_stat_msg_title": " Here is {0} graph below",
-    // TRADER COG
+
     "command_wtb_title": "💰WTB {0}💰\n<:_purple_circle:643936797222764554> Online in game - Sort by prices",
     "command_wtb_description": "View grapghical stats",
     "command_wtb_field_name_offer": "{0}. **{1}** | +**{2}**🙂 for **{3}** <:pl:632332600538824724> x **{4}** pieces",
@@ -61,7 +61,7 @@
     "command_riven_field_value_item_description": "Buyout price {0} | Starting price {1} | Top bid {2}\nPolarity {3} | MR {4}\nRe-rolls {5} | Mod rank {6}\n[View Riven](https://warframe.market/auction/{7})\n|| `/w {8} Hi!` ||",
     "command_riven_field_name_attributes": "Attributes",
     "command_riven_description_no_offer": "There is actually no offer sorry! Come back later Tenno!",
-    // WORLDSTATE COG
+
     "command_fissures_author_name": "[{0}] - Fissures",
     "command_sortie_description": "Faction : **{0}**\nTime left **{1}**\n In-progress : **{2}**",
     "command_sortie_author_name": "Sortie",
@@ -90,7 +90,7 @@
     "command_fish_title_fortuna": "Fortuna fishing map",
     "command_fish_title_cetus": "Cetus fishing map",
     "command_fish_provide_valid_map": "{0} Please provide a valid map location like `fortuna` or `cetus`",
-    // GENERAL TRANSLATIONS
+
     "reputation": "reputation",
     "credits": "credits",
     "wrong_item_name": "You might have spelled a wrong item name 🤔 or the API is basically down, try later tenno!",

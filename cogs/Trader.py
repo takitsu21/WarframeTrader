@@ -36,7 +36,7 @@ class Trader(commands.Cog):
     @commands.command(aliases=["b"])
     @trigger_typing
     async def wtb(self, ctx, platform: str=None, *args):
-        to_delete, delay = read_settings(ctx.guild.id)
+        to_delete, delay, lang = read_settings(ctx.guild.id)
         if platform is None:
             embed = self.embed_exceptions(ctx, "wtb", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
             return await e_send(ctx, to_delete, embed=embed, delay=delay)
@@ -99,7 +99,7 @@ class Trader(commands.Cog):
     @commands.command(aliases=["s"])
     @trigger_typing
     async def wts(self, ctx, platform: str=None, *args):
-        to_delete, delay = read_settings(ctx.guild.id)
+        to_delete, delay, lang = read_settings(ctx.guild.id)
         if platform is None:
             embed = self.embed_exceptions(ctx, "wts", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
             return await e_send(ctx, to_delete, embed=embed, delay=delay)
@@ -161,7 +161,7 @@ class Trader(commands.Cog):
     @commands.command(aliases=["d"])
     @trigger_typing
     async def ducats(self, ctx):
-        to_delete, delay = read_settings(ctx.guild.id)
+        to_delete, delay, lang = read_settings(ctx.guild.id)
         ducats = WfmApi('pc', 'tools', 'ducats')
         items = WfmApi('pc', 'items')
         ducats_data = ducats.data()
@@ -210,7 +210,7 @@ class Trader(commands.Cog):
 
     @commands.command(aliases=["r"])
     async def riven(self, ctx, platform: str = None, *args):
-        to_delete, delay = read_settings(ctx.guild.id)
+        to_delete, delay, lang = read_settings(ctx.guild.id)
         if platform is None:
             embed = self.embed_exceptions(ctx, "riven", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
             return await e_send(ctx, to_delete, embed=embed, delay=delay)

@@ -3,7 +3,7 @@ from decouple import config
 import logging
 import uuid
 import datetime
-import time    
+import time
 
 logger = logging.getLogger('warframe')
 
@@ -56,7 +56,7 @@ def u_prefix(_id, prefix):
     cur.execute(sql, (prefix, _id,))
     conn.commit()
     cur.close()
-    
+
 def i_prefix(values):
     conn.ping(reconnect=True)
     cur = conn.cursor()
@@ -74,14 +74,48 @@ def read_prefix(_id: int):
     cur.close()
     return rows
 
-def read_settings(_id):
+def read_user_lang(_id):
     conn.ping(reconnect=True)
-    sql = """SELECT to_delete, delay FROM guild_settings WHERE id=%s"""
+    sql = """SELECT lang FROM users WHERE id=%s"""
     cur = conn.cursor()
     cur.execute(sql, (_id,))
     rows = cur.fetchall()[0]
     cur.close()
-    return rows[0], rows[1]
+    return rows[0]
+
+def insert_user_lang(_id, lang):
+    conn.ping(reconnect=True)
+    cur = conn.cursor()
+    sql = """INSERT INTO users(id, lang)
+    VALUES(%s, %s)"""
+    cur.execute(sql, (_id, lang,))
+    conn.commit()
+    cur.close()
+
+def update_lang_user(_id, lang):
+    conn.ping(reconnect=True)
+    cur = conn.cursor()
+    sql = """UPDATE users SET lang=%s WHERE id=%s"""
+    cur.execute(sql, (lang, _id,))
+    conn.commit()
+    cur.close()
+
+def update_lang_server(_id, lang):
+    conn.ping(reconnect=True)
+    cur = conn.cursor()
+    sql = """UPDATE guild_settings SET lang=%s WHERE id=%s"""
+    cur.execute(sql, (lang, _id,))
+    conn.commit()
+    cur.close()
+
+def read_settings(_id):
+    conn.ping(reconnect=True)
+    sql = """SELECT to_delete, delay, lang FROM guild_settings WHERE id=%s"""
+    cur = conn.cursor()
+    cur.execute(sql, (_id,))
+    rows = cur.fetchall()[0]
+    cur.close()
+    return rows[0], rows[1], rows[2]
 
 def i_guild_settings(_id: int, prefix: str, to_delete: int, delay: int):
     conn.ping(reconnect=True)
@@ -106,7 +140,7 @@ def read_table(*selector):
 def u_guild_settings(_id: int, to_delete: int, delay: int):
     conn.ping(reconnect=True)
     cur = conn.cursor()
-    sql = """UPDATE guild_settings SET 
+    sql = """UPDATE guild_settings SET
             to_delete=%s,
             delay=%s
             WHERE id=%s"""
@@ -126,7 +160,7 @@ def d_guild(_id):
 def update_tracker(_id, channel_id, tracker, response_text):
     conn.ping(reconnect=True)
     cur = conn.cursor()
-    sql = """UPDATE tracker SET 
+    sql = """UPDATE tracker SET
             id=%s,
             channel=%s
             %s=%s"""

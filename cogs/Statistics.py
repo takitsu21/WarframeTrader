@@ -10,6 +10,7 @@ from src.wf_market_responses import *
 from src.decorators import trigger_typing
 from src.sql import *
 from src._discord import *
+from src.util import locales
 
 
 class Statistics(commands.Cog):
@@ -24,21 +25,11 @@ class Statistics(commands.Cog):
         graph = GraphProcess(fargs, args_endpoint)
         graph.save_graph(api.data())
 
-    def generate_msg(self, ctx, to_delete, delay, fargs):
-        msg = f"{ctx.author.mention}"
-        if to_delete:
-            if delay >= 60:
-                msg += f"\n{fargs} will be deleted in {round(delay/60, 2)} mins"
-            else:
-                msg += f"\n{fargs} will be deleted in {delay} seconds"
-        else:
-            msg += f" Here is {fargs} graph below"
-        return msg
-
     @commands.command(aliases=["st"])
     @trigger_typing
     async def stats(self, ctx, *args):
-        to_delete, delay = read_settings(ctx.guild.id)
+        to_delete, delay, lang = read_settings(ctx.guild.id)
+        lang_pack = locales(lang)
         if len(args):
             try:
                 args_endpoint = '_'.join(args).lower()
@@ -46,7 +37,7 @@ class Statistics(commands.Cog):
                 fargs = ' '.join(capitalize_args)
                 graphs_path = f"./graphs/{args_endpoint}.png"
                 self.make_graph(args_endpoint, fargs)
-                msg = self.generate_msg(ctx, to_delete, delay, fargs)
+                msg = lang_pack["command_stat_msg_title"].format(ctx.author.mention, fargs)
                 with open(graphs_path, 'rb') as p:
                     if delay:
                         await ctx.message.delete(delay=delay)
@@ -59,10 +50,10 @@ class Statistics(commands.Cog):
             except Exception as e:
                 print(f"{type(e).__name__} : {e}")
                 embed = discord.Embed(
-                    title='❌Error❌',
+                    title=lang_pack["error"],
                     colour=0xFF0026,
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-                    description="You might have spelled a wrong item name 🤔"
+                    description=lang_pack["wrong_item_name"]
                 )
                 embed.set_thumbnail(url='https://warframe.market/static/assets/frontend/logo_icon_only.png')
                 embed.set_footer(

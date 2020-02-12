@@ -349,7 +349,8 @@ class WorldState(commands.Cog):
         if location.lower() == "fortuna":
             embed = discord.Embed(
                 title=lang_pack["command_fish_title_fortuna"],
-                colour=self.colour,
+                colour = self.colour,
+                timestamp = datetime.datetime.utcfromtimestamp(time.time())
             )
             embed.set_image(url="https://semlar.com/fishing_map8.jpg")
             embed.set_footer(
@@ -361,7 +362,8 @@ class WorldState(commands.Cog):
             to_delete, delay, lang = read_settings(ctx.guild.id)
             embed = discord.Embed(
                 title=lang_pack["command_fish_title_cetus"],
-                colour=self.colour,
+                colour = self.colour,
+                timestamp = datetime.datetime.utcfromtimestamp(time.time())
             )
             embed.set_image(url="https://semlar.com/fishing_map.jpg")
             embed.set_footer(
@@ -370,14 +372,50 @@ class WorldState(commands.Cog):
                 )
             return await e_send(ctx, to_delete, embed=embed, delay=delay)
         else:
-            msg = lang_pack["command_fish_provide_valid_map"].format(ctx.author.mention)
-            return await e_send(ctx, to_delete, message=msg, delay=delay)
+            return await e_send(ctx, to_delete, message=lang_pack["command_fish_provide_valid_map"].format(ctx.author.mention), delay=delay)
 
-    @commands.command()
+    @commands.command(aliases=["acolyte"])
     @trigger_typing
-    async def acolytes(self):
+    async def acolytes(self, ctx, platform="pc"):
         to_delete, delay, lang = read_settings(ctx.guild.id)
-        pass
+        data = ws_data(platform, lang, 'persistentEnemies')
+        lang_pack = locales(lang)
+        if platform in ["pc", "xbox", "swi", "ps4"]:
+            if len(data) <= 3:
+                embed = discord.Embed(
+                    colour = self.colour,
+                    timestamp = datetime.datetime.utcfromtimestamp(time.time())
+                )
+                embed.set_author(name=lang_pack["command_acolytes_author_title"].format(platform.upper()),
+                                url="https://warframe.fandom.com/wiki/Acolytes",
+                                icon_url="https://vignette.wikia.nocookie.net/warframe/images/e/ec/StrikerAcolyte.png/revision/latest/scale-to-width-down/200?cb=20160125210745")
+                for c in data:
+                    if c["isDiscovered"]:
+                        embed.add_field(
+                            name=lang_pack["command_acolytes_field_name"].format(c["agentType"], c["rank"]),
+                            value=lang_pack["command_acolytes_field_value_discovered"].format(c["lastDiscoveredAt"], round(c["healthPercent"] * 100)),
+                            inline=False
+                        )
+                    else:
+                        embed.add_field(
+                            name=lang_pack["command_acolytes_field_name"].format(c["agentType"], c["rank"]),
+                            value=lang_pack["command_acolytes_field_value_not_discovered"].format(round(c["healthPercent"] * 100)),
+                            inline=False
+                        )
+            else:
+                embed = discord.Embed(
+                    title=lang_pack["command_acolytes_title_not_available"],
+                    colour = self.colour,
+                    timestamp = datetime.datetime.utcfromtimestamp(time.time())
+                )
+        else:
+            return await e_send(ctx, to_delete, message=lang_pack["wrong_platform"].format(ctx.author.mention), delay=delay)
+        embed.set_thumbnail(url="https://i.imgur.com/2nsXVJ2.jpg")
+        embed.set_footer(
+                    text=self.footer_ws,
+                    icon_url=ctx.guild.me.avatar_url
+                )
+        await e_send(ctx, to_delete, embed=embed, delay=delay)
     # @commands.command()
     # @trigger_typing
     # @commands.has_permissions(administrator=True)

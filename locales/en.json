@@ -99,6 +99,11 @@
     "command_fish_title_fortuna": "Fortuna fishing map",
     "command_fish_title_cetus": "Cetus fishing map",
     "command_fish_provide_valid_map": "{0} Please provide a valid map location like `fortuna` or `cetus`",
+    "command_acolytes_author_title": "Acolytes [{0}]",
+    "command_acolytes_title_not_available": "Acolytes are not available for now",
+    "command_acolytes_field_name": "{0} rank {1}",
+    "command_acolytes_field_value_discovered": "Discovered on {0}\nHealth left : {1}%",
+    "command_acolytes_field_value_not_discovered": "Not discovered\nHealth left : {0}%",
 
     "yes": "yes",
     "no": "no",

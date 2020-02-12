@@ -224,7 +224,7 @@ class Trader(commands.Cog):
                 data = auction_query.data()
                 if len(data['payload']['auctions']):
                     embed = discord.Embed(
-                        description=f"<:_green_circle:643936852327530548> Online | Online in game <:_purple_circle:643936797222764554>",
+                        description=lang_pack["command_riven_status_description"],
                         timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                         colour=self.colour
                     )
@@ -272,7 +272,9 @@ class Trader(commands.Cog):
                         timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                         colour=self.colour
                     )
-                    embed.set_author(name=lang_pack["command_riven_author_name"].format(item_c}", url='https://warframe.fandom.com/wiki/Riven_Mods', icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
+                    embed.set_author(name=lang_pack["command_riven_author_name"].format(item_c),
+                     url='https://warframe.fandom.com/wiki/Riven_Mods',
+                     icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
                     embed.set_footer(
                         text="Made with ❤️ by Taki#0853 (WIP) | api.warframe.market",
                         icon_url=ctx.guild.me.avatar_url

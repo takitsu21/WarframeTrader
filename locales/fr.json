@@ -66,8 +66,8 @@
     "command_wts_description": "Voir le graphique des stats",
     "command_wts_field_name_offer": "{0}. **{1}** | +**{2}**🙂 for **{3}** <:pl:632332600538824724> x **{4}** pieces",
     "command_riven_status_description": "<:_green_circle:643936852327530548> En ligne | En ligne et en jeu <:_purple_circle:643936797222764554>",
-    "command_riven_author_name": "Les enchères des rivens sont à {0}",
-    "command_riven_field_value_item_description": "Prix ​​de rachat {0} | Prix ​​de départ {1} | Meilleure enchère {2}\nPolarité {3} | MR {4}\nRe-rolls {5} | Niveau du mod {6}\n[View Riven](https://warframe.market/auction/{7})\n|| `/w {8} Hi!` ||",
+    "command_riven_author_name": "Les enchères des rivens pour {0}",
+    "command_riven_field_value_item_description": "Prix ​​de rachat {0} | Prix ​​de départ {1} | Meilleure enchère {2}\nPolarité {3} | MR {4}\nRe-rolls {5} | Niveau du mod {6}\n[Voir riven](https://warframe.market/auction/{7})\n||`/w {8} Hi!`||",
     "command_riven_field_name_attributes": "Attribues",
     "command_riven_description_no_offer": "Il n'y a pas d'offre en ce moment (désolé) mais revenez plus tard",
 
@@ -99,6 +99,12 @@
     "command_fish_title_fortuna": "Carte de pêche de Fortuna",
     "command_fish_title_cetus": "Carte de pêche de Cetus",
     "command_fish_provide_valid_map": "{0} Hum...Je ne connais pas cette localisation mais uniquement celles de `fortuna` et `cetus`",
+    "command_acolytes_author_title": "Acolytes [{0}]",
+    "command_acolytes_title_not_available": "Acolytes non disponible pour le moment",
+    "command_acolytes_field_name": "{0} rang {1}",
+    "command_acolytes_field_value_discovered": "Decouvert sur {0}\nVie restante : {1}%",
+    "command_acolytes_field_value_not_discovered": "Not discovered\nVie restante {0}%",
+
 
     "yes": "oui",
     "no": "non",

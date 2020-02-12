@@ -246,7 +246,7 @@ class Help(commands.Cog):
     async def language(self, ctx, lang=""):
         to_delete, delay, old = read_settings(ctx.guild.id)
         if len(lang):
-            if lang in ("fr", "en", "de", "es", "it", "ja","ko", "pl", "pt", "ru", "tc", "tr"):
+            if lang in ("fr", "en", "de", "es", "it", "ja","ko", "pl", "pt", "ru", "tc", "tr", "zh"):
                 update_lang_server(ctx.guild.id, lang)
                 lang_pack = locales(lang)
                 embed = discord.Embed(

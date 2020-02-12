@@ -9,6 +9,7 @@ from src._discord import *
 from src.exceptions import *
 from src.decorators import trigger_typing
 from src.sql import *
+from src.util import locales
 
 
 class Trader(commands.Cog):
@@ -211,6 +212,7 @@ class Trader(commands.Cog):
     @commands.command(aliases=["r"])
     async def riven(self, ctx, platform: str = None, *args):
         to_delete, delay, lang = read_settings(ctx.guild.id)
+        lang_pack = locales(lang)
         if platform is None:
             embed = self.embed_exceptions(ctx, "riven", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
             return await e_send(ctx, to_delete, embed=embed, delay=delay)
@@ -228,7 +230,7 @@ class Trader(commands.Cog):
                     )
                     item_c = ' '.join(args).capitalize()
                     embed.set_author(
-                        name=f"Riven auctions for {item_c}",
+                        name=lang_pack["command_riven_author_name"].format(item_c),
                         url='https://warframe.fandom.com/wiki/Riven_Mods',
                         icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png'
                         )
@@ -239,7 +241,7 @@ class Trader(commands.Cog):
                             status_emoji, status_game = self.convert_status(auction_iter['owner']['status'])
                             embed.add_field(
                                 name=f"**{item_c} {auction_iter['item']['name']}** {status_emoji}",
-                                value=f"Buyout price {auction_iter['buyout_price']} | Starting price {auction_iter['starting_price']} | Top bid {auction_iter['top_bid']}\nPolarity {self.convert_polarity(auction_iter['item']['polarity'])} | MR {auction_iter['item']['mastery_level']}\nRe-rolls {auction_iter['item']['re_rolls']} | Mod rank {auction_iter['item']['mod_rank']}\n[View Riven](https://warframe.market/auction/{auction_iter['id']})\n|| `/w {auction_iter['owner']['ingame_name']} Hi!` ||",
+                                value=lang_pack["command_riven_field_value_item_description"].format(auction_iter['buyout_price'], auction_iter['starting_price'], auction_iter['top_bid'], self.convert_polarity(auction_iter['item']['polarity']), auction_iter['item']['mastery_level'], auction_iter['item']['re_rolls'], auction_iter['item']['mod_rank'], auction_iter['id'], auction_iter['owner']['ingame_name']),
                                 inline=False
                             )
                             for attribute in auction_iter['item']['attributes']:
@@ -251,7 +253,8 @@ class Trader(commands.Cog):
                                     attributes += f"- {value} {attr}\n"
 
                             attributes += '\n```'
-                            embed.add_field(name='Attributes', value=attributes, inline=False)
+                            embed.add_field(name=lang_pack["command_riven_field_name_attributes"],
+                                            value=attributes, inline=False)
                             attributes = '```diff\n'
                             if i == 5:
                                 break
@@ -265,11 +268,11 @@ class Trader(commands.Cog):
                     await e_send(ctx, to_delete, embed=embed, delay=delay)
                 else:
                     embed = discord.Embed(
-                        description="There is actually no offer sorry! Come back later Tenno!",
+                        description=lang_pack["command_riven_description_no_offer"],
                         timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                         colour=self.colour
                     )
-                    embed.set_author(name=f"Riven auctions for {item_c}", url='https://warframe.fandom.com/wiki/Riven_Mods', icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
+                    embed.set_author(name=lang_pack["command_riven_author_name"].format(item_c}", url='https://warframe.fandom.com/wiki/Riven_Mods', icon_url='http://content.warframe.com/MobileExport/Lotus/Interface/Cards/Images/OmegaMod.png')
                     embed.set_footer(
                         text="Made with ❤️ by Taki#0853 (WIP) | api.warframe.market",
                         icon_url=ctx.guild.me.avatar_url

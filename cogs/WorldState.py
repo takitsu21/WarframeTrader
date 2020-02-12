@@ -373,6 +373,11 @@ class WorldState(commands.Cog):
             msg = lang_pack["command_fish_provide_valid_map"].format(ctx.author.mention)
             return await e_send(ctx, to_delete, message=msg, delay=delay)
 
+    @commands.command()
+    @trigger_typing
+    async def acolytes(self):
+        to_delete, delay, lang = read_settings(ctx.guild.id)
+        pass
     # @commands.command()
     # @trigger_typing
     # @commands.has_permissions(administrator=True)

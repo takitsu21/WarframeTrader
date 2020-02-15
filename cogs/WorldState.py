@@ -393,7 +393,7 @@ class WorldState(commands.Cog):
                     if c["isDiscovered"]:
                         embed.add_field(
                             name=lang_pack["command_acolytes_field_name"].format(c["agentType"], c["rank"]),
-                            value=lang_pack["command_acolytes_field_value_discovered"].format(c["lastDiscoveredAt"], round(c["healthPercent"] * 100)),
+                            value=lang_pack["command_acolytes_field_value_discovered"].format(c["lastDiscoveredAt"], c["healthPercent"] * 100),
                             inline=False
                         )
                     else:

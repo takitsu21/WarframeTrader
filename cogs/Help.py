@@ -109,7 +109,8 @@ class Help(commands.Cog):
             f"{prefix}wiki [QUERY]" : lang_pack["help_wiki"],
             f"{prefix}event" : lang_pack["help_event"],
             f"{prefix}sentient": lang_pack["help_sentient"],
-            f"{prefix}fish <cetus | fortuna>": lang_pack["help_fish"]
+            f"{prefix}fish <cetus | fortuna>": lang_pack["help_fish"],
+            f"{prefix}acolytes <pc | xbox | ps4 | swi>": "Views acolytes currently available"
         }
         other_commands = {
             f"{prefix}bug [MESSAGE]" : lang_pack["help_bug"],
@@ -215,7 +216,8 @@ class Help(commands.Cog):
         **`{prefix}wiki [QUERY]`** - {lang_pack["help_wiki"]}
         **`{prefix}event`** - {lang_pack["help_event"]}
         **`{prefix}sentient`** - {lang_pack["help_sentient"]}
-        **`{prefix}fish <cetus | fortuna>`** - {lang_pack["help_fish"]}"""
+        **`{prefix}fish <cetus | fortuna>`** - {lang_pack["help_fish"]}
+        **`{prefix}acolytes <pc | xbox | ps4 | swi>`** - Views acolytes currently available"""
         other_commands = f"""**`{prefix}bug [MESSAGE]`** - {lang_pack["help_bug"]}
         **`{prefix}suggestion [MESSAGE]`** - {lang_pack["help_suggestion"]}
         **`{prefix}ping`** - {lang_pack["help_ping"]}

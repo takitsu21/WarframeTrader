@@ -34,7 +34,7 @@
     "help_help": "Permet de voir les commandes disponibles. Vous pouvez utiliser `all` si vous souhaitez lister toutes les commandes en une fois.",
     "help_error": "Commandes disponibles",
 
-    "command_vote_title": "Votez sur Warframe Trader",
+    "command_vote_title": "Votez pour Warframe Trader",
     "command_about_title": "Commande d'aide",
     "command_about_contributor": "Liste des contribueurs",
     "command_settings_delete_title": "Supprimer des messages",
@@ -102,8 +102,8 @@
     "command_acolytes_author_title": "Acolytes [{0}]",
     "command_acolytes_title_not_available": "Acolytes non disponible pour le moment",
     "command_acolytes_field_name": "{0} rang {1}",
-    "command_acolytes_field_value_discovered": "Decouvert sur {0}\nVie restante : {1}%",
-    "command_acolytes_field_value_not_discovered": "Not discovered\nVie restante {0}%",
+    "command_acolytes_field_value_discovered": "Decouvert sur {0}\nVie restante : {1:.2f}%",
+    "command_acolytes_field_value_not_discovered": "Non découvert\nVie restante {0:.2f}%",
 
 
     "yes": "oui",

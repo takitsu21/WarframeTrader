@@ -102,8 +102,8 @@
     "command_acolytes_author_title": "Acolytes [{0}]",
     "command_acolytes_title_not_available": "Acolytes are not available for now",
     "command_acolytes_field_name": "{0} rank {1}",
-    "command_acolytes_field_value_discovered": "Discovered on {0}\nHealth left : {1}%",
-    "command_acolytes_field_value_not_discovered": "Not discovered\nHealth left : {0}%",
+    "command_acolytes_field_value_discovered": "Discovered on {0}\nHealth left : {1:.2f}%",
+    "command_acolytes_field_value_not_discovered": "Not discovered\nHealth left : {0:.2f}%",
 
     "yes": "yes",
     "no": "no",

@@ -176,16 +176,14 @@ class WarframeTrader(commands.Bot):
                 logger.exception(e, exc_info=True)
             try:
                 await self.change_presence(
-                    activity=discord.Activity(
-                        name="{0}{1} | {2} | [*help] & [@Mention help]".format(node, cetus_string, vallis_string),
-                        type=3
+                    activity=discord.Game(
+                        name="{0}{1} | {2} | [*help] & [@Mention help]".format(node, cetus_string, vallis_string)
                         )
                     )
             except:
                 await self.change_presence(
-                    activity=discord.Activity(
-                        name="Synchronization... | [*help] & [@Mention help]",
-                        type=3
+                    activity=discord.Game(
+                        name="Synchronization... | [*help] & [@Mention help]"
                         )
                     )
             await asyncio.sleep(60)

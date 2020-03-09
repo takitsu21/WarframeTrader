@@ -8,7 +8,7 @@
     "help_wtb": "Fiyatına ve durumuna göre 7 satıcıyı sıralar (Online in game)",
     "help_wts": "Fiyatına ve durumuna göre 7 alıcıyı sıralar (Online in game)",
     "help_riven": "Artan fiyata göre 7 riven mod sıralar (Online in game)",
-    "help_ducats": "Dükkanlarda satmaya değer 18 ürün", //Views 18 worth it items to sell in ducats
+    "help_ducats": "Dükkanlarda satmaya değer 18 ürün",
     "help_fissures": "Güncel Çatlakları gösterir, Filtre ekleyebilirsiniz, Örnek olarak **`*f pc requiem axi survival`** Bu filtre sadece requiem ve axi çatlaklarından Hayatta Kalma bölgelerini gösterir (Sınırsız filtre kabul edilir)",
     "help_sortie":  "Sortie görevlerini gösterir.",
     "help_baro": "Baro Ki'teer envanterini ve ne zaman geleceğini gösterir.",

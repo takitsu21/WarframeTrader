@@ -73,7 +73,7 @@ def _get_prefix(bot, message):
         logger.exception(e, exc_info=True)
         return when_mentioned_or('*')(bot, message)
 
-class WarframeTrader(commands.Bot):
+class WarframeTrader(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(
             command_prefix=_get_prefix,
@@ -152,6 +152,9 @@ class WarframeTrader(commands.Bot):
                             icon_url=guild.me.avatar_url)
             await general.send(embed=embed)
 
+    async def on_shard_ready(self, shard_id):
+        logger.info(f"shard {shard_id} ready")
+
     async def on_ready(self):
         # waiting internal cache to be ready
         await self.wait_until_ready()
@@ -189,26 +192,9 @@ class WarframeTrader(commands.Bot):
             await asyncio.sleep(60)
 
     def run(self, *args, **kwargs):
-        try:
-            self.loop.run_until_complete(self.start(decouple.config("debug_token")))
-        except KeyboardInterrupt:
-            self.loop.run_until_complete(self.logout())
-            for task in asyncio.all_tasks(self.loop):
-                task.cancel()
-            try:
-                self.loop.run_until_complete(
-                    asyncio.gather(*asyncio.all_tasks(self.loop))
-                )
-            except asyncio.CancelledError:
-                logger.debug("Pending tasks has been cancelled.")
-            finally:
-                try:
-                    conn.close()
-                    logger.info("Connection closed")
-                except Exception as e:
-                    logger.exception(e, exc_info=True)
-                logger.info("Shutting down")
+        super().run(decouple.config("token"), **kwargs)
+
 
 if __name__ == "__main__":
     bot = WarframeTrader()
-    bot.run()
+    bot.run(reconnect=True)

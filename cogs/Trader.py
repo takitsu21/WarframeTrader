@@ -18,8 +18,8 @@ class Trader(commands.Cog):
         self.bot = bot
         self.colour = 0x87DABC
 
-    def embed_exceptions(self, ctx, command, description: list=[]):
-        prefix = read_prefix(ctx.guild.id)
+    async def embed_exceptions(self, ctx, command, description: list=[]):
+        prefix = await self.bot.read_prefix(ctx.guild.id)
         command = f"{prefix}{command}"
         embed = discord.Embed(
             title=command,
@@ -37,26 +37,25 @@ class Trader(commands.Cog):
     @commands.command(aliases=["b"])
     @trigger_typing
     async def wtb(self, ctx, platform: str=None, *args):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         if platform is None:
-            embed = self.embed_exceptions(ctx, "wtb", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
+            embed = await self.embed_exceptions(ctx, "wtb", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
             return await e_send(ctx, to_delete, embed=embed, delay=delay)
         try:
             platform = platform.lower()
             if platform in ["pc", "xbox", "ps4", "swi"]:
                 args_endpoint = '_'.join(args).lower()
-                api_orders = WfmApi(platform, "items", args_endpoint, "orders")
-                api_icons = WfmApi(platform, "items", args_endpoint)
-                item_data = sort_orders(api_orders.data(), "wtb")
-                item_thumb = api_icons.icon_endpoint(args_endpoint)
+                api_orders = WfmApi(self.bot.http_session, platform, "items", args_endpoint, "orders")
+                api_icons = WfmApi(self.bot.http_session, platform, "items", args_endpoint)
+                item_data = sort_orders(await api_orders.data(), "wtb")
+                item_thumb = await api_icons.icon_endpoint(args_endpoint)
                 capitalize_args = [x.capitalize() for x in args]
                 formatted_args = ' '.join(capitalize_args)
-                prefix = read_prefix(ctx.guild.id)
                 embed = discord.Embed(
                     title=f'💰WTB {formatted_args}💰\n<:_purple_circle:643936797222764554> Online in game - Sort by prices',
                     colour=self.colour,
                     timestamp=datetime.datetime.utcfromtimestamp(time.time()),
-                    description=f"View grapghical stats ↙️\n**`{prefix}stats {' '.join(args)}`**"
+                    description=f"View grapghical stats ↙️\n**`{ctx.prefix}stats {' '.join(args)}`**"
                 )
 
                 if len(item_data["data"]):
@@ -67,7 +66,7 @@ class Trader(commands.Cog):
                                  "+**{2}**🙂 for **{3}** <:pl:632332600538824724> x "
                                  "**{4}** pieces".format(i, d["name"], d["rep"], pl, d["quantity"]),
                             value="||`/w {0} Hi! I want to buy: {1} "
-                                  "for {2} platinum. (warframe.market - https://top.gg/bot/593364281572196353)`||"
+                                  "for {2} platinum. (using api.warframe.market - discord.gg/wTxbQYb)`||"
                                   .format(d["name"], formatted_args, pl), inline=False
                         )
                 else:
@@ -81,7 +80,7 @@ class Trader(commands.Cog):
                     icon_url=ctx.guild.me.avatar_url
                 )
             else:
-                embed = self.embed_exceptions(ctx, "wtb", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
+                embed = await self.embed_exceptions(ctx, "wtb", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
                 return await e_send(ctx, to_delete, embed=embed, delay=delay)
         except StatusError as e:
             embed = discord.Embed(
@@ -100,21 +99,21 @@ class Trader(commands.Cog):
     @commands.command(aliases=["s"])
     @trigger_typing
     async def wts(self, ctx, platform: str=None, *args):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         if platform is None:
-            embed = self.embed_exceptions(ctx, "wts", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
+            embed = await self.embed_exceptions(ctx, "wts", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
             return await e_send(ctx, to_delete, embed=embed, delay=delay)
         try:
             platform = platform.lower()
             if platform in ["pc", "xbox", "ps4", "swi"]:
                 args_endpoint = '_'.join(args).lower()
-                api_orders = WfmApi(platform, "items", args_endpoint, "orders")
-                api_icons = WfmApi(platform, "items", args_endpoint)
+                api_orders = WfmApi(self.bot.http_session, platform, "items", args_endpoint, "orders")
+                api_icons = WfmApi(self.bot.http_session, platform, "items", args_endpoint)
                 item_data = sort_orders(api_orders.data(), "wts")
                 item_thumb = api_icons.icon_endpoint(args_endpoint)
                 capitalize_args = [x.capitalize() for x in args]
                 formatted_args = ' '.join(capitalize_args)
-                prefix = read_prefix(ctx.guild.id)
+                prefix = await self.bot.read_prefix(ctx.guild.id)
                 embed = discord.Embed(
                     title=f'💰WTS {formatted_args}💰\n<:_purple_circle:643936797222764554> Online in game - Sort by prices',
                     colour=self.colour,
@@ -143,7 +142,7 @@ class Trader(commands.Cog):
                     icon_url=ctx.guild.me.avatar_url
                 )
             else:
-                embed = self.embed_exceptions(ctx, "wts", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
+                embed = await self.embed_exceptions(ctx, "wts", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
                 return await e_send(ctx, to_delete, embed=embed, delay=delay)
         except StatusError as e:
             embed = discord.Embed(
@@ -162,11 +161,11 @@ class Trader(commands.Cog):
     @commands.command(aliases=["d"])
     @trigger_typing
     async def ducats(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
-        ducats = WfmApi('pc', 'tools', 'ducats')
-        items = WfmApi('pc', 'items')
-        ducats_data = ducats.data()
-        items_data = items.data()
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
+        ducats = WfmApi(self.bot.http_session, 'pc', 'tools', 'ducats')
+        items = WfmApi(self.bot.http_session, 'pc', 'items')
+        ducats_data = await ducats.data()
+        items_data = await items.data()
         embed = discord.Embed(
             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
             colour=self.colour
@@ -211,17 +210,17 @@ class Trader(commands.Cog):
 
     @commands.command(aliases=["r"])
     async def riven(self, ctx, platform: str = None, *args):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         if platform is None:
-            embed = self.embed_exceptions(ctx, "riven", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
+            embed = await self.embed_exceptions(ctx, "riven", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
             return await e_send(ctx, to_delete, embed=embed, delay=delay)
         elif platform in ["pc", "xbox", "ps4", "swi"]:
             try:
                 args = [x.lower() for x in args]
                 fargs = '_'.join(args)
-                auction_query = WfmApi(platform, 'auctions', f'search?type=riven&weapon_url_name={fargs}&polarity=any&sort_by=price_asc')
-                data = auction_query.data()
+                auction_query = WfmApi(self.bot.http_session, platform, 'auctions', f'search?type=riven&weapon_url_name={fargs}&polarity=any&sort_by=price_asc')
+                data = await auction_query.data()
                 if len(data['payload']['auctions']):
                     embed = discord.Embed(
                         description=lang_pack["command_riven_status_description"],
@@ -281,10 +280,10 @@ class Trader(commands.Cog):
                     )
                     await e_send(ctx, to_delete, embed=embed, delay=delay)
             except StatusError:
-                embed = self.embed_exceptions(ctx, "riven", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
+                embed = await self.embed_exceptions(ctx, "riven", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
                 await e_send(ctx, to_delete, embed=embed, delay=delay)
         else:
-            embed = self.embed_exceptions(ctx, "riven", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
+            embed = await self.embed_exceptions(ctx, "riven", description=["<pc | xbox | ps4 | swi> [ITEM_NAME]"])
             await e_send(ctx, to_delete, embed=embed, delay=delay)
 
 def setup(bot):

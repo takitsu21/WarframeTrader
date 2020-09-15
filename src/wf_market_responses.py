@@ -6,19 +6,28 @@ from decouple import config
 from discord.ext import commands
 import os
 
+from aiohttp import ClientSession
 
 class WfmApi(commands.Cog):
     """
     Returns warframe.market data
     """
-    def __init__(self, platform: str, *endpoints: list):
+    __slots__ = (
+        "icon_root",
+        "root",
+        "endpoints",
+        "URL",
+        "platform"
+    )
+    def __init__(self, session: ClientSession, platform: str, *endpoints: list):
         self.icon_root = "https://warframe.market/static/assets/"  # Example : https://warframe.market/static/assets/icons/en/thumbs/Akbronco_Prime_Set.34b5a7f99e5f8c15cc2039a76c725069.128x128.png
         self.root = "https://api.warframe.market/v1/"
         self.endpoints = '/'.join(endpoints)
         self.URL = f"{self.root}{self.endpoints}"
         self.platform = platform
+        self.session = session
 
-    def data(self):
+    async def data(self):
         """
         Fetch data from warframe market
         """
@@ -27,13 +36,13 @@ class WfmApi(commands.Cog):
             "Platform": self.platform,
             "Language": "en"
         }
-        r = requests.get(self.URL, headers=HEADERS)
-        if r.status_code == 200:
-            return r.json()
-        raise StatusError(r.status_code)
+        r = await self.session.get(self.URL, headers=HEADERS)
+        if r.status == 200:
+            return await r.json()
+        raise StatusError(r.status)
 
-    def icon_endpoint(self, url_name) -> str:
-        responses = self.data()
+    async def icon_endpoint(self, url_name) -> str:
+        responses = await self.data()
         try:
             for x in responses["payload"]["item"]["items_in_set"]:
                 if url_name == x["url_name"]:

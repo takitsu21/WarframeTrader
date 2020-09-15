@@ -19,8 +19,8 @@ class Help(commands.Cog):
         self.colour = 0x87DABC
         self._id = 162200556234866688
 
-    def embed_exceptions(self, ctx, command, description: list=[]):
-        prefix = read_prefix(ctx.guild.id)
+    async def embed_exceptions(self, ctx, command, description: list=[]):
+        prefix = await self.bot.read_prefix(ctx.guild.id)
         command = f"{prefix}{command}"
         embed = discord.Embed(
             title=command,
@@ -39,7 +39,7 @@ class Help(commands.Cog):
     @trigger_typing
     async def ping(self, ctx):
         """Ping's Bot"""
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         before = time.monotonic()
         message = await ctx.send("🏓Ping!", delete_after=delay)
@@ -57,8 +57,8 @@ class Help(commands.Cog):
             pass
         await message.edit(content="", embed=embed)
 
-    def embed_pagination(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+    async def embed_pagination(self, ctx):
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         embed = discord.Embed(title=lang_pack["help_title"],
                             description=lang_pack["help_description"],
@@ -91,8 +91,8 @@ class Help(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True, add_reactions=True)
     @trigger_typing
     async def help(self, ctx, arg=""):
-        prefix = read_prefix(ctx.guild.id)
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        prefix = await self.bot.read_prefix(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         trade_command = {
             f"<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]" : lang_pack["help_wtb"],
@@ -130,7 +130,7 @@ class Help(commands.Cog):
         }
         if not len(arg):
             toReact = ['⏪', '<:wf_market:641718306260385792>', '<:ws:641721981292773376>',u"\u2699"]
-            embed = self.embed_pagination(ctx)
+            embed = await self.embed_pagination(ctx)
             pagination = await ctx.send(embed=embed)
             for reaction in toReact:
                 await pagination.add_reaction(reaction)
@@ -148,7 +148,7 @@ class Help(commands.Cog):
                         pass
                     return await pagination.delete()
                 if '⏪' in emoji:
-                    embed = self.embed_pagination(ctx)
+                    embed = await self.embed_pagination(ctx)
                     thumb = ctx.guild.me.avatar_url
                 elif '<:wf_market:641718306260385792>' in emoji:
                     embed = discord.Embed(title="<:wf_market:641718306260385792> Warframe Market",
@@ -201,8 +201,8 @@ class Help(commands.Cog):
 
     @help.error
     async def help_error(self, ctx, error):
-        prefix = read_prefix(ctx.guild.id)
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        prefix = await self.bot.read_prefix(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         trade_command = f"""**`<{prefix}wtb | {prefix}b> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - {lang_pack["help_wtb"]}
         **`<{prefix}wts | {prefix}s> <pc | xbox | ps4 | swi> [ITEM_NAME]`** - {lang_pack["help_wts"]}
@@ -246,7 +246,7 @@ class Help(commands.Cog):
     @commands.command()
     @trigger_typing
     async def language(self, ctx, lang=""):
-        to_delete, delay, old = read_settings(ctx.guild.id)
+        to_delete, delay, old = await self.bot.read_settings(ctx.guild.id)
         if len(lang):
             if lang in ("fr", "en", "de", "es", "it", "ja","ko", "pl", "pt", "ru", "tc", "tr", "zh"):
                 update_lang_server(ctx.guild.id, lang)
@@ -278,7 +278,7 @@ class Help(commands.Cog):
     @commands.command()
     @trigger_typing
     async def invite(self,ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         embed = discord.Embed(
                         title=lang_pack["invite_bot"],
@@ -293,7 +293,7 @@ class Help(commands.Cog):
     @commands.command(pass_context=True)
     @trigger_typing
     async def vote(self,ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         embed = discord.Embed(title=lang_pack["command_vote_title"],
                               description=f'[{lang_pack["click_here"]}](https://top.gg/bot/593364281572196353/vote)',
@@ -305,7 +305,7 @@ class Help(commands.Cog):
     @commands.command(pass_context=True)
     @trigger_typing
     async def support(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         embed = discord.Embed(title=lang_pack["discord_support_title"],
                                description=f'[{lang_pack["click_here"]}](https://discordapp.com/invite/wTxbQYb)',
@@ -318,7 +318,7 @@ class Help(commands.Cog):
     @commands.command(pass_context=True)
     @trigger_typing
     async def donate(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         embed = discord.Embed(title=lang_pack["donate"],
                               colour=self.colour)
@@ -331,9 +331,9 @@ class Help(commands.Cog):
     @commands.command(pass_context=True)
     @trigger_typing
     async def about(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
-        prefix = read_prefix(ctx.guild.id)
+        prefix = await self.bot.read_prefix(ctx.guild.id)
         embed = discord.Embed(
                             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
                             color=self.colour
@@ -372,7 +372,7 @@ class Help(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def settings(self, ctx, *args):
         arg_l = len(args)
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         if not arg_l:
             embed = discord.Embed(
@@ -390,7 +390,7 @@ class Help(commands.Cog):
         elif arg_l == 2 and args[0] == '--delay':
             try:
                 delay = abs(int(args[1]))
-                u_guild_settings(ctx.guild.id, 1, delay)
+                await self.bot.u_guild_settings(ctx.guild.id, 1, delay)
                 embed = discord.Embed(
                     title=lang_pack["command_settings_update"],
                     description=lang_pack["command_settings_check_description_updated"].format(ctx.guild.id),
@@ -404,14 +404,14 @@ class Help(commands.Cog):
                         icon_url=ctx.guild.me.avatar_url)
                 return await e_send(ctx, 1, embed=embed, delay=delay)
             except:
-                to_delete, delay, lang = read_settings(ctx.guild.id)
-                embed = self.embed_exceptions(ctx, "settings", description=["[--delay] [TIME_IN_SECOND]"])
+                to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
+                embed = await self.embed_exceptions(ctx, "settings", description=["[--delay] [TIME_IN_SECOND]"])
                 await e_send(ctx, to_delete, embed=embed, delay=delay)
         elif arg_l == 2 and args[0] == '--delete':
             try:
                 delete = convert_str(args[1])
                 delete_bool = convert_bool(args[1])
-                u_guild_settings(ctx.guild.id, delete_bool, None)
+                await self.bot.u_guild_settings(ctx.guild.id, delete_bool, None)
                 embed = discord.Embed(
                     title=lang_pack["command_settings_update"],
                     description=lang_pack["command_settings_check_description_updated"].format(ctx.guild.id),
@@ -422,14 +422,14 @@ class Help(commands.Cog):
                         icon_url=ctx.guild.me.avatar_url)
                 embed.set_thumbnail(url=ctx.guild.icon_url)
                 embed.add_field(name=lang_pack["command_settings_delete_title"], value=delete)
-                to_delete, delay, lang = read_settings(ctx.guild.id)
+                to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
                 return await e_send(ctx, to_delete, embed=embed, delay=delay)
             except:
-                to_delete, delay, lang = read_settings(ctx.guild.id)
+                to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
                 embed = self.embed_exceptions(ctx, "settings", description=["[--delete] [y | n]"])
                 await e_send(ctx, to_delete, embed=embed, delay=delay)
         else:
-            to_delete, delay, lang = read_settings(ctx.guild.id)
+            to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
             embed = self.embed_exceptions(ctx, "settings", description=["[--delete] [y | n]", "[--delay] [TIME_IN_SECOND]"])
             await e_send(ctx, to_delete, embed=embed, delay=delay)
 
@@ -437,8 +437,8 @@ class Help(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def set_prefix(self, ctx, *, prefixes=""):
-        u_prefix(ctx.guild.id, prefixes)
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        await self.bot.u_prefix(ctx.guild.id, prefixes)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         await ctx.send(lang_pack["command_set_prefix"].format(prefixes))
 
@@ -447,18 +447,18 @@ class Help(commands.Cog):
     async def init_db(self, ctx):
         for s in self.bot.guilds:
             try:
-                i_guild_settings(s.id, '*', 0, None)
+                await self.bot.i_guild_settings(s.id, '*', 0, None)
             except:
                 pass
 
     @commands.command()
     @trigger_typing
     async def get_prefix(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         embed = discord.Embed(
             title=lang_pack["command_get_prefix_title"],
-            description=read_prefix(ctx.guild.id),
+            description=await self.bot.read_prefix(ctx.guild.id),
             timestamp=datetime.datetime.utcfromtimestamp(time.time()),
             color=self.colour
         )
@@ -467,7 +467,7 @@ class Help(commands.Cog):
     @commands.command()
     @trigger_typing
     async def suggestion(self, ctx, *message):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         if len(message) < 3:
             embed = discord.Embed(title=lang_pack["command_suggestion_title"],
@@ -493,7 +493,7 @@ class Help(commands.Cog):
     @commands.command()
     @trigger_typing
     async def bug(self, ctx, *message):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         if len(message) < 3:
             embed = discord.Embed(title=lang_pack["command_bug_title"],

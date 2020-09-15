@@ -26,13 +26,13 @@ class WorldState(commands.Cog):
     @commands.command(aliases=["f"])
     @trigger_typing
     async def fissures(self, ctx, platform: str=None, *highlight):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         if platform is not None and platform.lower() in ["pc", "xb1", "ps4", "swi"]:
             if len(highlight):
                 highlight = [x.lower() for x in highlight]
             platform = platform.lower()
-            data = ws_data(platform, lang, "fissures")
+            data = await ws_data(self.bot.http_session, platform, lang, "fissures")
             embed = discord.Embed(
                             colour=self.colour,
                             timestamp=datetime.datetime.utcfromtimestamp(time.time())
@@ -76,9 +76,9 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def sortie(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
-        data = ws_data('pc', lang, 'sortie')
+        data = await ws_data(self.bot.http_session, 'pc', lang, 'sortie')
         embed = discord.Embed(
             colour = self.colour,
             timestamp = datetime.datetime.utcfromtimestamp(time.time()),
@@ -103,16 +103,16 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def arbitration(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
-        data = ws_data('pc', lang, 'arbitration')
+        data = await ws_data(self.bot.http_session, 'pc', lang, 'arbitration')
         embed = discord.Embed(
             title=lang_pack["command_arbitration_title"],
             colour = self.colour,
             timestamp = datetime.datetime.utcfromtimestamp(time.time()),
             description=arbitration_eta(data["expiry"])
         )
-        embed.add_field(name=f"{data['type']} - {data['node']}", value=f"{data['enemy']}")
+        embed.add_field(name=f"{data['type']}", value=data['node'])
         embed.set_footer(
             text=self.footer_ws,
             icon_url=ctx.guild.me.avatar_url
@@ -123,9 +123,9 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def baro(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
-        data = ws_data('pc', lang, 'voidTrader')
+        data = await ws_data(self.bot.http_session, 'pc', lang, 'voidTrader')
         if not len(data['inventory']):
             embed = discord.Embed(
                 colour = self.colour,
@@ -164,11 +164,11 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def news(self, ctx, platform: str = None):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         if platform is not None and platform.lower() in ['pc', 'ps4', 'xb1', 'swi']:
             desc = ''
-            data = ws_data(platform, lang, 'news')
+            data = await ws_data(self.bot.http_session, platform, lang, 'news')
             for c in reversed(data):
                 desc += c['asString'] + '\n'
             embed = discord.Embed(
@@ -191,8 +191,8 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def earth(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
-        data = ws_data('pc', lang, 'earthCycle')
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
+        data = await ws_data(self.bot.http_session, 'pc', lang, 'earthCycle')
         lang_pack = locales(lang)
         timeLeft = data["timeLeft"]
         if timeLeft.startswith('-'):
@@ -221,7 +221,7 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def wiki(self, ctx, *wiki_query):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         base_uri = "https://warframe.fandom.com/wiki/"
         wiki_uri = '_'.join(x.capitalize() for x in wiki_query)
         embed = discord.Embed(
@@ -252,9 +252,9 @@ class WorldState(commands.Cog):
     @commands.command(aliases=["events"])
     @trigger_typing
     async def event(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
-        data = ws_data('pc', lang, 'events')
+        data = await ws_data(self.bot.http_session, 'pc', lang, 'events')
         embed = discord.Embed(
             title=lang_pack["command_event_title"],
             colour = self.colour,
@@ -279,10 +279,10 @@ class WorldState(commands.Cog):
     @trigger_typing
     async def nightwave(self, ctx):
         try:
-            to_delete, delay, lang = read_settings(ctx.guild.id)
+            to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
             lang_pack = locales(lang)
             uri_emblem = "https://vignette.wikia.nocookie.net/warframe/images/e/e0/NightwaveSyndicate.png/revision/latest?cb=20190727121305"
-            data = ws_data('pc', lang, 'nightwave')
+            data = await ws_data(self.bot.http_session, 'pc', lang, 'nightwave')
             days, hours, minutes, seconds = self._to_string_time(data['expiry'])
             days_p, hours_p, minutes_p, seconds_p = self._to_string_time(data['activeChallenges'][0]['expiry'])
             season_deadline = f"**{days}d {hours}h {minutes}mn {seconds}s**"
@@ -307,7 +307,7 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def sentient(self, ctx):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         Tmp = ws_offi()['Tmp']
         if Tmp != '[]':
@@ -344,7 +344,7 @@ class WorldState(commands.Cog):
     @commands.command()
     @trigger_typing
     async def fish(self, ctx, location):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         if location.lower() == "fortuna":
             embed = discord.Embed(
@@ -359,7 +359,7 @@ class WorldState(commands.Cog):
                 )
             return await e_send(ctx, to_delete, embed=embed, delay=delay)
         if location.lower() == "cetus":
-            to_delete, delay, lang = read_settings(ctx.guild.id)
+            to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
             embed = discord.Embed(
                 title=lang_pack["command_fish_title_cetus"],
                 colour = self.colour,
@@ -377,8 +377,8 @@ class WorldState(commands.Cog):
     @commands.command(aliases=["acolyte"])
     @trigger_typing
     async def acolytes(self, ctx, platform="pc"):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
-        data = ws_data(platform, lang, 'persistentEnemies')
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
+        data = await ws_data(self.bot.http_session, platform, lang, 'persistentEnemies')
         lang_pack = locales(lang)
         if platform in ["pc", "xbox", "swi", "ps4"]:
             if len(data) <= 3:
@@ -421,7 +421,7 @@ class WorldState(commands.Cog):
     # @commands.has_permissions(administrator=True)
     # async def track(self, ctx, track_command):
     #     VALID_TRACKER = ['sortie', 'baro', 'sentient']
-    #     # to_delete, delay, lang = read_settings(ctx.guild.id)
+    #     # to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
     #     if track_command in VALID_TRACKER:
     #         channel = self.bot.get_channel(ctx.message.channel.id)
     #         await ctx.send(content=f"{ctx.message.channel.id} {channel}")

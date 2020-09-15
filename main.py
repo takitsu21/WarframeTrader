@@ -1,18 +1,22 @@
 #!/usr/bin/python3
 # coding:utf-8
-import discord
-import os
 import asyncio
-import logging
-from discord.ext import commands
-from src.worldstate import *
-import decouple
-from discord.ext.commands import when_mentioned_or
 import datetime
+import logging
+import os
 import time
-from discord.utils import find
-from src.sql import *
 
+import aiomysql
+import decouple
+import discord
+from aiohttp import ClientSession
+from decouple import config
+from discord.ext import commands
+from discord.ext.commands import when_mentioned_or
+from discord.utils import find
+
+from src.sql import Pool
+from src.worldstate import *
 
 __version__ = "0.0.1"
 logger = logging.getLogger('warframe')
@@ -65,24 +69,34 @@ def get_orbisCycle(data: dict) -> list:
         icon = "🔥"
     return timeLeft, icon
 
-def _get_prefix(bot, message):
-    try:
-        prefix = read_prefix(message.guild.id)
-        return when_mentioned_or(prefix)(bot, message)
-    except Exception as e:
-        logger.exception(e, exc_info=True)
-        return when_mentioned_or('*')(bot, message)
 
-class WarframeTrader(commands.AutoShardedBot):
+
+class WarframeTrader(commands.AutoShardedBot, Pool):
+    __slots__ = (
+        "colour",
+        "http_session",
+        "pool"
+    )
     def __init__(self):
         super().__init__(
-            command_prefix=_get_prefix,
+            command_prefix=self._get_prefix,
             activity=discord.Game(name='Updating...'),
             status=discord.Status('dnd')
         )
+        super(Pool, self).__init__()
         self.remove_command("help")
         self._load_extensions()
         self.colour = 0x87DAB
+        self.http_session = None
+        self.pool = None
+
+    async def _get_prefix(self, bot, message):
+        try:
+            prefix = await self.read_prefix(message.guild.id)
+            return when_mentioned_or(prefix)(bot, message)
+        except Exception as e:
+            logger.exception(e, exc_info=True)
+            return when_mentioned_or('*')(bot, message)
 
     def _load_extensions(self):
         for file in os.listdir("cogs/"):
@@ -103,12 +117,12 @@ class WarframeTrader(commands.AutoShardedBot):
                 logger.exception(f"Fail to unload {file}")
 
     async def on_guild_remove(self, guild: discord.Guild):
-        d_guild(guild.id)
+        await self.d_guild(guild.id)
         logger.info(f"guild {guild.id} removed")
 
     async def on_guild_join(self, guild: discord.Guild):
         try:
-            i_guild_settings(guild.id, '*', 0, None)
+            await self.i_guild_settings(guild.id, '*', 0, None)
             logger.info(f"guild {guild.id} added")
         except Exception as e:
             logger.exception(e, exc_info=True)
@@ -156,21 +170,37 @@ class WarframeTrader(commands.AutoShardedBot):
         logger.info(f"shard {shard_id} ready")
 
     async def on_ready(self):
-        # waiting internal cache to be ready
-        await self.wait_until_ready()
+        self.http_session = ClientSession(loop=self.loop)
+        try:
+            self.pool = await aiomysql.create_pool(
+                    host=config("db_host"),
+                    port=3306,
+                    user=config("db"),
+                    password=config("password"),
+                    db=config("db"),
+                    loop=self.loop,
+                    maxsize=1000,
+                    autocommit=True
+                )
+        except Exception as e:
+            logger.exception(e, exc_info=True)
+
+        while self.http_session is None or self.pool is None:
+            pass
         while True:
             try:
-                cetus_time = get_cetusCycle(ws_data("pc", "cetusCycle"))
+                cetus_time = get_cetusCycle(await ws_data(self.http_session, "pc", "cetusCycle"))
                 cetus_string = ttc_c(cetus_time[0], cetus_time[1])
             except Exception as e:
                 logger.exception(e, exc_info=True)
             try:
-                vallis_time = get_orbisCycle(ws_data("pc", "vallisCycle"))
+                vallis_time = get_orbisCycle(await ws_data(self.http_session, "pc", "vallisCycle"))
                 vallis_string = ttc_c(vallis_time[0], vallis_time[1])
             except Exception as e:
                 logger.exception(e, exc_info=True)
             try:
-                sentient_code = ws_offi()['Tmp']
+                ws_of = await ws_offi(self.http_session)
+                sentient_code = ws_of['Tmp']
                 node = ""
                 if sentient_code != '[]':
                     code = int(sentient_code[7:10])
@@ -192,7 +222,7 @@ class WarframeTrader(commands.AutoShardedBot):
             await asyncio.sleep(60)
 
     def run(self, *args, **kwargs):
-        super().run(decouple.config("token"), **kwargs)
+        super().run(decouple.config("debug_token"), **kwargs)
 
 
 if __name__ == "__main__":

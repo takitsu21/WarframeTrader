@@ -15,20 +15,23 @@ from src.util import locales
 
 class Statistics(commands.Cog):
     """Graphical Stats for an item"""
+    __slots__ = (
+        "bot",
+        "colour"
+    )
     def __init__(self, bot):
         self.bot = bot
         self.colour = 0x87DABC
 
-    @staticmethod
-    def make_graph(args_endpoint: str, fargs: str):
+    async def make_graph(self, args_endpoint: str, fargs: str):
         api = WfmApi("pc", "items", args_endpoint, "statistics")
-        graph = GraphProcess(fargs, args_endpoint)
-        graph.save_graph(api.data())
+        graph = GraphProcess(self.bot.http_session, fargs, args_endpoint)
+        graph.save_graph(await api.data())
 
     @commands.command(aliases=["st"])
     @trigger_typing
     async def stats(self, ctx, *args):
-        to_delete, delay, lang = read_settings(ctx.guild.id)
+        to_delete, delay, lang = await self.bot.read_settings(ctx.guild.id)
         lang_pack = locales(lang)
         if len(args):
             try:
@@ -36,7 +39,7 @@ class Statistics(commands.Cog):
                 capitalize_args = [x.capitalize() for x in args]
                 fargs = ' '.join(capitalize_args)
                 graphs_path = f"./graphs/{args_endpoint}.png"
-                self.make_graph(args_endpoint, fargs)
+                await self.make_graph(args_endpoint, fargs)
                 msg = lang_pack["command_stat_msg_title"].format(ctx.author.mention, fargs)
                 with open(graphs_path, 'rb') as p:
                     if delay:

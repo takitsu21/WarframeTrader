@@ -14,9 +14,7 @@ class GraphProcess:
         self.title = title
         self.url_name = url_name
 
-    def save_graph(self, data: dict) -> bytes:
-        # with open('graph.json', 'w') as f:
-        #     f.write(str(data))
+    def save_graph(self, data: dict) -> None:
         try:
             if isinstance(
                     data["payload"]["statistics_closed"]["90days"][0]["mod_rank"],
@@ -43,6 +41,17 @@ class GraphProcess:
         x = np.arange(len(dates))
         plt.figure(figsize=(8, 7))
         ax1 = plt.subplot(2, 1, 1)
+
+        ax1.spines['bottom'].set_visible(False)
+        ax1.spines['top'].set_visible(False)
+        ax1.spines['right'].set_visible(False)
+        ax1.spines['left'].set_visible(False)
+
+        ax1.xaxis.label.set_color('white')
+        ax1.yaxis.label.set_color('white')
+        ax1.tick_params(axis='x', colors='white')
+        ax1.tick_params(axis='y', colors='white')
+
         ax1.xaxis.set_major_locator(MultipleLocator(7))
         ax1.xaxis.set_minor_locator(MultipleLocator(1))
         plt.plot(x, y, "r--")
@@ -56,6 +65,17 @@ class GraphProcess:
         plt.ylabel("Prices (platinum)")
 
         ax2 = plt.subplot(2, 1, 2)
+
+        ax2.spines['bottom'].set_visible(False)
+        ax2.spines['top'].set_visible(False)
+        ax2.spines['right'].set_visible(False)
+        ax2.spines['left'].set_visible(False)
+
+        ax2.xaxis.label.set_color('white')
+        ax2.yaxis.label.set_color('white')
+        ax2.tick_params(axis='x', colors='white')
+        ax2.tick_params(axis='y', colors='white')
+
         plt.bar(x, d, label="Bars")
         plt.legend(["Volume sold"])
         plt.xlabel("Time (last 90 days)")
@@ -64,6 +84,6 @@ class GraphProcess:
         ax2.xaxis.set_major_locator(MultipleLocator(7))
         ax2.xaxis.set_minor_locator(MultipleLocator(1))
         plt.grid(True)
-        plt.savefig("graphs/"+self.url_name+".png")
+        plt.savefig("graphs/"+self.url_name+".png", transparent=True)
         plt.close('all')
         # plt.show()

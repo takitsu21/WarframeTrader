@@ -3,7 +3,7 @@ from src.exceptions import *
 import datetime
 import os
 import json
-
+from aiohttp import ClientSession
 
 ROOT = "https://api.warframestat.us/"
 FORMAT_DATE = "%Y-%m-%dT%H:%M:%S.%fZ"
@@ -14,12 +14,12 @@ FORMAT_DATE = "%Y-%m-%dT%H:%M:%S.%fZ"
 #         loaded = json.loads(txt)
 #         return loaded
 
-def ws_data(platform: str="pc", *endpoints: list) -> dict:
+async def ws_data(session: ClientSession, platform: str="pc", *endpoints: list) -> dict:
     endpoint = platform + "/" + '/'.join(endpoints)
-    r = requests.get(ROOT + endpoint)
-    if r.status_code == 200:
-        return r.json()
-    raise StatusError(r.status_code)
+    r = await session.get(ROOT + endpoint)
+    if r.status in range(200, 300):
+        return await r.json()
+    raise StatusError(r.status)
 
 def arbitration_eta(expiry):
     da = datetime.datetime.now()
@@ -41,12 +41,12 @@ def sentient_node(code: int) -> str:
     }
     return nodes[code]
 
-def ws_offi():
+async def ws_offi(session: ClientSession):
     uri = "http://content.warframe.com/dynamic/worldState.php"
-    r = requests.get(uri)
-    if r.status_code == 200:
-        return r.json()
-    raise StatusError(r.status_code)
+    r = await session.get(uri)
+    if r.status in range(200, 300):
+        return json.loads(await r.text())
+    raise StatusError(r.status)
 
 def sentient_time_checker(activation: str) -> bool:
     """If we know next activation event,
@@ -61,7 +61,7 @@ def sentient_tlba(activation: str) -> str:
     now = datetime.datetime.now()
     date_activation = datetime.datetime.strptime(activation, FORMAT_DATE)
     delta_deta = now - date_activation
-    minutes = (duration.seconds  % 3600) // 60
+    minutes = (delta_deta.seconds  % 3600) // 60
     return f"Sentient ship will be active in **{minutes}**"
 
 def sentient_tlbe(expiry: str) -> str:
@@ -69,5 +69,5 @@ def sentient_tlbe(expiry: str) -> str:
     now = datetime.datetime.now()
     date_expiry = datetime.datetime.strptime(expiry, FORMAT_DATE)
     delta_deta = date_expiry - now
-    minutes = (duration.seconds  % 3600) // 60
+    minutes = (delta_deta.seconds  % 3600) // 60
     return f"**{minutes}** mins before sentient ship become inactive"

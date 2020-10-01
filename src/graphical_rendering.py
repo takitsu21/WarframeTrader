@@ -83,6 +83,6 @@ class GraphProcess:
         ax2.xaxis.set_major_locator(MultipleLocator(15))
         # ax2.xaxis.set_minor_locator(MultipleLocator(1))
         plt.grid(True)
-        plt.savefig("graphs/"+self.url_name+".png")
+        plt.savefig("graphs/"+self.url_name+".png", transparent=True)
         plt.close('all')
         # plt.show()

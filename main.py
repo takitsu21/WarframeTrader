@@ -86,7 +86,6 @@ class WarframeTrader(commands.AutoShardedBot, Pool):
         self.colour = 0x87DAB
         self.http_session = None
         self.pool = None
-        # self.loop.create_task(self.init_async())
 
     async def _get_prefix(self, bot, message):
         try:

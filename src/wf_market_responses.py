@@ -84,7 +84,7 @@ def sort_orders(data: dict, order_type: str) -> dict:
             "order_type": prices[igname]["order_type"],
             "number": i
             })
-        if i == 6:
+        if i == 7:
             break
         i += 1
     _sorted["data"] = parser

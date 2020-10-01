@@ -24,8 +24,8 @@ class Statistics(commands.Cog):
         self.colour = 0x87DABC
 
     async def make_graph(self, args_endpoint: str, fargs: str):
-        api = WfmApi("pc", "items", args_endpoint, "statistics")
-        graph = GraphProcess(self.bot.http_session, fargs, args_endpoint)
+        api = WfmApi(self.bot.http_session, "pc", "items", args_endpoint, "statistics")
+        graph = GraphProcess(fargs, args_endpoint)
         graph.save_graph(await api.data())
 
     @commands.command(aliases=["st"])

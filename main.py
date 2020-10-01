@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-# coding:utf-8
 import asyncio
 import datetime
 import logging
@@ -70,7 +68,6 @@ def get_orbisCycle(data: dict) -> list:
     return timeLeft, icon
 
 
-
 class WarframeTrader(commands.AutoShardedBot, Pool):
     __slots__ = (
         "colour",
@@ -89,6 +86,7 @@ class WarframeTrader(commands.AutoShardedBot, Pool):
         self.colour = 0x87DAB
         self.http_session = None
         self.pool = None
+        # self.loop.create_task(self.init_async())
 
     async def _get_prefix(self, bot, message):
         try:
@@ -169,24 +167,26 @@ class WarframeTrader(commands.AutoShardedBot, Pool):
     async def on_shard_ready(self, shard_id):
         logger.info(f"shard {shard_id} ready")
 
-    async def on_ready(self):
-        self.http_session = ClientSession(loop=self.loop)
-        try:
-            self.pool = await aiomysql.create_pool(
-                    host=config("db_host"),
-                    port=3306,
-                    user=config("db"),
-                    password=config("password"),
-                    db=config("db"),
-                    loop=self.loop,
-                    maxsize=1000,
-                    autocommit=True
-                )
-        except Exception as e:
-            logger.exception(e, exc_info=True)
+    async def init_async(self):
+        if self.http_session is None:
+            self.http_session = ClientSession(loop=self.loop)
+        if self.pool is None:
+            try:
+                self.pool = await aiomysql.create_pool(
+                        host=config("db_host"),
+                        port=3306,
+                        user=config("db"),
+                        password=config("password"),
+                        db=config("db"),
+                        minsize=5,
+                        maxsize=50,
+                        loop=self.loop,
+                        autocommit=True
+                    )
+            except Exception as e:
+                logger.exception(e, exc_info=True)
 
-        while self.http_session is None or self.pool is None:
-            pass
+    async def presence_indicator(self):
         while True:
             try:
                 cetus_time = get_cetusCycle(await ws_data(self.http_session, "pc", "cetusCycle"))
@@ -221,8 +221,17 @@ class WarframeTrader(commands.AutoShardedBot, Pool):
                     )
             await asyncio.sleep(60)
 
+    async def on_ready(self):
+        await self.init_async()
+        self.loop.create_task(self.presence_indicator())
+
     def run(self, *args, **kwargs):
-        super().run(decouple.config("debug_token"), **kwargs)
+        try:
+            super().run(decouple.config("token"), **kwargs)
+        except KeyboardInterrupt:
+            self.loop.run_until_complete(self._close())
+            self.loop.run_until_complete(self.http_session.close())
+            exit(0)
 
 
 if __name__ == "__main__":

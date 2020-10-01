@@ -1,14 +1,11 @@
 #!/usr/bin/python3
 # coding:utf-8
-import requests
 from src.exceptions import *
 from decouple import config
-from discord.ext import commands
-import os
 
 from aiohttp import ClientSession
 
-class WfmApi(commands.Cog):
+class WfmApi():
     """
     Returns warframe.market data
     """
@@ -17,7 +14,8 @@ class WfmApi(commands.Cog):
         "root",
         "endpoints",
         "URL",
-        "platform"
+        "platform",
+        "session"
     )
     def __init__(self, session: ClientSession, platform: str, *endpoints: list):
         self.icon_root = "https://warframe.market/static/assets/"  # Example : https://warframe.market/static/assets/icons/en/thumbs/Akbronco_Prime_Set.34b5a7f99e5f8c15cc2039a76c725069.128x128.png

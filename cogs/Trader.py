@@ -47,7 +47,8 @@ class Trader(commands.Cog):
                 args_endpoint = '_'.join(args).lower()
                 api_orders = WfmApi(self.bot.http_session, platform, "items", args_endpoint, "orders")
                 api_icons = WfmApi(self.bot.http_session, platform, "items", args_endpoint)
-                item_data = sort_orders(await api_orders.data(), "wtb")
+                api_orders_data = await api_orders.data()
+                item_data = sort_orders(api_orders_data, "wtb")
                 item_thumb = await api_icons.icon_endpoint(args_endpoint)
                 capitalize_args = [x.capitalize() for x in args]
                 formatted_args = ' '.join(capitalize_args)
